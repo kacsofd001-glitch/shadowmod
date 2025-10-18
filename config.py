@@ -11,7 +11,10 @@ DEFAULT_CONFIG = {
     'min_account_age_days': 7,
     'warnings': {},
     'temp_bans': {},
-    'temp_mutes': {}
+    'temp_mutes': {},
+    'giveaways': {},
+    'completed_giveaways': {},
+    'role_prefixes': {}
 }
 
 def load_config():

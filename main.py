@@ -23,6 +23,10 @@ class DiscordBot(commands.Bot):
         await self.load_extension('cogs.moderation')
         await self.load_extension('cogs.games')
         await self.load_extension('cogs.fun')
+        await self.load_extension('cogs.polls')
+        await self.load_extension('cogs.roles')
+        await self.load_extension('cogs.giveaways')
+        await self.load_extension('cogs.nameauto')
         print("All cogs loaded successfully!")
         
     async def on_ready(self):
@@ -66,7 +70,31 @@ async def help_command(ctx):
     
     embed.add_field(
         name="😄 Fun",
-        value="`!meme` - Generate a random meme\n`!sound` - Random sound response",
+        value="`!meme` - Generate a random meme\n`!sound` - Random sound response\n`!8ball <question>` - Magic 8-ball\n`!coinflip` - Flip a coin\n`!roll 2d6` - Roll dice",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="📊 Polls",
+        value="`!poll <question> <option1> <option2>...` - Create poll\n`!quickpoll <question>` - Yes/No/Maybe poll",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="👥 Roles",
+        value="`!addrole <@user> <@role>` - Add role to user\n`!removerole <@user> <@role>` - Remove role\n`!createrole <name> [color]` - Create role\n`!deleterole <@role>` - Delete role\n`!roles` - List all roles",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="🎉 Giveaways",
+        value="`!giveaway <time> <winners> <prize>` - Start giveaway\n`!reroll <message_id>` - Reroll giveaway",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="📝 Name Automation",
+        value="`!setprefix <@role> <prefix>` - Set role prefix\n`!removeprefix <@role>` - Remove prefix\n`!viewprefixes` - View all prefixes\n`!updateallnicks` - Update all nicknames",
         inline=False
     )
     

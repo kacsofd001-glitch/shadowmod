@@ -42,6 +42,30 @@ A feature-rich Discord bot built with Python and discord.py featuring an automat
 - `!coinflip` - Flip a coin
 - `!roll` - Roll dice (e.g., `!roll 2d6`)
 
+### 📊 Poll System
+- **Interactive Polls** - Create polls with button voting
+- **Quick Polls** - Fast yes/no/maybe polls with reactions
+- **Live Results** - Real-time vote counting with progress bars
+
+### 👥 Role Management
+- Create and delete roles with custom colors
+- Assign/remove roles from members
+- View role information and member counts
+- List all server roles
+
+### 🎉 Giveaway System
+- Create timed giveaways with automatic winner selection
+- Button-based entry system
+- Multiple winner support
+- Automatic ending and winner announcement
+- Reroll functionality
+
+### 📝 Name Automation
+- Automatically add role prefixes to member nicknames
+- Configure custom prefixes for different roles (e.g., "M |" for members, "A |" for admins)
+- Automatic nickname updates on join and role changes
+- Bulk nickname update commands
+
 ## 🚀 Setup Instructions
 
 ### 1. Get Your Discord Bot Token
@@ -115,6 +139,36 @@ python main.py
 !roll 2d6          - Roll dice
 ```
 
+### Poll Commands
+```
+!poll <question> <opt1> <opt2> ...  - Create interactive poll with buttons
+!quickpoll <question>               - Create yes/no/maybe poll with reactions
+```
+
+### Role Commands
+```
+!addrole @user @role       - Add a role to a user
+!removerole @user @role    - Remove a role from a user
+!createrole <name> [color] - Create a new role (color in hex: #FF5733)
+!deleterole @role          - Delete a role
+!roleinfo @role            - View detailed role information
+!roles                     - List all server roles
+```
+
+### Giveaway Commands
+```
+!giveaway <time> <winners> <prize>  - Start a giveaway (e.g., !giveaway 1d 2 Nitro)
+!reroll <message_id>                - Reroll a giveaway winner
+```
+
+### Name Automation Commands
+```
+!setprefix @role <prefix>  - Set automatic name prefix for role (e.g., M |)
+!removeprefix @role        - Remove prefix from a role
+!viewprefixes              - View all configured role prefixes
+!updateallnicks            - Manually update all member nicknames
+```
+
 ### General
 ```
 !help              - Show all commands
@@ -133,10 +187,12 @@ Every interaction with this bot uses Discord's modern UI features:
 The bot stores configuration in `bot_config.json` including:
 - Log channel ID
 - Ticket counter
-- Muted role ID
+- Muted role IDs (per guild)
 - Minimum account age for alt detection
 - User warnings
 - Temporary bans and mutes
+- Active giveaways
+- Role name prefixes
 
 ## 🔧 Troubleshooting
 
