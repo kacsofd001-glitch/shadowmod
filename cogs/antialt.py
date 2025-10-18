@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import config
 
 class AntiAlt(commands.Cog):
@@ -13,7 +13,7 @@ class AntiAlt(commands.Cog):
         min_age_days = cfg.get('min_account_age_days', 7)
         log_channel_id = cfg.get('log_channel_id')
         
-        account_age = datetime.utcnow() - member.created_at
+        account_age = datetime.now(timezone.utc) - member.created_at
         age_in_days = account_age.days
         
         if age_in_days < min_age_days:
@@ -21,7 +21,7 @@ class AntiAlt(commands.Cog):
                 title="🚨 Possible Alt Account Detected",
                 description=f"**User:** {member.mention} ({member})\n**ID:** {member.id}",
                 color=discord.Color.red(),
-                timestamp=datetime.utcnow()
+                timestamp=datetime.now(timezone.utc)
             )
             embed.add_field(
                 name="Account Created",

@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands, tasks
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import config
 import asyncio
 
@@ -24,7 +24,7 @@ class Moderation(commands.Cog):
     @tasks.loop(minutes=1)
     async def check_temp_actions(self):
         cfg = config.load_config()
-        current_time = datetime.utcnow().timestamp()
+        current_time = datetime.now(timezone.utc).timestamp()
         
         temp_bans = cfg.get('temp_bans', {})
         for guild_id, bans in list(temp_bans.items()):
@@ -47,11 +47,12 @@ class Moderation(commands.Cog):
             if not guild:
                 continue
             
-            muted_role_id = cfg.get('muted_role_id')
+            muted_roles = cfg.get('muted_roles', {})
+            muted_role_id = muted_roles.get(str(guild_id))
             if not muted_role_id:
                 continue
             
-            muted_role = guild.get_role(muted_role_id)
+            muted_role = guild.get_role(int(muted_role_id))
             if not muted_role:
                 continue
             
@@ -82,7 +83,7 @@ class Moderation(commands.Cog):
             title="🔨 User Banned",
             description=f"**User:** {member.mention}\n**Reason:** {reason}\n**Moderator:** {ctx.author.mention}",
             color=discord.Color.red(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         
         await member.ban(reason=reason)
@@ -100,7 +101,7 @@ class Moderation(commands.Cog):
             title="👢 User Kicked",
             description=f"**User:** {member.mention}\n**Reason:** {reason}\n**Moderator:** {ctx.author.mention}",
             color=discord.Color.orange(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         
         await member.kick(reason=reason)
@@ -111,7 +112,8 @@ class Moderation(commands.Cog):
     @commands.has_permissions(moderate_members=True)
     async def mute_user(self, ctx, member: discord.Member):
         cfg = config.load_config()
-        muted_role_id = cfg.get('muted_role_id')
+        muted_roles = cfg.get('muted_roles', {})
+        muted_role_id = muted_roles.get(str(ctx.guild.id))
         
         if not muted_role_id:
             muted_role = await ctx.guild.create_role(name="Muted", color=discord.Color.dark_gray())
@@ -119,9 +121,19 @@ class Moderation(commands.Cog):
             for channel in ctx.guild.channels:
                 await channel.set_permissions(muted_role, send_messages=False, speak=False)
             
-            config.update_config('muted_role_id', muted_role.id)
+            if 'muted_roles' not in cfg:
+                cfg['muted_roles'] = {}
+            cfg['muted_roles'][str(ctx.guild.id)] = muted_role.id
+            config.save_config(cfg)
         else:
-            muted_role = ctx.guild.get_role(muted_role_id)
+            muted_role = ctx.guild.get_role(int(muted_role_id))
+            if not muted_role:
+                await ctx.send("❌ Muted role not found! Creating new one...")
+                muted_role = await ctx.guild.create_role(name="Muted", color=discord.Color.dark_gray())
+                for channel in ctx.guild.channels:
+                    await channel.set_permissions(muted_role, send_messages=False, speak=False)
+                cfg['muted_roles'][str(ctx.guild.id)] = muted_role.id
+                config.save_config(cfg)
         
         await member.add_roles(muted_role)
         
@@ -129,7 +141,7 @@ class Moderation(commands.Cog):
             title="🔇 User Muted",
             description=f"**User:** {member.mention}\n**Moderator:** {ctx.author.mention}",
             color=discord.Color.dark_gray(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         
         await ctx.send(embed=embed)
@@ -139,13 +151,18 @@ class Moderation(commands.Cog):
     @commands.has_permissions(moderate_members=True)
     async def unmute_user(self, ctx, member: discord.Member):
         cfg = config.load_config()
-        muted_role_id = cfg.get('muted_role_id')
+        muted_roles = cfg.get('muted_roles', {})
+        muted_role_id = muted_roles.get(str(ctx.guild.id))
         
         if not muted_role_id:
             await ctx.send("❌ No muted role found!")
             return
         
-        muted_role = ctx.guild.get_role(muted_role_id)
+        muted_role = ctx.guild.get_role(int(muted_role_id))
+        if not muted_role:
+            await ctx.send("❌ Muted role not found!")
+            return
+        
         if muted_role in member.roles:
             await member.remove_roles(muted_role)
             
@@ -153,7 +170,7 @@ class Moderation(commands.Cog):
                 title="🔊 User Unmuted",
                 description=f"**User:** {member.mention}\n**Moderator:** {ctx.author.mention}",
                 color=discord.Color.green(),
-                timestamp=datetime.utcnow()
+                timestamp=datetime.now(timezone.utc)
             )
             
             await ctx.send(embed=embed)
@@ -165,15 +182,25 @@ class Moderation(commands.Cog):
     @commands.has_permissions(moderate_members=True)
     async def temp_mute(self, ctx, member: discord.Member, duration: str):
         cfg = config.load_config()
-        muted_role_id = cfg.get('muted_role_id')
+        muted_roles = cfg.get('muted_roles', {})
+        muted_role_id = muted_roles.get(str(ctx.guild.id))
         
         if not muted_role_id:
             muted_role = await ctx.guild.create_role(name="Muted", color=discord.Color.dark_gray())
             for channel in ctx.guild.channels:
                 await channel.set_permissions(muted_role, send_messages=False, speak=False)
-            config.update_config('muted_role_id', muted_role.id)
+            if 'muted_roles' not in cfg:
+                cfg['muted_roles'] = {}
+            cfg['muted_roles'][str(ctx.guild.id)] = muted_role.id
+            config.save_config(cfg)
         else:
-            muted_role = ctx.guild.get_role(muted_role_id)
+            muted_role = ctx.guild.get_role(int(muted_role_id))
+            if not muted_role:
+                muted_role = await ctx.guild.create_role(name="Muted", color=discord.Color.dark_gray())
+                for channel in ctx.guild.channels:
+                    await channel.set_permissions(muted_role, send_messages=False, speak=False)
+                cfg['muted_roles'][str(ctx.guild.id)] = muted_role.id
+                config.save_config(cfg)
         
         time_units = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
         time_amount = int(duration[:-1])
@@ -184,7 +211,7 @@ class Moderation(commands.Cog):
             return
         
         seconds = time_amount * time_units[time_unit]
-        unmute_time = datetime.utcnow().timestamp() + seconds
+        unmute_time = datetime.now(timezone.utc).timestamp() + seconds
         
         await member.add_roles(muted_role)
         
@@ -199,7 +226,7 @@ class Moderation(commands.Cog):
             title="🔇 User Temporarily Muted",
             description=f"**User:** {member.mention}\n**Duration:** {duration}\n**Moderator:** {ctx.author.mention}",
             color=discord.Color.dark_gray(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         
         await ctx.send(embed=embed)
@@ -217,7 +244,7 @@ class Moderation(commands.Cog):
             return
         
         seconds = time_amount * time_units[time_unit]
-        unban_time = datetime.utcnow().timestamp() + seconds
+        unban_time = datetime.now(timezone.utc).timestamp() + seconds
         
         await member.ban(reason=reason)
         
@@ -233,7 +260,7 @@ class Moderation(commands.Cog):
             title="🔨 User Temporarily Banned",
             description=f"**User:** {member.mention}\n**Duration:** {duration}\n**Reason:** {reason}\n**Moderator:** {ctx.author.mention}",
             color=discord.Color.red(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         
         await ctx.send(embed=embed)
@@ -277,7 +304,7 @@ class Moderation(commands.Cog):
         warning = {
             'reason': reason,
             'moderator': str(ctx.author.id),
-            'timestamp': datetime.utcnow().isoformat()
+            'timestamp': datetime.now(timezone.utc).isoformat()
         }
         cfg['warnings'][user_id].append(warning)
         config.save_config(cfg)
@@ -286,7 +313,7 @@ class Moderation(commands.Cog):
             title="⚠️ User Warned",
             description=f"**User:** {member.mention}\n**Reason:** {reason}\n**Moderator:** {ctx.author.mention}\n**Total Warnings:** {len(cfg['warnings'][user_id])}",
             color=discord.Color.gold(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         
         await ctx.send(embed=embed)

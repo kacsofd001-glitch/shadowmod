@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from datetime import datetime
+from datetime import datetime, timezone
 import config
 
 class Logging(commands.Cog):
@@ -25,7 +25,7 @@ class Logging(commands.Cog):
             title="🗑️ Message Deleted",
             description=f"**Author:** {message.author.mention}\n**Channel:** {message.channel.mention}",
             color=discord.Color.red(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         embed.add_field(
             name="Content",
@@ -45,7 +45,7 @@ class Logging(commands.Cog):
             title="📝 Message Edited",
             description=f"**Author:** {before.author.mention}\n**Channel:** {before.channel.mention}",
             color=discord.Color.orange(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         embed.add_field(
             name="Before",
@@ -67,7 +67,7 @@ class Logging(commands.Cog):
             title="📥 Member Joined",
             description=f"**User:** {member.mention} ({member})",
             color=discord.Color.green(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         embed.add_field(
             name="Account Created",
@@ -85,7 +85,7 @@ class Logging(commands.Cog):
             title="📤 Member Left",
             description=f"**User:** {member.mention} ({member})",
             color=discord.Color.red(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         embed.set_thumbnail(url=member.display_avatar.url)
         embed.set_footer(text=f"User ID: {member.id} | Total Members: {member.guild.member_count}")
@@ -98,7 +98,7 @@ class Logging(commands.Cog):
             title="🔨 Member Banned",
             description=f"**User:** {user.mention} ({user})",
             color=discord.Color.dark_red(),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         embed.set_thumbnail(url=user.display_avatar.url)
         embed.set_footer(text=f"User ID: {user.id}")

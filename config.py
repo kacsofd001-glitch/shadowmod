@@ -7,7 +7,7 @@ DEFAULT_CONFIG = {
     'log_channel_id': None,
     'ticket_category_id': None,
     'ticket_counter': 0,
-    'muted_role_id': None,
+    'muted_roles': {},
     'min_account_age_days': 7,
     'warnings': {},
     'temp_bans': {},
