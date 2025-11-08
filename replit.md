@@ -32,14 +32,15 @@ All features use Discord embeds and button components for a modern user experien
 │   ├── logging.py       # Event logging
 │   ├── moderation.py    # Moderation commands
 │   ├── games.py         # Interactive games
-│   ├── fun.py           # Fun commands
+│   ├── fun.py           # Fun commands (including multilingual memes)
 │   ├── polls.py         # Poll system
 │   ├── roles.py         # Role management
 │   ├── giveaways.py     # Giveaway system
 │   ├── nameauto.py      # Name automation
 │   ├── webhook_logging.py  # Webhook logging for bot errors
 │   ├── language.py      # Language switching commands
-│   └── slash_commands.py  # Slash command implementations
+│   ├── aichat.py        # AI chat assistant with OpenAI
+│   └── slash_commands.py  # Slash command implementations (18 commands)
 ├── .env                 # Environment variables (DISCORD_TOKEN)
 ├── bot_config.json      # Runtime configuration (auto-generated)
 └── README.md            # User documentation
@@ -47,10 +48,13 @@ All features use Discord embeds and button components for a modern user experien
 
 ## Setup Requirements
 1. Discord bot token must be set in environment as `DISCORD_TOKEN`
-2. Bot requires these Discord intents: members, messages, message_content, guilds
-3. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
+2. **Optional:** OpenAI API key as `OPENAI_API_KEY` for AI chat feature
+3. Bot requires these Discord intents: members, messages, message_content, guilds
+4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **Added AI Chat Assistant** - OpenAI-powered responses in designated channels with language support (en/hu)
+- **Added /ping command** - For Active Developer Badge maintenance (now 18 total slash commands)
 - **Added multilingual meme generator** - Memes automatically generate in English or Hungarian based on server language
 - **Fixed role prefix duplication bug** - Role prefixes no longer duplicate when updated; auto-updates all members on prefix change
 - **Updated moderation commands** - All slash commands (/ban, /kick, /mute, /unmute, /warn) now accept both user mentions and user IDs

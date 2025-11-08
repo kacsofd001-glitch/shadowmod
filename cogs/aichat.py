@@ -70,6 +70,12 @@ class AIChat(commands.Cog):
         if message.author.bot:
             return
         
+        if not message.content or not message.content.strip():
+            return
+        
+        if message.content.startswith('!') or message.content.startswith('/'):
+            return
+        
         if not self.openai_api_key:
             return
         
@@ -81,6 +87,10 @@ class AIChat(commands.Cog):
             return
         
         channel_config = ai_channels[channel_id]
+        
+        if str(message.guild.id) != channel_config.get('guild_id'):
+            return
+        
         if not channel_config.get('enabled', False):
             return
         
@@ -99,7 +109,12 @@ class AIChat(commands.Cog):
                     await message.reply(response_text, mention_author=False)
                     
             except Exception as e:
-                await message.reply("❌ Sorry, I couldn't process that message.", mention_author=False)
+                error_msg = "❌ Sorry, I couldn't process that message."
+                if "rate_limit" in str(e).lower():
+                    error_msg = "❌ Rate limit reached. Please try again later."
+                elif "invalid" in str(e).lower():
+                    error_msg = "❌ API key issue. Please contact an administrator."
+                await message.reply(error_msg, mention_author=False)
     
     async def get_ai_response(self, user_message: str, language: str) -> str:
         """Get AI response from OpenAI API"""
