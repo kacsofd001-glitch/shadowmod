@@ -119,7 +119,24 @@ const translations = {
         vision: "Vision",
         vision_desc: "Creating a futuristic Discord experience with AI-powered moderation, multilingual support, and seamless automation for communities worldwide.",
         powered_by: "Powered by Replit • Created with 💜",
-        version: "v2.0 FUTURISTIC"
+        version: "v2.0 FUTURISTIC",
+        help_title: "COMMAND DATABASE",
+        help_subtitle: "Next-Gen Discord Moderation System v2.0",
+        cat_info: "INFORMATION SYSTEMS",
+        cat_security: "SECURITY & VERIFICATION",
+        cat_antialt: "ANTI-ALT SYSTEM",
+        cat_mod: "MODERATION MATRIX",
+        cat_tickets: "TICKET NEXUS",
+        cat_games: "GAMING ARENA",
+        cat_fun: "FUN PROTOCOLS",
+        cat_polls: "POLL SYSTEM",
+        cat_roles: "ROLE ARCHITECT",
+        cat_giveaway: "GIVEAWAY ENGINE",
+        cat_nameauto: "NAME AUTOMATION",
+        cat_ai: "AI NEURAL LINK",
+        cat_entertainment: "ENTERTAINMENT SYSTEMS",
+        cat_engagement: "ENGAGEMENT PROTOCOLS",
+        cat_language: "SYSTEM CONFIGURATION"
     },
     hu: {
         nav_dashboard: "Irányítópult",
@@ -154,7 +171,24 @@ const translations = {
         vision: "Jövőkép",
         vision_desc: "Futurisztikus Discord élmény megteremtése AI-alapú moderációval, többnyelvű támogatással és zökkenőmentes automatizálással közösségek számára világszerte.",
         powered_by: "Powered by Replit • Készítve 💜-tel",
-        version: "v2.0 FUTURISZTIKUS"
+        version: "v2.0 FUTURISZTIKUS",
+        help_title: "PARANCSADATBÁZIS",
+        help_subtitle: "Következő Generációs Discord Moderációs Rendszer v2.0",
+        cat_info: "INFORMÁCIÓS RENDSZEREK",
+        cat_security: "BIZTONSÁG ÉS ELLENŐRZÉS",
+        cat_antialt: "ANTI-ALT RENDSZER",
+        cat_mod: "MODERÁCIÓS MÁTRIX",
+        cat_tickets: "TICKET NEXUS",
+        cat_games: "JÁTÉK ARÉNA",
+        cat_fun: "SZÓRAKOZÁS PROTOKOLLOK",
+        cat_polls: "SZAVAZÁS RENDSZER",
+        cat_roles: "SZEREPKÖR ÉPÍTÉSZ",
+        cat_giveaway: "NYEREMÉNYJÁTÉK MOTOR",
+        cat_nameauto: "NÉV AUTOMATIZÁLÁS",
+        cat_ai: "AI NEURÁLIS LINK",
+        cat_entertainment: "SZÓRAKOZTATÁSI RENDSZEREK",
+        cat_engagement: "KÖZÖSSÉGI PROTOKOLLOK",
+        cat_language: "RENDSZER KONFIGURÁCIÓ"
     }
 };
 
