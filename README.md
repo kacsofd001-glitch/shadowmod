@@ -90,7 +90,8 @@ A feature-rich Discord bot built with Python and discord.py featuring an automat
 - **Futuristic cyberpunk theme** with neon colors and animated starfield
 - **Auto-refreshing data** every 5 seconds
 - Shows server count, user count, channel count, and uptime
-- Accessible to everyone at your Repl URL
+- **Accessible at:** `https://your-repl-url/dashboard` (root path auto-redirects)
+- Use `/webpage` command in Discord to get the direct link
 
 ## 🚀 Setup Instructions
 
