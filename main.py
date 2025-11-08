@@ -99,8 +99,8 @@ async def help_command(ctx):
     )
     
     embed.add_field(
-        name="🤖 AI Chat (Admin)",
-        value="`/aichat <#channel> <en/hu> <on/off>` - Configure AI chat\n**NEW:** Mention me anywhere and I'll respond with AI! 🧠",
+        name="🤖 AI Chat",
+        value="Mention me anywhere (@bot) and I'll respond with AI! 🧠\nResponds in your server's language (en/hu)",
         inline=False
     )
     

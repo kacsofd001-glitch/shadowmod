@@ -186,13 +186,16 @@ python main.py
 ```
 **Note:** When you set or remove a role prefix, all members with that role are automatically updated!
 
-### AI Chat (NEW! 🤖)
-```
-/aichat <#channel> <en/hu> <true/false>  - Configure AI assistant in a channel
-```
-**Admin only.** Enable AI chat in specific channels! The bot will respond to all messages in configured channels with AI-powered responses in the selected language.
+### AI Chat 🤖
+**Simply mention the bot anywhere** to get AI-powered responses!
 
-**✨ NEW: Mention Feature!** You can also mention the bot anywhere in any channel (e.g., `@YourBot hello!`) and it will respond with AI-powered responses in your server's language (English or Hungarian)!
+```
+@YourBot hello!
+@YourBot what's 2+2?
+@YourBot tell me a joke
+```
+
+The bot will respond in your server's language (English or Hungarian based on `/setlang`). Works in any channel!
 
 ### Verification System (NEW! 🔐)
 ```
