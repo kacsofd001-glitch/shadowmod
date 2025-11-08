@@ -118,12 +118,17 @@ class AIChat(commands.Cog):
             except Exception as e:
                 print(f"AI Chat Error: {type(e).__name__}: {str(e)}")
                 error_msg = "❌ Sorry, I couldn't process that message."
-                if "rate_limit" in str(e).lower():
-                    error_msg = "❌ Rate limit reached. Please try again later."
-                elif "invalid" in str(e).lower() or "401" in str(e):
+                error_str = str(e).lower()
+                
+                if "429" in str(e) or "quota" in error_str or "insufficient_quota" in error_str:
+                    error_msg = "❌ AI chat is temporarily unavailable (API quota exceeded). Please contact the bot owner to add OpenAI credits."
+                elif "rate_limit" in error_str or "rate limit" in error_str:
+                    error_msg = "❌ Rate limit reached. Please try again in a few moments."
+                elif "invalid" in error_str or "401" in str(e):
                     error_msg = "❌ API key issue. Please contact an administrator."
-                elif "timeout" in str(e).lower():
+                elif "timeout" in error_str:
                     error_msg = "❌ Request timed out. Please try again."
+                
                 await message.reply(error_msg, mention_author=False)
     
     async def get_ai_response(self, user_message: str, language: str) -> str:
