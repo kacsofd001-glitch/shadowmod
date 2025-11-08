@@ -19,6 +19,8 @@ A feature-rich Discord bot built with Python and discord.py featuring an automat
 - Message deletions and edits
 - Member joins and leaves
 - Bans, kicks, and moderation actions
+- **Webhook Logging** - Real-time bot error and event logging to Discord via webhooks
+- Monitor bot health, command errors, and system events through Discord embeds
 - No need to check bot code!
 
 ### 🔨 Moderation Commands
@@ -105,23 +107,27 @@ python main.py
 
 ## 📖 Command Guide
 
+**Note:** Key commands support both `!` prefix and `/` slash commands for Discord's Active Developer badge!
+
 ### Setup Commands (Admin Only)
-- `!setlog #channel` - Set the channel for bot logs
+- `!setlog #channel` or `/setlog` - Set the channel for bot logs
 - `!setaltage <days>` - Set minimum account age (default: 7 days)
-- `!ticket` - Create a ticket panel with button
+- `!setwebhook <url>` or `/setwebhook` - Set webhook URL for bot error logging
+- `!testwebhook` or `/testwebhook` - Test the webhook logging system
+- `!ticket` or `/ticket` - Create a ticket panel with button
 
 ### Moderation Commands
 ```
-!ban @user [reason]       - Ban a user
-!kick @user [reason]      - Kick a user
-!mute @user               - Mute a user
-!unmute @user             - Unmute a user
-!tempmute @user 10m       - Temporarily mute (10s, 5m, 2h, 1d)
-!tempban @user 1d reason  - Temporarily ban
-!lock                     - Lock current channel
-!unlock                   - Unlock current channel
-!warn @user [reason]      - Warn a user
-!warnings @user           - Check user's warnings
+!ban @user [reason]   or  /ban      - Ban a user
+!kick @user [reason]  or  /kick     - Kick a user
+!mute @user           or  /mute     - Mute a user
+!unmute @user         or  /unmute   - Unmute a user
+!tempmute @user 10m                 - Temporarily mute (10s, 5m, 2h, 1d)
+!tempban @user 1d reason            - Temporarily ban
+!lock                 or  /lock     - Lock current channel
+!unlock               or  /unlock   - Unlock current channel
+!warn @user [reason]  or  /warn     - Warn a user
+!warnings @user                     - Check user's warnings
 ```
 
 ### Game Commands
@@ -132,11 +138,11 @@ python main.py
 
 ### Fun Commands
 ```
-!meme              - Get a random meme
-!sound             - Random sound effect
-!8ball <question>  - Ask the magic 8-ball
-!coinflip          - Flip a coin
-!roll 2d6          - Roll dice
+!meme              or  /meme      - Get a random meme
+!sound                            - Random sound effect
+!8ball <question>  or  /8ball     - Ask the magic 8-ball
+!coinflip          or  /coinflip  - Flip a coin
+!roll 2d6                         - Roll dice
 ```
 
 ### Poll Commands
@@ -171,7 +177,7 @@ python main.py
 
 ### General
 ```
-!help              - Show all commands
+!help  or  /help   - Show all commands
 ```
 
 ## 🎨 All Features Use Embeds & Buttons!
@@ -193,6 +199,32 @@ The bot stores configuration in `bot_config.json` including:
 - Temporary bans and mutes
 - Active giveaways
 - Role name prefixes
+
+### Setting Up Webhook Logging
+
+To monitor your bot's health and errors in real-time via Discord:
+
+1. **Create a Webhook in Discord:**
+   - Right-click the channel where you want bot logs
+   - Click "Edit Channel" → "Integrations" → "Webhooks"
+   - Click "New Webhook" or "Create Webhook"
+   - Copy the webhook URL
+
+2. **Set the Webhook in Your Bot:**
+   ```
+   !setwebhook https://discord.com/api/webhooks/YOUR_WEBHOOK_URL
+   ```
+
+3. **Test It:**
+   ```
+   !testwebhook
+   ```
+
+Now you'll receive:
+- ✅ Bot startup notifications
+- ⚠️ Command errors with details
+- ❌ Critical bot errors with stack traces
+- ℹ️ Custom info logs
 
 ## 🔧 Troubleshooting
 

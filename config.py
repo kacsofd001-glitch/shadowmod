@@ -14,7 +14,8 @@ DEFAULT_CONFIG = {
     'temp_mutes': {},
     'giveaways': {},
     'completed_giveaways': {},
-    'role_prefixes': {}
+    'role_prefixes': {},
+    'webhook_url': None
 }
 
 def load_config():

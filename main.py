@@ -27,16 +27,25 @@ class DiscordBot(commands.Bot):
         await self.load_extension('cogs.roles')
         await self.load_extension('cogs.giveaways')
         await self.load_extension('cogs.nameauto')
+        await self.load_extension('cogs.webhook_logging')
+        await self.load_extension('cogs.slash_commands')
         print("All cogs loaded successfully!")
         
     async def on_ready(self):
         print(f'Bot is ready! Logged in as {self.user}')
         print(f'Bot ID: {self.user.id}')
         print('------')
+        
+        try:
+            synced = await self.tree.sync()
+            print(f'Synced {len(synced)} slash commands')
+        except Exception as e:
+            print(f'Failed to sync commands: {e}')
+        
         await self.change_presence(
             activity=discord.Activity(
                 type=discord.ActivityType.watching,
-                name="your server | !help"
+                name="your server | !help or /help"
             )
         )
 
@@ -100,11 +109,11 @@ async def help_command(ctx):
     
     embed.add_field(
         name="⚙️ Configuration",
-        value="`!setlog <#channel>` - Set log channel\n`!setaltage <days>` - Set minimum account age",
+        value="`!setlog <#channel>` - Set log channel\n`!setaltage <days>` - Set minimum account age\n`!setwebhook <url>` - Set webhook for bot logging\n`!testwebhook` - Test webhook logging",
         inline=False
     )
     
-    embed.set_footer(text="Use buttons for interactive features!")
+    embed.set_footer(text="Use buttons for interactive features! Commands work with ! or / prefix")
     
     await ctx.send(embed=embed)
 
