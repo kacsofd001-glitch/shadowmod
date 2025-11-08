@@ -32,9 +32,13 @@ outputType = "webview"
 
 [deployment]
 deploymentTarget = "vm"
-run = ["bash", "-c", "python main.py & gunicorn --bind=0.0.0.0:5000 --reuse-port web_server:app"]
+run = ["python", "bot_launcher.py"]
 ignorePorts = true
 
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 45903
+externalPort = 3000
