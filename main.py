@@ -30,6 +30,7 @@ class DiscordBot(commands.Bot):
         await self.load_extension('cogs.webhook_logging')
         await self.load_extension('cogs.language')
         await self.load_extension('cogs.aichat')
+        await self.load_extension('cogs.verify')
         await self.load_extension('cogs.slash_commands')
         print("All cogs loaded successfully!")
         
@@ -105,7 +106,7 @@ async def help_command(ctx):
     
     embed.add_field(
         name="⚙️ Configuration (Admin)",
-        value="`!setlang <en/hu>` or `/setlang` - Change language\n`!setwebhook <url>` - Set webhook logging\n`!setprefix <@role> <prefix>` - Role name prefix",
+        value="`/setupverify` - Setup verification system\n`!setlang <en/hu>` or `/setlang` - Change language\n`!setaltage <days>` - Set account age for anti-alt\n`!setwebhook <url>` - Set webhook logging",
         inline=False
     )
     

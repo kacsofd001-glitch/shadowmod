@@ -192,6 +192,12 @@ python main.py
 ```
 **Admin only.** Enable AI chat in specific channels! The bot will respond to all messages in configured channels with AI-powered responses in the selected language.
 
+### Verification System (NEW! 🔐)
+```
+/setupverify <#channel> <@roles_to_add> <@roles_to_remove>  - Setup member verification
+```
+**Admin only.** Creates a verification panel with a button. Members must pass anti-alt check (account age) to verify. Automatically adds/removes configured roles!
+
 ### General
 ```
 !help  or  /help   - Show all commands

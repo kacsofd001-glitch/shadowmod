@@ -4,6 +4,7 @@
 A comprehensive Discord bot built with Python featuring:
 - **Multilanguage support (English & Hungarian)**
 - **AI Chat Assistant** - OpenAI-powered responses in designated channels
+- **Verification system** - Button-based member verification with anti-alt protection
 - Automated ticket system with buttons
 - Anti-alt account detection
 - Advanced logging to Discord channels
@@ -16,7 +17,8 @@ A comprehensive Discord bot built with Python featuring:
 - Giveaway system with automatic winner selection
 - Name automation with role-based prefixes
 - **Dual prefix support (! and /) for active developer badge**
-- **19 slash commands for Active Developer Badge maintenance**
+- **20 slash commands for Active Developer Badge maintenance**
+- **Verification system** - Button-based verification with anti-alt checks
 
 All features use Discord embeds and button components for a modern user experience.
 
@@ -53,7 +55,8 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
-- **Added /purge command** - Bulk message deletion (1-100 messages) with multilingual support (now 19 slash commands!)
+- **Added verification system** - Button-based member verification with anti-alt protection (now 20 slash commands!)
+- **Added /purge command** - Bulk message deletion (1-100 messages) with multilingual support
 - **Added AI Chat Assistant** - OpenAI-powered responses in designated channels with language support (en/hu)
 - **Added /ping command** - For Active Developer Badge maintenance
 - **Added multilingual meme generator** - Memes automatically generate in English or Hungarian based on server language
