@@ -7,12 +7,10 @@ import os
 class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # Get Replit domain for webpage link
-        self.replit_domain = os.getenv('REPLIT_DOMAINS', 'localhost:5000')
-        if not self.replit_domain.startswith('http'):
-            self.replit_domain = f'https://{self.replit_domain}'
+        # Use custom domain shadowmod.net
+        self.custom_domain = 'https://shadowmod.net'
         # Add /dashboard path to URL
-        self.dashboard_url = f'{self.replit_domain}/dashboard'
+        self.dashboard_url = f'{self.custom_domain}/dashboard'
     
     @commands.command(name='serverinfo', aliases=['si'])
     async def serverinfo(self, ctx):
