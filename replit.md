@@ -70,6 +70,7 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **👤 CREATOR BRANDING** - Updated all "v2.0 FUTURISTIC" references to "Made by MoonlightVFX" across website, bot commands, and documentation
 - **📱 MOBILE-RESPONSIVE NAV** - Navigation bar now fully responsive with tablet (768px) and mobile (480px) breakpoints, smaller buttons and text on mobile, emoji-only mode for tiny screens
 - **🎨 CSS CLASSES** - Converted inline navigation styles to proper CSS classes for better maintainability and responsive design
 - **🌐 LANGUAGE TOGGLE** - Added EN/HU language switcher slider on website with localStorage persistence and full Hungarian translations

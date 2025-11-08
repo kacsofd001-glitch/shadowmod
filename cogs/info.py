@@ -128,7 +128,7 @@ class Info(commands.Cog):
         
         embed = discord.Embed(
             title="⚡ SHADOW-MOD ✨ | Bot Info",
-            description="**Next-Gen Discord Moderation System v2.0**\nFuturistic bot with AI integration & real-time web dashboard",
+            description="**Made by MoonlightVFX**\nFuturistic bot with AI integration & real-time web dashboard",
             color=0x8B00FF,
             timestamp=datetime.now(timezone.utc)
         )
