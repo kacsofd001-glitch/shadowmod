@@ -16,9 +16,13 @@ A feature-rich Discord bot built with Python and discord.py featuring an automat
 - Easy ticket closing with confirmation embeds
 
 ### 🛡️ Anti-Alt Detection
-- Automatically detects new/alt accounts based on account age
-- Configurable minimum account age threshold
-- Logs suspicious joins to your designated log channel
+- **Automatically detects new/alt accounts** based on account age
+- **Configurable minimum account age threshold** (default: 7 days)
+- **Logs suspicious joins** to your designated log channel with detailed info
+- **DM warnings** sent to new accounts (if DMs are open)
+- **Configure with:** `!setaltage <days>` (Admin only)
+- Example: `!setaltage 14` - Set minimum account age to 14 days
+- The system checks every new member join and alerts if account is younger than threshold
 
 ### 📋 Logging System
 - Logs all important events to a Discord channel
@@ -73,6 +77,20 @@ A feature-rich Discord bot built with Python and discord.py featuring an automat
 - Configure custom prefixes for different roles (e.g., "M |" for members, "A |" for admins)
 - Automatic nickname updates on join and role changes
 - Bulk nickname update commands
+
+### ℹ️ Information Commands
+- **Server Info** - Comprehensive server statistics and information
+- **Bot Info** - Bot features, statistics, and uptime
+- **User Info** - Detailed user profiles with badges (Staff, Partner, HypeSquad, Bug Hunter, Early Supporter, Active Developer, etc.)
+- **Support Server** - Quick access to the support server invite
+- **Web Dashboard** - Link to the live statistics web page
+
+### 🌐 Live Web Dashboard
+- **Real-time statistics** displayed on a public web page
+- **Futuristic cyberpunk theme** with neon colors and animated starfield
+- **Auto-refreshing data** every 5 seconds
+- Shows server count, user count, channel count, and uptime
+- Accessible to everyone at your Repl URL
 
 ## 🚀 Setup Instructions
 
@@ -204,6 +222,15 @@ The bot will respond in your server's language (English or Hungarian based on `/
 /setupverify <#channel> <@roles_to_add> <@roles_to_remove>  - Setup member verification
 ```
 **Admin only.** Creates a verification panel with a button. Members must pass anti-alt check (account age) to verify. Automatically adds/removes configured roles!
+
+### Information Commands
+```
+!serverinfo  or  /serverinfo  - Show detailed server information and statistics
+!botinfo     or  /botinfo     - Display bot features, stats, and uptime
+!userinfo [@user]  or  /userinfo [@user]  - Show user profile with badges
+!support     or  /support     - Get the support server invite link
+!webpage     or  /webpage     - Get the live web dashboard link
+```
 
 ### General
 ```

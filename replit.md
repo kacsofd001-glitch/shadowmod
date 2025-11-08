@@ -19,8 +19,10 @@ A comprehensive Discord bot built with Python featuring a cyberpunk neon theme a
 - Giveaway system with automatic winner selection
 - Name automation with role-based prefixes
 - **Dual prefix support (! and /) for active developer badge**
-- **20 slash commands for Active Developer Badge maintenance**
+- **25 slash commands for Active Developer Badge maintenance**
 - **Verification system** - Button-based verification with anti-alt checks
+- **Information Commands** - Server info, bot info, user info with badges
+- **Support & Web Links** - Quick access to support server and live dashboard
 
 All features use Discord embeds and button components for a modern user experience.
 
@@ -52,7 +54,9 @@ All features use Discord embeds and button components for a modern user experien
 │   ├── webhook_logging.py  # Webhook logging for bot errors
 │   ├── language.py      # Language switching commands
 │   ├── aichat.py        # AI chat assistant with OpenAI
-│   └── slash_commands.py  # Slash command implementations (18 commands)
+│   ├── verify.py        # Member verification with anti-alt checks
+│   ├── info.py          # Information commands (serverinfo, botinfo, userinfo, etc)
+│   └── slash_commands.py  # Slash command implementations (25 commands)
 ├── .env                 # Environment variables (DISCORD_TOKEN)
 ├── bot_config.json      # Runtime configuration (auto-generated)
 └── README.md            # User documentation
@@ -65,11 +69,12 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **📊 INFORMATION COMMANDS** - Added serverinfo, botinfo, userinfo (with badges), support, and webpage commands (now 25 slash commands!)
 - **🎨 FUTURISTIC THEME** - Complete UI overhaul with cyberpunk neon colors (cyan, pink, purple, blue)
 - **🌐 Live Web Stats Page** - Public dashboard showing real-time bot statistics at port 5000
 - **Updated tempmute** - Now uses Discord's native timeout feature (max 28 days) instead of role-based muting
 - **Enhanced AI Chat** - Bot now responds when mentioned anywhere (mention-only mode)
-- **Added verification system** - Button-based member verification with anti-alt protection (now 20 slash commands!)
+- **Added verification system** - Button-based member verification with anti-alt protection
 - **Added /purge command** - Bulk message deletion (1-100 messages) with multilingual support
 - **Added AI Chat Assistant** - OpenAI-powered responses in designated channels with language support (en/hu)
 - **Added /ping command** - For Active Developer Badge maintenance
