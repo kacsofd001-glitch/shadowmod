@@ -148,17 +148,34 @@ class SlashCommands(commands.Cog):
         await interaction.response.send_message(embed=embed)
     
     @app_commands.command(name="ban", description="Ban a user / Felhasználó kitiltása")
-    @app_commands.describe(user="The user to ban / Kitiltandó felhasználó", reason="Reason / Indok")
+    @app_commands.describe(user="User mention or ID / Felhasználó mention vagy ID", reason="Reason / Indok")
     @app_commands.checks.has_permissions(ban_members=True)
-    async def slash_ban(self, interaction: discord.Interaction, user: discord.Member, reason: str = None):
+    async def slash_ban(self, interaction: discord.Interaction, user: str, reason: str = None):
         guild_id = interaction.guild.id
         
         try:
-            await user.ban(reason=reason)
+            # Try to convert string to user ID or extract from mention
+            user_id = None
+            if user.startswith('<@') and user.endswith('>'):
+                user_id = int(user.strip('<@!>'))
+            else:
+                try:
+                    user_id = int(user)
+                except ValueError:
+                    await interaction.response.send_message(translations.get_text(guild_id, 'invalid_user'), ephemeral=True)
+                    return
+            
+            # Fetch the user
+            try:
+                target_user = await interaction.guild.fetch_member(user_id)
+            except:
+                target_user = await self.bot.fetch_user(user_id)
+            
+            await interaction.guild.ban(target_user, reason=reason)
             
             embed = discord.Embed(
                 title=translations.get_text(guild_id, 'user_banned'),
-                description=translations.get_text(guild_id, 'user_banned_desc', user.mention),
+                description=translations.get_text(guild_id, 'user_banned_desc', target_user.mention),
                 color=discord.Color.red()
             )
             if reason:
@@ -170,17 +187,31 @@ class SlashCommands(commands.Cog):
             await interaction.response.send_message(translations.get_text(guild_id, 'ban_failed', str(e)), ephemeral=True)
     
     @app_commands.command(name="kick", description="Kick a user / Felhasználó kirúgása")
-    @app_commands.describe(user="The user to kick / Kirúgandó felhasználó", reason="Reason / Indok")
+    @app_commands.describe(user="User mention or ID / Felhasználó mention vagy ID", reason="Reason / Indok")
     @app_commands.checks.has_permissions(kick_members=True)
-    async def slash_kick(self, interaction: discord.Interaction, user: discord.Member, reason: str = None):
+    async def slash_kick(self, interaction: discord.Interaction, user: str, reason: str = None):
         guild_id = interaction.guild.id
         
         try:
-            await user.kick(reason=reason)
+            # Try to convert string to user ID or extract from mention
+            user_id = None
+            if user.startswith('<@') and user.endswith('>'):
+                user_id = int(user.strip('<@!>'))
+            else:
+                try:
+                    user_id = int(user)
+                except ValueError:
+                    await interaction.response.send_message(translations.get_text(guild_id, 'invalid_user'), ephemeral=True)
+                    return
+            
+            # Fetch the member
+            target_user = await interaction.guild.fetch_member(user_id)
+            
+            await target_user.kick(reason=reason)
             
             embed = discord.Embed(
                 title=translations.get_text(guild_id, 'user_kicked'),
-                description=translations.get_text(guild_id, 'user_kicked_desc', user.mention),
+                description=translations.get_text(guild_id, 'user_kicked_desc', target_user.mention),
                 color=discord.Color.orange()
             )
             if reason:
@@ -192,62 +223,96 @@ class SlashCommands(commands.Cog):
             await interaction.response.send_message(translations.get_text(guild_id, 'kick_failed', str(e)), ephemeral=True)
     
     @app_commands.command(name="mute", description="Mute a user / Felhasználó némítása")
-    @app_commands.describe(user="The user to mute / Némítandó felhasználó")
+    @app_commands.describe(user="User mention or ID / Felhasználó mention vagy ID")
     @app_commands.checks.has_permissions(manage_roles=True)
-    async def slash_mute(self, interaction: discord.Interaction, user: discord.Member):
+    async def slash_mute(self, interaction: discord.Interaction, user: str):
         guild_id_int = interaction.guild.id
         guild_id = str(guild_id_int)
         
-        cfg = config.load_config()
-        muted_role_id = cfg.get('muted_roles', {}).get(guild_id)
-        
-        if not muted_role_id:
-            muted_role = await interaction.guild.create_role(name="Muted", color=discord.Color.dark_gray())
-            cfg.setdefault('muted_roles', {})[guild_id] = muted_role.id
-            config.save_config(cfg)
+        try:
+            # Try to convert string to user ID or extract from mention
+            user_id = None
+            if user.startswith('<@') and user.endswith('>'):
+                user_id = int(user.strip('<@!>'))
+            else:
+                try:
+                    user_id = int(user)
+                except ValueError:
+                    await interaction.response.send_message(translations.get_text(guild_id_int, 'invalid_user'), ephemeral=True)
+                    return
             
-            for channel in interaction.guild.channels:
-                await channel.set_permissions(muted_role, send_messages=False, speak=False)
-        else:
-            muted_role = interaction.guild.get_role(muted_role_id)
-        
-        await user.add_roles(muted_role)
-        
-        embed = discord.Embed(
-            title=translations.get_text(guild_id_int, 'user_muted'),
-            description=translations.get_text(guild_id_int, 'user_muted_desc', user.mention),
-            color=discord.Color.dark_gray()
-        )
-        
-        await interaction.response.send_message(embed=embed)
-    
-    @app_commands.command(name="unmute", description="Unmute a user / Felhasználó visszahangosítása")
-    @app_commands.describe(user="The user to unmute / Visszahangosítandó felhasználó")
-    @app_commands.checks.has_permissions(manage_roles=True)
-    async def slash_unmute(self, interaction: discord.Interaction, user: discord.Member):
-        guild_id_int = interaction.guild.id
-        guild_id = str(guild_id_int)
-        
-        cfg = config.load_config()
-        muted_role_id = cfg.get('muted_roles', {}).get(guild_id)
-        
-        if not muted_role_id:
-            await interaction.response.send_message(translations.get_text(guild_id_int, 'no_muted_role'), ephemeral=True)
-            return
-        
-        muted_role = interaction.guild.get_role(muted_role_id)
-        if muted_role in user.roles:
-            await user.remove_roles(muted_role)
+            # Fetch the member
+            target_user = await interaction.guild.fetch_member(user_id)
+            
+            cfg = config.load_config()
+            muted_role_id = cfg.get('muted_roles', {}).get(guild_id)
+            
+            if not muted_role_id:
+                muted_role = await interaction.guild.create_role(name="Muted", color=discord.Color.dark_gray())
+                cfg.setdefault('muted_roles', {})[guild_id] = muted_role.id
+                config.save_config(cfg)
+                
+                for channel in interaction.guild.channels:
+                    await channel.set_permissions(muted_role, send_messages=False, speak=False)
+            else:
+                muted_role = interaction.guild.get_role(muted_role_id)
+            
+            await target_user.add_roles(muted_role)
             
             embed = discord.Embed(
-                title=translations.get_text(guild_id_int, 'user_unmuted'),
-                description=translations.get_text(guild_id_int, 'user_unmuted_desc', user.mention),
-                color=discord.Color.green()
+                title=translations.get_text(guild_id_int, 'user_muted'),
+                description=translations.get_text(guild_id_int, 'user_muted_desc', target_user.mention),
+                color=discord.Color.dark_gray()
             )
             
             await interaction.response.send_message(embed=embed)
-        else:
-            await interaction.response.send_message(translations.get_text(guild_id_int, 'user_not_muted'), ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Error: {str(e)}", ephemeral=True)
+    
+    @app_commands.command(name="unmute", description="Unmute a user / Felhasználó visszahangosítása")
+    @app_commands.describe(user="User mention or ID / Felhasználó mention vagy ID")
+    @app_commands.checks.has_permissions(manage_roles=True)
+    async def slash_unmute(self, interaction: discord.Interaction, user: str):
+        guild_id_int = interaction.guild.id
+        guild_id = str(guild_id_int)
+        
+        try:
+            # Try to convert string to user ID or extract from mention
+            user_id = None
+            if user.startswith('<@') and user.endswith('>'):
+                user_id = int(user.strip('<@!>'))
+            else:
+                try:
+                    user_id = int(user)
+                except ValueError:
+                    await interaction.response.send_message(translations.get_text(guild_id_int, 'invalid_user'), ephemeral=True)
+                    return
+            
+            # Fetch the member
+            target_user = await interaction.guild.fetch_member(user_id)
+            
+            cfg = config.load_config()
+            muted_role_id = cfg.get('muted_roles', {}).get(guild_id)
+            
+            if not muted_role_id:
+                await interaction.response.send_message(translations.get_text(guild_id_int, 'no_muted_role'), ephemeral=True)
+                return
+            
+            muted_role = interaction.guild.get_role(muted_role_id)
+            if muted_role in target_user.roles:
+                await target_user.remove_roles(muted_role)
+                
+                embed = discord.Embed(
+                    title=translations.get_text(guild_id_int, 'user_unmuted'),
+                    description=translations.get_text(guild_id_int, 'user_unmuted_desc', target_user.mention),
+                    color=discord.Color.green()
+                )
+                
+                await interaction.response.send_message(embed=embed)
+            else:
+                await interaction.response.send_message(translations.get_text(guild_id_int, 'user_not_muted'), ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Error: {str(e)}", ephemeral=True)
     
     @app_commands.command(name="lock", description="Lock the channel / Csatorna lezárása")
     @app_commands.checks.has_permissions(manage_channels=True)
@@ -286,36 +351,53 @@ class SlashCommands(commands.Cog):
         await interaction.response.send_message(embed=embed)
     
     @app_commands.command(name="warn", description="Warn a user / Felhasználó figyelmeztetése")
-    @app_commands.describe(user="The user to warn / Figyelmeztetendő felhasználó", reason="Reason / Indok")
+    @app_commands.describe(user="User mention or ID / Felhasználó mention vagy ID", reason="Reason / Indok")
     @app_commands.checks.has_permissions(manage_messages=True)
-    async def slash_warn(self, interaction: discord.Interaction, user: discord.Member, reason: str = None):
+    async def slash_warn(self, interaction: discord.Interaction, user: str, reason: str = None):
         guild_id = interaction.guild.id
         
-        cfg = config.load_config()
-        warnings = cfg.get('warnings', {})
-        user_id = str(user.id)
-        
-        if user_id not in warnings:
-            warnings[user_id] = []
-        
-        warnings[user_id].append({
-            'reason': reason or translations.get_text(guild_id, 'no_reason_provided'),
-            'moderator': str(interaction.user),
-            'timestamp': datetime.now(timezone.utc).isoformat()
-        })
-        
-        cfg['warnings'] = warnings
-        config.save_config(cfg)
-        
-        embed = discord.Embed(
-            title=translations.get_text(guild_id, 'user_warned'),
-            description=translations.get_text(guild_id, 'user_warned_desc', user.mention),
-            color=discord.Color.yellow()
-        )
-        embed.add_field(name=translations.get_text(guild_id, 'reason'), value=reason or translations.get_text(guild_id, 'no_reason_provided'), inline=False)
-        embed.add_field(name=translations.get_text(guild_id, 'total_warnings'), value=str(len(warnings[user_id])), inline=True)
-        
-        await interaction.response.send_message(embed=embed)
+        try:
+            # Try to convert string to user ID or extract from mention
+            user_id_int = None
+            if user.startswith('<@') and user.endswith('>'):
+                user_id_int = int(user.strip('<@!>'))
+            else:
+                try:
+                    user_id_int = int(user)
+                except ValueError:
+                    await interaction.response.send_message(translations.get_text(guild_id, 'invalid_user'), ephemeral=True)
+                    return
+            
+            # Fetch the member
+            target_user = await interaction.guild.fetch_member(user_id_int)
+            
+            cfg = config.load_config()
+            warnings = cfg.get('warnings', {})
+            user_id = str(target_user.id)
+            
+            if user_id not in warnings:
+                warnings[user_id] = []
+            
+            warnings[user_id].append({
+                'reason': reason or translations.get_text(guild_id, 'no_reason_provided'),
+                'moderator': str(interaction.user),
+                'timestamp': datetime.now(timezone.utc).isoformat()
+            })
+            
+            cfg['warnings'] = warnings
+            config.save_config(cfg)
+            
+            embed = discord.Embed(
+                title=translations.get_text(guild_id, 'user_warned'),
+                description=translations.get_text(guild_id, 'user_warned_desc', target_user.mention),
+                color=discord.Color.yellow()
+            )
+            embed.add_field(name=translations.get_text(guild_id, 'reason'), value=reason or translations.get_text(guild_id, 'no_reason_provided'), inline=False)
+            embed.add_field(name=translations.get_text(guild_id, 'total_warnings'), value=str(len(warnings[user_id])), inline=True)
+            
+            await interaction.response.send_message(embed=embed)
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Error: {str(e)}", ephemeral=True)
     
     @app_commands.command(name="setlog", description="Set log channel / Napló csatorna beállítása")
     @app_commands.describe(channel="The channel / A csatorna")

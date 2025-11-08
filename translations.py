@@ -113,6 +113,7 @@ TRANSLATIONS = {
         'missing_argument': '❌ Missing required argument: {}',
         'invalid_language': '❌ Invalid language! Use: `en` (English) or `hu` (Hungarian)',
         'error_setting_language': '❌ Error setting language!',
+        'invalid_user': '❌ Invalid user! Please provide a valid user mention or user ID.',
     },
     
     'hu': {
@@ -224,6 +225,7 @@ TRANSLATIONS = {
         'missing_argument': '❌ Hiányzó kötelező paraméter: {}',
         'invalid_language': '❌ Érvénytelen nyelv! Használd: `en` (English) vagy `hu` (Hungarian)',
         'error_setting_language': '❌ Hiba a nyelv beállításakor!',
+        'invalid_user': '❌ Érvénytelen felhasználó! Adj meg egy érvényes mention-t vagy felhasználó ID-t.',
     }
 }
 
