@@ -28,6 +28,7 @@ class DiscordBot(commands.Bot):
         await self.load_extension('cogs.giveaways')
         await self.load_extension('cogs.nameauto')
         await self.load_extension('cogs.webhook_logging')
+        await self.load_extension('cogs.language')
         await self.load_extension('cogs.slash_commands')
         print("All cogs loaded successfully!")
         

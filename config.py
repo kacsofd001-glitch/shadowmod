@@ -15,7 +15,8 @@ DEFAULT_CONFIG = {
     'giveaways': {},
     'completed_giveaways': {},
     'role_prefixes': {},
-    'webhook_url': None
+    'webhook_url': None,
+    'guild_languages': {}
 }
 
 def load_config():

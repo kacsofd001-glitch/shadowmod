@@ -4,6 +4,12 @@ A feature-rich Discord bot built with Python and discord.py featuring an automat
 
 ## ✨ Features
 
+### 🌍 Multilanguage Support
+- **English** and **Hungarian** language support
+- Set server language with `/setlang` or `!setlang`
+- All commands and messages automatically adapt to selected language
+- Per-server language preferences saved automatically
+
 ### 🎫 Ticket System
 - Button-based ticket creation
 - Automatic ticket channels with proper permissions
@@ -115,6 +121,7 @@ python main.py
 - `!setwebhook <url>` or `/setwebhook` - Set webhook URL for bot error logging
 - `!testwebhook` or `/testwebhook` - Test the webhook logging system
 - `!ticket` or `/ticket` - Create a ticket panel with button
+- `!setlang <en/hu>` or `/setlang` - Change server language (English/Hungarian)
 
 ### Moderation Commands
 ```

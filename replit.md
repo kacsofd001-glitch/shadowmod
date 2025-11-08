@@ -2,6 +2,7 @@
 
 ## Overview
 A comprehensive Discord bot built with Python featuring:
+- **Multilanguage support (English & Hungarian)**
 - Automated ticket system with buttons
 - Anti-alt account detection
 - Advanced logging to Discord channels
@@ -22,6 +23,7 @@ All features use Discord embeds and button components for a modern user experien
 .
 ├── main.py              # Main bot entry point (dual prefix support)
 ├── config.py            # Configuration management
+├── translations.py      # Multilanguage translation system
 ├── cogs/                # Bot feature modules
 │   ├── tickets.py       # Ticket system
 │   ├── antialt.py       # Anti-alt detection
@@ -33,7 +35,9 @@ All features use Discord embeds and button components for a modern user experien
 │   ├── roles.py         # Role management
 │   ├── giveaways.py     # Giveaway system
 │   ├── nameauto.py      # Name automation
-│   └── webhook_logging.py  # Webhook logging for bot errors
+│   ├── webhook_logging.py  # Webhook logging for bot errors
+│   ├── language.py      # Language switching commands
+│   └── slash_commands.py  # Slash command implementations
 ├── .env                 # Environment variables (DISCORD_TOKEN)
 ├── bot_config.json      # Runtime configuration (auto-generated)
 └── README.md            # User documentation
@@ -45,8 +49,11 @@ All features use Discord embeds and button components for a modern user experien
 3. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **Added multilanguage support** - English and Hungarian translations for all commands and messages
+- **Added language switcher** - !setlang and /setlang commands to change server language
 - **Added webhook logging system** - Real-time bot error and event monitoring via Discord webhooks
 - **Added dual prefix support** (! and /) - Helps users maintain Discord active developer badge
+- Added 16 slash commands with bilingual descriptions
 - Added poll system with interactive button voting
 - Added role management commands (create, delete, assign, remove)
 - Added giveaway system with automatic winner selection and reroll
