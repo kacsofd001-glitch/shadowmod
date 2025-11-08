@@ -20,7 +20,7 @@ A comprehensive Discord bot built with Python featuring a cyberpunk neon theme a
 - Giveaway system with automatic winner selection
 - Name automation with role-based prefixes
 - **Dual prefix support (! and /) for active developer badge**
-- **28 slash commands for Active Developer Badge maintenance**
+- **37 slash commands for Active Developer Badge maintenance**
 - **Verification system** - Button-based verification with anti-alt checks
 - **Information Commands** - Server info, bot info, user info with badges
 - **Support & Web Links** - Quick access to support server and live dashboard

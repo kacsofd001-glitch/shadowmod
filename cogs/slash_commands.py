@@ -79,7 +79,7 @@ class SlashCommands(commands.Cog):
             inline=False
         )
         
-        embed.set_footer(text="⚡ Made by MoonlightVFX | 28 Slash Commands Ready ⚡")
+        embed.set_footer(text="⚡ Made by MoonlightVFX | 37 Slash Commands Ready ⚡")
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
     
@@ -718,6 +718,258 @@ class SlashCommands(commands.Cog):
                 )
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
+    
+    @app_commands.command(name="setaltage", description="Set minimum account age / Minimális fiók kor beállítása")
+    @app_commands.describe(days="Minimum account age in days / Minimális fiók kor napokban")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_setaltage(self, interaction: discord.Interaction, days: int):
+        if days < 0:
+            await interaction.response.send_message("❌ Days must be a positive number!", ephemeral=True)
+            return
+        
+        import config as cfg_module
+        cfg_module.update_config('min_account_age_days', days)
+        
+        embed = discord.Embed(
+            title="✅ Anti-Alt Configuration Updated",
+            description=f"Minimum account age set to **{days} days**",
+            color=0x00F3FF
+        )
+        await interaction.response.send_message(embed=embed)
+    
+    @app_commands.command(name="tempmute", description="Temporarily mute a user / Felhasználó ideiglenes némítása")
+    @app_commands.describe(
+        user="User to mute / Némítandó felhasználó",
+        duration="Duration (e.g., 1h, 30m, 1d) / Időtartam"
+    )
+    @app_commands.checks.has_permissions(moderate_members=True)
+    async def slash_tempmute(self, interaction: discord.Interaction, user: discord.Member, duration: str):
+        moderation_cog = self.bot.get_cog('Moderation')
+        if moderation_cog:
+            try:
+                time_dict = moderation_cog.parse_time(duration)
+                delta = timedelta(**time_dict)
+                
+                if delta.total_seconds() > 2419200:
+                    await interaction.response.send_message("❌ Maximum timeout duration is 28 days!", ephemeral=True)
+                    return
+                
+                await user.timeout(delta, reason=f"Timed out by {interaction.user}")
+                
+                embed = discord.Embed(
+                    title="🔇 User Timed Out",
+                    description=f"{user.mention} has been timed out",
+                    color=0xFF006E
+                )
+                embed.add_field(name="Duration", value=duration, inline=True)
+                embed.add_field(name="Moderator", value=interaction.user.mention, inline=True)
+                
+                await interaction.response.send_message(embed=embed)
+            except ValueError as e:
+                await interaction.response.send_message(f"❌ Invalid time format! Use: 1h, 30m, 1d, etc.", ephemeral=True)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="dice", description="Roll a dice / Kockadobás")
+    @app_commands.describe(sides="Number of sides (default: 6) / Oldalak száma")
+    async def slash_dice(self, interaction: discord.Interaction, sides: int = 6):
+        fun_cog = self.bot.get_cog('Fun')
+        if fun_cog:
+            await interaction.response.defer()
+            
+            import random
+            result = random.randint(1, sides)
+            
+            embed = discord.Embed(
+                title="🎲 Dice Roll",
+                description=f"You rolled a **{result}** on a {sides}-sided dice!",
+                color=0x8B00FF
+            )
+            embed.set_footer(text=f"Rolled by {interaction.user.display_name}")
+            
+            await interaction.followup.send(embed=embed)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="rps", description="Play Rock-Paper-Scissors / Kő-Papír-Olló játék")
+    @app_commands.describe(choice="Your choice / Választásod")
+    @app_commands.choices(choice=[
+        app_commands.Choice(name="🪨 Rock / Kő", value="rock"),
+        app_commands.Choice(name="📄 Paper / Papír", value="paper"),
+        app_commands.Choice(name="✂️ Scissors / Olló", value="scissors")
+    ])
+    async def slash_rps(self, interaction: discord.Interaction, choice: str):
+        games_cog = self.bot.get_cog('Games')
+        if games_cog:
+            import random
+            
+            choices = ['rock', 'paper', 'scissors']
+            bot_choice = random.choice(choices)
+            
+            emoji_map = {'rock': '🪨', 'paper': '📄', 'scissors': '✂️'}
+            
+            if choice == bot_choice:
+                result = "It's a tie!"
+                color = 0x8B00FF
+            elif (choice == 'rock' and bot_choice == 'scissors') or \
+                 (choice == 'paper' and bot_choice == 'rock') or \
+                 (choice == 'scissors' and bot_choice == 'paper'):
+                result = "You win!"
+                color = 0x00F3FF
+            else:
+                result = "I win!"
+                color = 0xFF006E
+            
+            embed = discord.Embed(
+                title="🎮 Rock-Paper-Scissors",
+                description=f"**You:** {emoji_map[choice]}\n**Bot:** {emoji_map[bot_choice]}\n\n**{result}**",
+                color=color
+            )
+            
+            await interaction.response.send_message(embed=embed)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="tictactoe", description="Play Tic-Tac-Toe / Amőba játék")
+    @app_commands.describe(opponent="Player to challenge / Kihívandó játékos")
+    async def slash_tictactoe(self, interaction: discord.Interaction, opponent: discord.Member):
+        games_cog = self.bot.get_cog('Games')
+        if games_cog:
+            if opponent == interaction.user:
+                await interaction.response.send_message("❌ You can't play against yourself!", ephemeral=True)
+                return
+            
+            if opponent.bot:
+                await interaction.response.send_message("❌ You can't play against a bot!", ephemeral=True)
+                return
+            
+            view = games_cog.TicTacToeView(interaction.user, opponent)
+            
+            embed = discord.Embed(
+                title="⭕ Tic-Tac-Toe",
+                description=f"{interaction.user.mention} vs {opponent.mention}\n\n{interaction.user.mention}'s turn (⭕)",
+                color=0x8B00FF
+            )
+            
+            await interaction.response.send_message(embed=embed, view=view)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="poll", description="Create a poll / Szavazás létrehozása")
+    @app_commands.describe(
+        question="Poll question / Kérdés",
+        option1="First option / Első lehetőség",
+        option2="Second option / Második lehetőség",
+        option3="Third option (optional) / Harmadik lehetőség",
+        option4="Fourth option (optional) / Negyedik lehetőség"
+    )
+    async def slash_poll(self, interaction: discord.Interaction, question: str, option1: str, option2: str, 
+                        option3: str = None, option4: str = None):
+        polls_cog = self.bot.get_cog('Polls')
+        if polls_cog:
+            options = [option1, option2]
+            if option3:
+                options.append(option3)
+            if option4:
+                options.append(option4)
+            
+            view = polls_cog.PollView(options)
+            
+            embed = discord.Embed(
+                title="📊 " + question,
+                description="Click the buttons below to vote!",
+                color=0x8B00FF
+            )
+            
+            for i, option in enumerate(options, 1):
+                embed.add_field(name=f"Option {i}", value=option, inline=False)
+            
+            embed.set_footer(text=f"Poll by {interaction.user.display_name}")
+            
+            await interaction.response.send_message(embed=embed, view=view)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="giveaway", description="Create a giveaway / Nyereményjáték létrehozása")
+    @app_commands.describe(
+        prize="Prize to give away / Nyeremény",
+        duration="Duration (e.g., 1h, 1d) / Időtartam",
+        winners="Number of winners / Nyertesek száma"
+    )
+    @app_commands.checks.has_permissions(manage_guild=True)
+    async def slash_giveaway(self, interaction: discord.Interaction, prize: str, duration: str, winners: int = 1):
+        giveaway_cog = self.bot.get_cog('Giveaways')
+        if giveaway_cog:
+            try:
+                time_dict = giveaway_cog.parse_time(duration)
+                end_time = datetime.now(timezone.utc) + timedelta(**time_dict)
+                
+                embed = discord.Embed(
+                    title="🎁 GIVEAWAY",
+                    description=f"**Prize:** {prize}\n**Winners:** {winners}\n**Ends:** <t:{int(end_time.timestamp())}:R>",
+                    color=0xFF006E
+                )
+                embed.set_footer(text=f"Hosted by {interaction.user.display_name}")
+                
+                from datetime import datetime, timezone
+                giveaway_id = f"giveaway_{interaction.channel.id}_{int(datetime.now(timezone.utc).timestamp())}"
+                view = giveaway_cog.GiveawayView(end_time, winners, prize, giveaway_id)
+                
+                await interaction.response.send_message(embed=embed, view=view)
+                
+                message = await interaction.original_response()
+                self.bot.loop.create_task(giveaway_cog.end_giveaway(message, end_time, winners, prize))
+            except ValueError:
+                await interaction.response.send_message("❌ Invalid time format! Use: 1h, 30m, 1d, etc.", ephemeral=True)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="createrole", description="Create a new role / Új szerep létrehozása")
+    @app_commands.describe(
+        name="Role name / Szerep neve",
+        color="Hex color (e.g., #FF0000) / Szín"
+    )
+    @app_commands.checks.has_permissions(manage_roles=True)
+    async def slash_createrole(self, interaction: discord.Interaction, name: str, color: str = None):
+        try:
+            role_color = discord.Color.default()
+            if color:
+                color = color.lstrip('#')
+                role_color = discord.Color(int(color, 16))
+            
+            role = await interaction.guild.create_role(name=name, color=role_color)
+            
+            embed = discord.Embed(
+                title="✅ Role Created",
+                description=f"Role {role.mention} has been created!",
+                color=0x00F3FF
+            )
+            
+            await interaction.response.send_message(embed=embed)
+        except ValueError:
+            await interaction.response.send_message("❌ Invalid color format! Use hex format like #FF0000", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Error creating role: {str(e)}", ephemeral=True)
+    
+    @app_commands.command(name="closeticket", description="Close a ticket / Jegy lezárása")
+    @app_commands.checks.has_permissions(manage_channels=True)
+    async def slash_closeticket(self, interaction: discord.Interaction):
+        ticket_cog = self.bot.get_cog('Tickets')
+        if ticket_cog:
+            if not interaction.channel.name.startswith('ticket-'):
+                await interaction.response.send_message("❌ This command can only be used in ticket channels!", ephemeral=True)
+                return
+            
+            embed = discord.Embed(
+                title="🎫 Ticket Closed",
+                description="This ticket has been closed.",
+                color=0xFF006E
+            )
+            
+            await interaction.response.send_message(embed=embed)
+            await interaction.channel.delete(reason="Ticket closed")
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))
