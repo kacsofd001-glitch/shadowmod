@@ -30,10 +30,11 @@ class NameAutomation(commands.Cog):
             
             current_nick = member.display_name
             
-            for p in all_prefixes:
-                if current_nick.startswith(p + ' '):
-                    current_nick = current_nick[len(p):].strip()
-                    break
+            while any(current_nick.startswith(p + ' ') for p in all_prefixes):
+                for p in all_prefixes:
+                    if current_nick.startswith(p + ' '):
+                        current_nick = current_nick[len(p):].strip()
+                        break
             
             if prefix:
                 new_nick = f"{prefix} {current_nick}"
@@ -67,6 +68,7 @@ class NameAutomation(commands.Cog):
         if 'role_prefixes' not in cfg:
             cfg['role_prefixes'] = {}
         
+        old_prefix = cfg['role_prefixes'].get(str(role.id))
         cfg['role_prefixes'][str(role.id)] = prefix
         config.save_config(cfg)
         
@@ -77,7 +79,17 @@ class NameAutomation(commands.Cog):
         )
         embed.add_field(name="Example", value=f"{prefix} Username", inline=False)
         
-        await ctx.send(embed=embed)
+        msg = await ctx.send(embed=embed)
+        
+        await msg.edit(content="🔄 Updating member nicknames...", embed=embed)
+        count = 0
+        for member in ctx.guild.members:
+            if role in member.roles:
+                await self.update_member_nickname(member)
+                count += 1
+        
+        embed.add_field(name="Updated", value=f"{count} members updated!", inline=False)
+        await msg.edit(content=None, embed=embed)
     
     @commands.command(name='removeprefix')
     @commands.has_permissions(administrator=True)
@@ -98,7 +110,17 @@ class NameAutomation(commands.Cog):
             color=discord.Color.green()
         )
         
-        await ctx.send(embed=embed)
+        msg = await ctx.send(embed=embed)
+        
+        await msg.edit(content="🔄 Updating member nicknames...", embed=embed)
+        count = 0
+        for member in ctx.guild.members:
+            if role in member.roles:
+                await self.update_member_nickname(member)
+                count += 1
+        
+        embed.add_field(name="Updated", value=f"{count} members updated!", inline=False)
+        await msg.edit(content=None, embed=embed)
     
     @commands.command(name='updateallnicks')
     @commands.has_permissions(administrator=True)

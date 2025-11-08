@@ -177,11 +177,12 @@ python main.py
 
 ### Name Automation Commands
 ```
-!setprefix @role <prefix>  - Set automatic name prefix for role (e.g., M |)
-!removeprefix @role        - Remove prefix from a role
+!setprefix @role <prefix>  - Set automatic name prefix for role (auto-updates members)
+!removeprefix @role        - Remove prefix from a role (auto-updates members)
 !viewprefixes              - View all configured role prefixes
 !updateallnicks            - Manually update all member nicknames
 ```
+**Note:** When you set or remove a role prefix, all members with that role are automatically updated!
 
 ### General
 ```

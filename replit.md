@@ -49,6 +49,7 @@ All features use Discord embeds and button components for a modern user experien
 3. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **Fixed role prefix duplication bug** - Role prefixes no longer duplicate when updated; auto-updates all members on prefix change
 - **Updated moderation commands** - All slash commands (/ban, /kick, /mute, /unmute, /warn) now accept both user mentions and user IDs
 - **Added multilanguage support** - English and Hungarian translations for all commands and messages
 - **Added language switcher** - !setlang and /setlang commands to change server language
