@@ -70,6 +70,7 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **🌐 LANGUAGE TOGGLE** - Added EN/HU language switcher slider on website with localStorage persistence and full Hungarian translations
 - **📋 NAVIGATION MENU** - Added sticky navigation bar to both pages with links to Dashboard, Commands, Support Server, and Add Bot
 - **🔗 QUICK LINKS & OWNER PROFILE** - Added support server, bot invite links, and developer profile section to both dashboard and help page
 - **📖 HELP PAGE** - Created shadowmod.net/help with full command documentation in futuristic theme, linked in !help, /help, /botinfo, and dashboard
