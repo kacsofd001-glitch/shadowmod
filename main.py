@@ -145,6 +145,12 @@ async def help_command(ctx):
         inline=False
     )
     
+    embed.add_field(
+        name="🌐 WEB RESOURCES",
+        value="[📖 Full Command List](https://shadowmod.net/help)\n[📊 Live Dashboard](https://shadowmod.net/dashboard)",
+        inline=False
+    )
+    
     embed.set_footer(text="⚡ 28 Slash Commands | Active Developer Ready | v2.0 FUTURISTIC ⚡")
     embed.set_thumbnail(url=ctx.bot.user.display_avatar.url)
     
