@@ -479,6 +479,18 @@ class SlashCommands(commands.Cog):
             
             await webhook_cog.send_to_webhook(test_embed)
             await interaction.response.send_message(translations.get_text(guild_id, 'test_webhook_sent'))
+    
+    @app_commands.command(name="ping", description="Check bot latency / Bot késleltetés ellenőrzése")
+    async def slash_ping(self, interaction: discord.Interaction):
+        latency = round(self.bot.latency * 1000)
+        
+        embed = discord.Embed(
+            title="🏓 Pong!",
+            description=f"Bot latency: **{latency}ms**",
+            color=discord.Color.green()
+        )
+        
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))

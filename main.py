@@ -29,6 +29,7 @@ class DiscordBot(commands.Bot):
         await self.load_extension('cogs.nameauto')
         await self.load_extension('cogs.webhook_logging')
         await self.load_extension('cogs.language')
+        await self.load_extension('cogs.aichat')
         await self.load_extension('cogs.slash_commands')
         print("All cogs loaded successfully!")
         
@@ -62,13 +63,13 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🎫 Ticket System",
-        value="`!ticket` - Create a ticket panel\n`!closeticket` - Close a ticket",
+        value="`!ticket` or `/ticket` - Create a ticket panel",
         inline=False
     )
     
     embed.add_field(
         name="🛡️ Moderation",
-        value="`!ban <user> [reason]` - Ban a user\n`!kick <user> [reason]` - Kick a user\n`!mute <user>` - Mute a user\n`!unmute <user>` - Unmute a user\n`!tempmute <user> <time>` - Temporarily mute\n`!tempban <user> <time>` - Temporarily ban\n`!lock` - Lock channel\n`!unlock` - Unlock channel\n`!warn <user> [reason]` - Warn a user\n`!warnings <user>` - Check warnings",
+        value="`!ban <user> [reason]` or `/ban` - Ban a user\n`!kick <user>` or `/kick` - Kick a user\n`!mute <user>` or `/mute` - Mute a user\n`!unmute <user>` or `/unmute` - Unmute a user\n`!lock` or `/lock` - Lock channel\n`!unlock` or `/unlock` - Unlock channel\n`!warn <user>` or `/warn` - Warn a user",
         inline=False
     )
     
@@ -80,19 +81,13 @@ async def help_command(ctx):
     
     embed.add_field(
         name="😄 Fun",
-        value="`!meme` - Generate a random meme\n`!sound` - Random sound response\n`!8ball <question>` - Magic 8-ball\n`!coinflip` - Flip a coin\n`!roll 2d6` - Roll dice",
+        value="`!meme` or `/meme` - Generate a meme 🌍\n`!8ball <question>` or `/8ball` - Magic 8-ball\n`!coinflip` or `/coinflip` - Flip a coin\n`!ping` or `/ping` - Check bot latency",
         inline=False
     )
     
     embed.add_field(
-        name="📊 Polls",
-        value="`!poll <question> <option1> <option2>...` - Create poll\n`!quickpoll <question>` - Yes/No/Maybe poll",
-        inline=False
-    )
-    
-    embed.add_field(
-        name="👥 Roles",
-        value="`!addrole <@user> <@role>` - Add role to user\n`!removerole <@user> <@role>` - Remove role\n`!createrole <name> [color]` - Create role\n`!deleterole <@role>` - Delete role\n`!roles` - List all roles",
+        name="📊 Polls & Roles",
+        value="`!poll <question> <opt1> <opt2>` - Create poll\n`!addrole <@user> <@role>` - Add role to user",
         inline=False
     )
     
@@ -103,18 +98,30 @@ async def help_command(ctx):
     )
     
     embed.add_field(
-        name="📝 Name Automation",
-        value="`!setprefix <@role> <prefix>` - Set role prefix\n`!removeprefix <@role>` - Remove prefix\n`!viewprefixes` - View all prefixes\n`!updateallnicks` - Update all nicknames",
+        name="🤖 AI Chat (Admin)",
+        value="`/aichat <#channel> <en/hu> <on/off>` - Configure AI chat in a channel",
         inline=False
     )
     
     embed.add_field(
-        name="⚙️ Configuration",
-        value="`!setlog <#channel>` - Set log channel\n`!setaltage <days>` - Set minimum account age\n`!setwebhook <url>` - Set webhook for bot logging\n`!testwebhook` - Test webhook logging",
+        name="⚙️ Configuration (Admin)",
+        value="`!setlang <en/hu>` or `/setlang` - Change language\n`!setwebhook <url>` - Set webhook logging\n`!setprefix <@role> <prefix>` - Role name prefix",
         inline=False
     )
     
-    embed.set_footer(text="Use buttons for interactive features! Commands work with ! or / prefix")
+    embed.set_footer(text="Use / for slash commands to keep Active Developer Badge! 🌟")
+    
+    await ctx.send(embed=embed)
+
+@bot.command(name='ping')
+async def ping_command(ctx):
+    latency = round(bot.latency * 1000)
+    
+    embed = discord.Embed(
+        title="🏓 Pong!",
+        description=f"Bot latency: **{latency}ms**",
+        color=discord.Color.green()
+    )
     
     await ctx.send(embed=embed)
 
