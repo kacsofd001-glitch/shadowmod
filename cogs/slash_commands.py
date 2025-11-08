@@ -62,6 +62,12 @@ class SlashCommands(commands.Cog):
         )
         
         embed.add_field(
+            name=translations.get_text(guild_id, 'help_nameauto'),
+            value=translations.get_text(guild_id, 'help_nameauto_desc'),
+            inline=False
+        )
+        
+        embed.add_field(
             name=translations.get_text(guild_id, 'help_config'),
             value=translations.get_text(guild_id, 'help_config_desc'),
             inline=False

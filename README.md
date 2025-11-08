@@ -134,14 +134,15 @@ python main.py
 **Note:** All key commands support both `!` prefix and `/` slash commands for Discord's Active Developer badge!
 
 ### Help Command
-Both `!help` and `/help` now include all 25 commands organized by category:
-- **Information Systems** - serverinfo, botinfo, userinfo, support, webpage
-- **Security & Verification** - setupverify, setaltage
-- **Moderation Matrix** - ban, kick, mute, unmute, tempmute, purge, warn, lock, unlock
-- **AI Neural Link** - Mention the bot anywhere for AI chat
-- **Entertainment Systems** - Games and fun commands
-- **Engagement Protocols** - Polls, giveaways, tickets, roles
-- **System Configuration** - Language, logging, webhook, ping
+Both `!help` and `/help` now include all 28 commands organized by category:
+- **📊 Information Systems** - serverinfo, botinfo, userinfo, support, webpage
+- **🔐 Security & Verification** - setupverify, setaltage
+- **⚔️ Moderation Matrix** - ban, kick, mute, unmute, tempmute, purge, warn, lock, unlock
+- **🧠 AI Neural Link** - Mention the bot anywhere for AI chat
+- **🎮 Entertainment Systems** - Games and fun commands
+- **🎁 Engagement Protocols** - Polls, giveaways, tickets, roles
+- **🏷️ Name Automation** - setprefix, removeprefix, viewprefixes
+- **🌐 System Configuration** - Language, logging, webhook, ping
 
 ### Setup Commands (Admin Only)
 - `!setlog #channel` or `/setlog` - Set the channel for bot logs

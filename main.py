@@ -128,6 +128,12 @@ async def help_command(ctx):
     )
     
     embed.add_field(
+        name="🏷️ NAME AUTOMATION",
+        value="`/setprefix <@role> <prefix>` - Set role prefix\n`/removeprefix <@role>` - Remove role prefix\n`/viewprefixes` - View all prefixes",
+        inline=False
+    )
+    
+    embed.add_field(
         name="🌐 SYSTEM CONFIGURATION",
         value="`/setlang <en/hu>` - Language matrix\n`!setwebhook` - Logging system\n`/ping` - Latency check",
         inline=False
