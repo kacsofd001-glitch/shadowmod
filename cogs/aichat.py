@@ -25,8 +25,14 @@ class AIChat(commands.Cog):
         language: str,
         enabled: bool
     ):
+        await interaction.response.defer()
+        
         if language not in ['en', 'hu']:
-            await interaction.response.send_message("❌ Language must be 'en' or 'hu'", ephemeral=True)
+            await interaction.followup.send("❌ Language must be 'en' or 'hu'", ephemeral=True)
+            return
+        
+        if not self.openai_api_key:
+            await interaction.followup.send("❌ OpenAI API key not configured! Please contact the bot owner.", ephemeral=True)
             return
         
         cfg = config.load_config()
@@ -45,13 +51,14 @@ class AIChat(commands.Cog):
             
             embed = discord.Embed(
                 title="✅ AI Chat Enabled",
-                description=f"AI chat enabled in {channel.mention}",
+                description=f"AI chat enabled in {channel.mention}\n\nThe bot will respond to all messages in this channel with AI-powered responses.",
                 color=discord.Color.green()
             )
             embed.add_field(name="Language", value=language.upper(), inline=True)
             embed.add_field(name="Status", value="✅ Enabled", inline=True)
+            embed.add_field(name="Note", value="Messages starting with ! or / will be ignored", inline=False)
             
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
         else:
             if channel_id in cfg.get('ai_chat_channels', {}):
                 del cfg['ai_chat_channels'][channel_id]
@@ -63,7 +70,7 @@ class AIChat(commands.Cog):
                 color=discord.Color.red()
             )
             
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
     
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -109,11 +116,14 @@ class AIChat(commands.Cog):
                     await message.reply(response_text, mention_author=False)
                     
             except Exception as e:
+                print(f"AI Chat Error: {type(e).__name__}: {str(e)}")
                 error_msg = "❌ Sorry, I couldn't process that message."
                 if "rate_limit" in str(e).lower():
                     error_msg = "❌ Rate limit reached. Please try again later."
-                elif "invalid" in str(e).lower():
+                elif "invalid" in str(e).lower() or "401" in str(e):
                     error_msg = "❌ API key issue. Please contact an administrator."
+                elif "timeout" in str(e).lower():
+                    error_msg = "❌ Request timed out. Please try again."
                 await message.reply(error_msg, mention_author=False)
     
     async def get_ai_response(self, user_message: str, language: str) -> str:
@@ -150,7 +160,9 @@ class AIChat(commands.Cog):
                     result = await response.json()
                     return result['choices'][0]['message']['content']
                 else:
-                    raise Exception(f"OpenAI API error: {response.status}")
+                    error_text = await response.text()
+                    print(f"OpenAI API Error {response.status}: {error_text}")
+                    raise Exception(f"OpenAI API error {response.status}: {error_text[:100]}")
 
 async def setup(bot):
     await bot.add_cog(AIChat(bot))
