@@ -122,6 +122,12 @@ async def help_command(ctx):
     )
     
     embed.add_field(
+        name="🎵 MUSIC SYSTEM",
+        value="`!play <song>` - Play music (YouTube/Spotify/SoundCloud)\n`!pause` - Pause playback\n`!resume` - Resume playback\n`!skip` - Skip current song\n`!stop` - Stop and disconnect\n`!queue` - Show queue\n`!nowplaying` - Current song\n`!loop` - Toggle loop mode\n`!volume <0-100>` - Adjust volume",
+        inline=False
+    )
+    
+    embed.add_field(
         name="🎮 ENTERTAINMENT SYSTEMS",
         value="`/rps` - Rock-Paper-Scissors\n`/tictactoe` - Tic-Tac-Toe\n`/meme` - Generate memes\n`/8ball` - Magic 8-ball\n`/coinflip` - Flip coin\n`/dice` - Roll dice",
         inline=False

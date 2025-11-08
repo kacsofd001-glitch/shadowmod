@@ -50,6 +50,12 @@ class SlashCommands(commands.Cog):
         )
         
         embed.add_field(
+            name=translations.get_text(guild_id, 'help_music'),
+            value=translations.get_text(guild_id, 'help_music_desc'),
+            inline=False
+        )
+        
+        embed.add_field(
             name=translations.get_text(guild_id, 'help_games'),
             value=translations.get_text(guild_id, 'help_games_desc'),
             inline=False
