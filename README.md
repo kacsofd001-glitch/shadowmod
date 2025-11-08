@@ -185,9 +185,16 @@ python main.py
 ```
 **Note:** When you set or remove a role prefix, all members with that role are automatically updated!
 
+### AI Chat (NEW! 🤖)
+```
+/aichat <#channel> <en/hu> <true/false>  - Configure AI assistant in a channel
+```
+**Admin only.** Enable AI chat in specific channels! The bot will respond to all messages in configured channels with AI-powered responses in the selected language.
+
 ### General
 ```
 !help  or  /help   - Show all commands
+!ping  or  /ping   - Check bot latency (for Active Developer Badge!)
 ```
 
 ## 🎨 All Features Use Embeds & Buttons!

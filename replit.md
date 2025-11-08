@@ -3,6 +3,7 @@
 ## Overview
 A comprehensive Discord bot built with Python featuring:
 - **Multilanguage support (English & Hungarian)**
+- **AI Chat Assistant** - OpenAI-powered responses in designated channels
 - Automated ticket system with buttons
 - Anti-alt account detection
 - Advanced logging to Discord channels
@@ -15,6 +16,7 @@ A comprehensive Discord bot built with Python featuring:
 - Giveaway system with automatic winner selection
 - Name automation with role-based prefixes
 - **Dual prefix support (! and /) for active developer badge**
+- **17 slash commands for Active Developer Badge maintenance**
 
 All features use Discord embeds and button components for a modern user experience.
 
