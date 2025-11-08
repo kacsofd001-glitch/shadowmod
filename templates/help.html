@@ -97,17 +97,27 @@
     <nav style="background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); border-bottom: 2px solid rgba(0, 243, 255, 0.3); padding: 15px 0; position: sticky; top: 0; z-index: 1000;">
         <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; gap: 25px; flex-wrap: wrap; padding: 0 20px;">
             <a href="/dashboard" style="color: #00F3FF; text-decoration: none; font-weight: bold; font-size: 1.1em; padding: 8px 20px; border-radius: 15px; transition: all 0.3s ease; background: rgba(0, 243, 255, 0.1); border: 1px solid rgba(0, 243, 255, 0.3);">
-                📊 Dashboard
+                📊 <span data-translate="nav_dashboard">Dashboard</span>
             </a>
             <a href="/help" style="color: #FF006E; text-decoration: none; font-weight: bold; font-size: 1.1em; padding: 8px 20px; border-radius: 15px; transition: all 0.3s ease; background: rgba(255, 0, 110, 0.1); border: 1px solid rgba(255, 0, 110, 0.3);">
-                📖 Commands
+                📖 <span data-translate="nav_commands">Commands</span>
             </a>
             <a href="https://discord.gg/w6s6qA4E7E" target="_blank" style="color: #8B00FF; text-decoration: none; font-weight: bold; font-size: 1.1em; padding: 8px 20px; border-radius: 15px; transition: all 0.3s ease; background: rgba(139, 0, 255, 0.1); border: 1px solid rgba(139, 0, 255, 0.3);">
-                💬 Support
+                💬 <span data-translate="nav_support">Support</span>
             </a>
             <a href="https://discord.com/api/oauth2/authorize?client_id=928675592159780915&permissions=8&scope=bot%20applications.commands" target="_blank" style="color: #00F3FF; text-decoration: none; font-weight: bold; font-size: 1.1em; padding: 8px 20px; border-radius: 15px; transition: all 0.3s ease; background: linear-gradient(135deg, #FF006E, #8B00FF); border: 1px solid rgba(255, 0, 110, 0.5);">
-                ➕ Add Bot
+                ➕ <span data-translate="nav_addbot">Add Bot</span>
             </a>
+            
+            <div style="display: flex; align-items: center; gap: 10px; padding: 5px 15px; background: rgba(139, 0, 255, 0.1); border: 1px solid rgba(139, 0, 255, 0.3); border-radius: 20px;">
+                <span style="color: #00F3FF; font-weight: bold; font-size: 0.9em;">EN</span>
+                <label style="position: relative; display: inline-block; width: 50px; height: 24px; cursor: pointer;">
+                    <input type="checkbox" id="langToggle" style="opacity: 0; width: 0; height: 0;">
+                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #00F3FF, #8B00FF); border-radius: 24px; transition: 0.4s; box-shadow: 0 0 10px rgba(0, 243, 255, 0.5);"></span>
+                    <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.4s; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);"></span>
+                </label>
+                <span style="color: #FF006E; font-weight: bold; font-size: 0.9em;">HU</span>
+            </div>
         </div>
     </nav>
     

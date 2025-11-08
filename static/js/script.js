@@ -75,7 +75,129 @@ document.addEventListener('mousemove', (e) => {
     const x = e.clientX / window.innerWidth;
     const y = e.clientY / window.innerHeight;
     
-    document.querySelector('.stars').style.transform = `translate(${x * 10}px, ${y * 10}px)`;
-    document.querySelector('.stars2').style.transform = `translate(${x * 20}px, ${y * 20}px)`;
-    document.querySelector('.stars3').style.transform = `translate(${x * 30}px, ${y * 30}px)`;
+    const stars = document.querySelector('.stars');
+    const stars2 = document.querySelector('.stars2');
+    const stars3 = document.querySelector('.stars3');
+    
+    if (stars) stars.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
+    if (stars2) stars2.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
+    if (stars3) stars3.style.transform = `translate(${x * 30}px, ${y * 30}px)`;
 });
+
+// Language translations
+const translations = {
+    en: {
+        nav_dashboard: "Dashboard",
+        nav_commands: "Commands",
+        nav_support: "Support",
+        nav_addbot: "Add Bot",
+        subtitle: "Next-Gen Discord Moderation System",
+        status_online: "SYSTEM ONLINE",
+        active_servers: "Active Servers",
+        total_users: "Total Users",
+        active_channels: "Active Channels",
+        system_uptime: "System Uptime",
+        core_features: "CORE FEATURES",
+        verification_title: "Verification System",
+        verification_desc: "Anti-alt protection with button verification",
+        ai_title: "AI Assistant",
+        ai_desc: "OpenAI-powered chat responses",
+        mod_title: "Advanced Moderation",
+        mod_desc: "Ban, kick, timeout, warnings & more",
+        games_title: "Interactive Games",
+        games_desc: "RPS, Tic-Tac-Toe & mini-games",
+        multilang_title: "Multilingual",
+        multilang_desc: "Full English & Hungarian support",
+        slash_title: "28 Slash Commands",
+        slash_desc: "Active Developer Badge ready",
+        quick_links: "QUICK LINKS",
+        join_support: "Join Support Server",
+        add_bot_server: "Add Bot to Server",
+        meet_dev: "MEET THE DEVELOPER",
+        owner_title: "Bot Owner & Creator",
+        owner_desc: "Shadow-MOD is developed and maintained with passion to bring the next generation of Discord moderation to your servers. Built with cutting-edge technology and futuristic design, this bot combines powerful features with an intuitive user experience.",
+        vision: "Vision",
+        vision_desc: "Creating a futuristic Discord experience with AI-powered moderation, multilingual support, and seamless automation for communities worldwide.",
+        powered_by: "Powered by Replit • Created with 💜",
+        version: "v2.0 FUTURISTIC"
+    },
+    hu: {
+        nav_dashboard: "Irányítópult",
+        nav_commands: "Parancsok",
+        nav_support: "Támogatás",
+        nav_addbot: "Bot Hozzáadása",
+        subtitle: "Következő Generációs Discord Moderációs Rendszer",
+        status_online: "RENDSZER ONLINE",
+        active_servers: "Aktív Szerverek",
+        total_users: "Összes Felhasználó",
+        active_channels: "Aktív Csatornák",
+        system_uptime: "Rendszer Üzemidő",
+        core_features: "ALAPVETŐ FUNKCIÓK",
+        verification_title: "Ellenőrző Rendszer",
+        verification_desc: "Anti-alt védelem gombos ellenőrzéssel",
+        ai_title: "AI Asszisztens",
+        ai_desc: "OpenAI-alapú chat válaszok",
+        mod_title: "Fejlett Moderáció",
+        mod_desc: "Kitiltás, kirúgás, timeout, figyelmeztetések",
+        games_title: "Interaktív Játékok",
+        games_desc: "Kő-Papír-Olló, Tic-Tac-Toe és mini játékok",
+        multilang_title: "Többnyelvű",
+        multilang_desc: "Teljes angol és magyar támogatás",
+        slash_title: "28 Slash Parancs",
+        slash_desc: "Aktív Fejlesztői Jelvény kész",
+        quick_links: "GYORS LINKEK",
+        join_support: "Csatlakozz a Támogatói Szerverhez",
+        add_bot_server: "Bot Hozzáadása Szerverhez",
+        meet_dev: "ISMERD MEG A FEJLESZTŐT",
+        owner_title: "Bot Tulajdonos és Készítő",
+        owner_desc: "A Shadow-MOD szenvedéllyel van fejlesztve és karbantartva, hogy a Discord moderáció következő generációját hozza el szervereidre. Élvonalbeli technológiával és futurisztikus dizájnnal épült, ez a bot erőteljes funkciókat kombinál intuitív felhasználói élménnyel.",
+        vision: "Jövőkép",
+        vision_desc: "Futurisztikus Discord élmény megteremtése AI-alapú moderációval, többnyelvű támogatással és zökkenőmentes automatizálással közösségek számára világszerte.",
+        powered_by: "Powered by Replit • Készítve 💜-tel",
+        version: "v2.0 FUTURISZTIKUS"
+    }
+};
+
+// Language switching functionality
+let currentLang = localStorage.getItem('language') || 'en';
+
+function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('language', lang);
+    
+    // Update all translatable elements
+    document.querySelectorAll('[data-translate]').forEach(element => {
+        const key = element.getAttribute('data-translate');
+        if (translations[lang] && translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+    
+    // Update toggle state
+    const toggle = document.getElementById('langToggle');
+    if (toggle) {
+        toggle.checked = (lang === 'hu');
+    }
+}
+
+// Initialize language on page load
+document.addEventListener('DOMContentLoaded', () => {
+    setLanguage(currentLang);
+    
+    // Setup language toggle listener
+    const toggle = document.getElementById('langToggle');
+    if (toggle) {
+        toggle.addEventListener('change', (e) => {
+            setLanguage(e.target.checked ? 'hu' : 'en');
+        });
+    }
+});
+
+// CSS for toggle slider animation
+const style = document.createElement('style');
+style.textContent = `
+    #langToggle:checked + span + span {
+        transform: translateX(26px);
+    }
+`;
+document.head.appendChild(style);
