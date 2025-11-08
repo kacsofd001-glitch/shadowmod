@@ -540,5 +540,63 @@ class SlashCommands(commands.Cog):
                 ephemeral=True
             )
 
+    @app_commands.command(name="serverinfo", description="Show server information / Szerver információk megjelenítése")
+    async def slash_serverinfo(self, interaction: discord.Interaction):
+        info_cog = self.bot.get_cog('Info')
+        if info_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.author = interaction.user
+            ctx.guild = interaction.guild
+            ctx.send = interaction.response.send_message
+            await info_cog.serverinfo(ctx)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="botinfo", description="Show bot information / Bot információk megjelenítése")
+    async def slash_botinfo(self, interaction: discord.Interaction):
+        info_cog = self.bot.get_cog('Info')
+        if info_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.author = interaction.user
+            ctx.guild = interaction.guild
+            ctx.send = interaction.response.send_message
+            await info_cog.botinfo(ctx)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="userinfo", description="Show user information / Felhasználó információk megjelenítése")
+    async def slash_userinfo(self, interaction: discord.Interaction, member: discord.Member = None):
+        info_cog = self.bot.get_cog('Info')
+        if info_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.author = interaction.user
+            ctx.guild = interaction.guild
+            ctx.send = interaction.response.send_message
+            await info_cog.userinfo(ctx, member)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="support", description="Get support server invite / Support szerver meghívó")
+    async def slash_support(self, interaction: discord.Interaction):
+        info_cog = self.bot.get_cog('Info')
+        if info_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.author = interaction.user
+            ctx.send = interaction.response.send_message
+            await info_cog.support(ctx)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="webpage", description="Get web dashboard link / Web irányítópult link")
+    async def slash_webpage(self, interaction: discord.Interaction):
+        info_cog = self.bot.get_cog('Info')
+        if info_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.author = interaction.user
+            ctx.send = interaction.response.send_message
+            await info_cog.webpage(ctx)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))
