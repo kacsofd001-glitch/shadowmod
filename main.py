@@ -92,6 +92,12 @@ async def help_command(ctx):
     )
     
     embed.add_field(
+        name="📊 INFORMATION SYSTEMS",
+        value="`/serverinfo` - Server statistics & details\n`/botinfo` - Bot features & uptime\n`/userinfo [@user]` - User profile with badges\n`/support` - Support server link\n`/webpage` - Live web dashboard",
+        inline=False
+    )
+    
+    embed.add_field(
         name="🔐 SECURITY & VERIFICATION",
         value="`/setupverify` - Deploy verification system\n`!setaltage <days>` - Configure anti-alt protection",
         inline=False
@@ -127,8 +133,8 @@ async def help_command(ctx):
         inline=False
     )
     
-    embed.set_footer(text="⚡ 20 Slash Commands | Active Developer Ready | v2.0 FUTURISTIC ⚡")
-    embed.set_thumbnail(url="https://i.imgur.com/placeholder.png")  # Bot avatar
+    embed.set_footer(text="⚡ 25 Slash Commands | Active Developer Ready | v2.0 FUTURISTIC ⚡")
+    embed.set_thumbnail(url=ctx.bot.user.display_avatar.url)
     
     await ctx.send(embed=embed)
 

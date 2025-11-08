@@ -16,7 +16,13 @@ class SlashCommands(commands.Cog):
         embed = discord.Embed(
             title=translations.get_text(guild_id, 'help_title'),
             description=translations.get_text(guild_id, 'help_description'),
-            color=0x8B00FF
+            color=0x00F3FF
+        )
+        
+        embed.add_field(
+            name=translations.get_text(guild_id, 'help_info'),
+            value=translations.get_text(guild_id, 'help_info_desc'),
+            inline=False
         )
         
         embed.add_field(
@@ -61,7 +67,7 @@ class SlashCommands(commands.Cog):
             inline=False
         )
         
-        embed.set_footer(text=translations.get_text(guild_id, 'help_footer'))
+        embed.set_footer(text="⚡ 25 Slash Commands | Active Developer Ready | v2.0 FUTURISTIC ⚡")
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
     

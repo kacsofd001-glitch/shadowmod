@@ -97,10 +97,12 @@ TRANSLATIONS = {
         ],
         
         # Help command
+        'help_info': '📊 Information',
+        'help_info_desc': '`/serverinfo` - Server statistics\n`/botinfo` - Bot features & uptime\n`/userinfo [@user]` - User profile with badges\n`/support` - Support server link\n`/webpage` - Live web dashboard',
         'help_tickets': '🎫 Ticket System',
         'help_tickets_desc': '`/ticket` or `!ticket` - Create a ticket panel\n`!closeticket` - Close a ticket',
         'help_moderation': '🛡️ Moderation',
-        'help_moderation_desc': '`/ban` `/kick` `/mute` `/unmute` - Basic moderation\n`!tempmute <user> <time>` - Temporarily mute\n`!tempban <user> <time>` - Temporarily ban\n`/lock` `/unlock` - Lock/unlock channel\n`/warn` - Warn a user',
+        'help_moderation_desc': '`/ban` `/kick` `/mute` `/unmute` - Basic moderation\n`!tempmute <user> <time>` - Temporarily mute\n`!tempban <user> <time>` - Temporarily ban\n`/lock` `/unlock` - Lock/unlock channel\n`/warn` - Warn a user\n`/purge <1-100>` - Bulk delete messages',
         'help_games': '🎮 Games',
         'help_games_desc': '`!rps` - Play Rock Paper Scissors\n`!tictactoe <@user>` - Play Tic Tac Toe',
         'help_fun': '😄 Fun',
@@ -110,7 +112,7 @@ TRANSLATIONS = {
         'help_giveaways': '🎉 Giveaways',
         'help_giveaways_desc': '`!giveaway <time> <winners> <prize>` - Start giveaway\n`!reroll <message_id>` - Reroll winner',
         'help_config': '⚙️ Configuration',
-        'help_config_desc': '`/setlog` - Set log channel\n`/setwebhook` - Set webhook for logging\n`/testwebhook` - Test webhook\n`/setlang` - Change language',
+        'help_config_desc': '`/setlog` - Set log channel\n`/setwebhook` - Set webhook for logging\n`/testwebhook` - Test webhook\n`/setlang` - Change language\n`/ping` - Check bot latency',
         'no_reason_provided': 'No reason provided',
         
         # Errors
@@ -215,10 +217,12 @@ TRANSLATIONS = {
         ],
         
         # Help command
+        'help_info': '📊 Információk',
+        'help_info_desc': '`/serverinfo` - Szerver statisztikák\n`/botinfo` - Bot funkciók & működési idő\n`/userinfo [@user]` - Felhasználó profil jelvényekkel\n`/support` - Support szerver link\n`/webpage` - Élő webes vezérlőpult',
         'help_tickets': '🎫 Jegy Rendszer',
         'help_tickets_desc': '`/ticket` vagy `!ticket` - Jegy panel létrehozása\n`!closeticket` - Jegy lezárása',
         'help_moderation': '🛡️ Moderáció',
-        'help_moderation_desc': '`/ban` `/kick` `/mute` `/unmute` - Alap moderáció\n`!tempmute <user> <idő>` - Ideiglenes némítás\n`!tempban <user> <idő>` - Ideiglenes kitiltás\n`/lock` `/unlock` - Csatorna lezárása/feloldása\n`/warn` - Felhasználó figyelmeztetése',
+        'help_moderation_desc': '`/ban` `/kick` `/mute` `/unmute` - Alap moderáció\n`!tempmute <user> <idő>` - Ideiglenes némítás\n`!tempban <user> <idő>` - Ideiglenes kitiltás\n`/lock` `/unlock` - Csatorna lezárása/feloldása\n`/warn` - Felhasználó figyelmeztetése\n`/purge <1-100>` - Tömeges üzenet törlés',
         'help_games': '🎮 Játékok',
         'help_games_desc': '`!rps` - Kő Papír Olló\n`!tictactoe <@user>` - Amőba játék',
         'help_fun': '😄 Szórakoztató',
@@ -228,7 +232,7 @@ TRANSLATIONS = {
         'help_giveaways': '🎉 Nyereményjátékok',
         'help_giveaways_desc': '`!giveaway <idő> <nyertesek> <nyeremény>` - Nyereményjáték indítása\n`!reroll <üzenet_id>` - Újra sorsolás',
         'help_config': '⚙️ Beállítások',
-        'help_config_desc': '`/setlog` - Napló csatorna beállítása\n`/setwebhook` - Webhook beállítása\n`/testwebhook` - Webhook tesztelése\n`/setlang` - Nyelv módosítása',
+        'help_config_desc': '`/setlog` - Napló csatorna beállítása\n`/setwebhook` - Webhook beállítása\n`/testwebhook` - Webhook tesztelése\n`/setlang` - Nyelv módosítása\n`/ping` - Bot késleltetés ellenőrzés',
         'no_reason_provided': 'Nincs megadva indok',
         
         # Errors
