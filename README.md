@@ -124,16 +124,17 @@ python main.py
 - `!setlang <en/hu>` or `/setlang` - Change server language (English/Hungarian)
 
 ### Moderation Commands
+**All moderation slash commands accept both user mentions (@user) and user IDs!**
 ```
-!ban @user [reason]   or  /ban      - Ban a user
-!kick @user [reason]  or  /kick     - Kick a user
-!mute @user           or  /mute     - Mute a user
-!unmute @user         or  /unmute   - Unmute a user
-!tempmute @user 10m                 - Temporarily mute (10s, 5m, 2h, 1d)
-!tempban @user 1d reason            - Temporarily ban
-!lock                 or  /lock     - Lock current channel
-!unlock               or  /unlock   - Unlock current channel
-!warn @user [reason]  or  /warn     - Warn a user
+!ban @user [reason]   or  /ban <@user or ID>     - Ban a user
+!kick @user [reason]  or  /kick <@user or ID>    - Kick a user
+!mute @user           or  /mute <@user or ID>    - Mute a user
+!unmute @user         or  /unmute <@user or ID>  - Unmute a user
+!tempmute @user 10m                              - Temporarily mute (10s, 5m, 2h, 1d)
+!tempban @user 1d reason                         - Temporarily ban
+!lock                 or  /lock                  - Lock current channel
+!unlock               or  /unlock                - Unlock current channel
+!warn @user [reason]  or  /warn <@user or ID>    - Warn a user
 !warnings @user                     - Check user's warnings
 ```
 
