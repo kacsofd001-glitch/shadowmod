@@ -128,9 +128,9 @@ python main.py
 ```
 !ban @user [reason]   or  /ban <@user or ID>     - Ban a user
 !kick @user [reason]  or  /kick <@user or ID>    - Kick a user
-!mute @user           or  /mute <@user or ID>    - Mute a user
+!mute @user           or  /mute <@user or ID>    - Mute a user (role-based)
 !unmute @user         or  /unmute <@user or ID>  - Unmute a user
-!tempmute @user 10m                              - Temporarily mute (10s, 5m, 2h, 1d)
+!tempmute @user 10m                              - Discord timeout (10s-28d) ⏱️
 !tempban @user 1d reason                         - Temporarily ban
 !lock                 or  /lock                  - Lock current channel
 !unlock               or  /unlock                - Unlock current channel
@@ -138,6 +138,8 @@ python main.py
 !warnings @user                                  - Check user's warnings
 !purge <amount>       or  /purge <amount>        - Delete 1-100 messages 🗑️
 ```
+
+**Note:** `!tempmute` now uses Discord's native timeout feature! This prevents the user from sending messages, reacting, joining voice channels, and more. Maximum duration is 28 days. Discord automatically removes the timeout when it expires.
 
 ### Game Commands
 ```

@@ -41,31 +41,6 @@ class Moderation(commands.Cog):
                     except:
                         pass
         
-        temp_mutes = cfg.get('temp_mutes', {})
-        for guild_id, mutes in list(temp_mutes.items()):
-            guild = self.bot.get_guild(int(guild_id))
-            if not guild:
-                continue
-            
-            muted_roles = cfg.get('muted_roles', {})
-            muted_role_id = muted_roles.get(str(guild_id))
-            if not muted_role_id:
-                continue
-            
-            muted_role = guild.get_role(int(muted_role_id))
-            if not muted_role:
-                continue
-            
-            for user_id, unmute_time in list(mutes.items()):
-                if current_time >= unmute_time:
-                    try:
-                        member = guild.get_member(int(user_id))
-                        if member:
-                            await member.remove_roles(muted_role, reason="Temporary mute expired")
-                        del temp_mutes[guild_id][user_id]
-                    except:
-                        pass
-        
         config.save_config(cfg)
     
     @check_temp_actions.before_loop
@@ -181,56 +156,48 @@ class Moderation(commands.Cog):
     @commands.command(name='tempmute')
     @commands.has_permissions(moderate_members=True)
     async def temp_mute(self, ctx, member: discord.Member, duration: str):
-        cfg = config.load_config()
-        muted_roles = cfg.get('muted_roles', {})
-        muted_role_id = muted_roles.get(str(ctx.guild.id))
-        
-        if not muted_role_id:
-            muted_role = await ctx.guild.create_role(name="Muted", color=discord.Color.dark_gray())
-            for channel in ctx.guild.channels:
-                await channel.set_permissions(muted_role, send_messages=False, speak=False)
-            if 'muted_roles' not in cfg:
-                cfg['muted_roles'] = {}
-            cfg['muted_roles'][str(ctx.guild.id)] = muted_role.id
-            config.save_config(cfg)
-        else:
-            muted_role = ctx.guild.get_role(int(muted_role_id))
-            if not muted_role:
-                muted_role = await ctx.guild.create_role(name="Muted", color=discord.Color.dark_gray())
-                for channel in ctx.guild.channels:
-                    await channel.set_permissions(muted_role, send_messages=False, speak=False)
-                cfg['muted_roles'][str(ctx.guild.id)] = muted_role.id
-                config.save_config(cfg)
-        
         time_units = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
-        time_amount = int(duration[:-1])
-        time_unit = duration[-1]
+        
+        try:
+            time_amount = int(duration[:-1])
+            time_unit = duration[-1]
+        except:
+            await ctx.send("❌ Invalid time format! Use: 10s, 5m, 2h, 1d")
+            return
         
         if time_unit not in time_units:
             await ctx.send("❌ Invalid time format! Use: 10s, 5m, 2h, 1d")
             return
         
         seconds = time_amount * time_units[time_unit]
-        unmute_time = datetime.now(timezone.utc).timestamp() + seconds
         
-        await member.add_roles(muted_role)
+        if seconds > 2419200:
+            await ctx.send("❌ Maximum timeout duration is 28 days!")
+            return
         
-        if 'temp_mutes' not in cfg:
-            cfg['temp_mutes'] = {}
-        if str(ctx.guild.id) not in cfg['temp_mutes']:
-            cfg['temp_mutes'][str(ctx.guild.id)] = {}
-        cfg['temp_mutes'][str(ctx.guild.id)][str(member.id)] = unmute_time
-        config.save_config(cfg)
+        if seconds < 1:
+            await ctx.send("❌ Timeout duration must be at least 1 second!")
+            return
         
-        embed = discord.Embed(
-            title="🔇 User Temporarily Muted",
-            description=f"**User:** {member.mention}\n**Duration:** {duration}\n**Moderator:** {ctx.author.mention}",
-            color=discord.Color.dark_gray(),
-            timestamp=datetime.now(timezone.utc)
-        )
+        timeout_until = datetime.now(timezone.utc) + timedelta(seconds=seconds)
         
-        await ctx.send(embed=embed)
-        await self.send_log(embed)
+        try:
+            await member.timeout(timeout_until, reason=f"Timed out by {ctx.author}")
+            
+            embed = discord.Embed(
+                title="⏱️ User Timed Out",
+                description=f"**User:** {member.mention}\n**Duration:** {duration}\n**Moderator:** {ctx.author.mention}",
+                color=discord.Color.dark_gray(),
+                timestamp=datetime.now(timezone.utc)
+            )
+            embed.add_field(name="Timeout Until", value=f"<t:{int(timeout_until.timestamp())}:F>", inline=False)
+            
+            await ctx.send(embed=embed)
+            await self.send_log(embed)
+        except discord.Forbidden:
+            await ctx.send("❌ I don't have permission to timeout this user!")
+        except discord.HTTPException as e:
+            await ctx.send(f"❌ Failed to timeout user: {str(e)}")
     
     @commands.command(name='tempban')
     @commands.has_permissions(ban_members=True)
