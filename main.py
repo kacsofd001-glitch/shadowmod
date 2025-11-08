@@ -123,8 +123,8 @@ async def help_command(ctx):
     )
     
     embed.add_field(
-        name="🎵 MUSIC SYSTEM",
-        value="`!play <song>` - Play music (YouTube/Spotify/SoundCloud)\n`!pause` - Pause playback\n`!resume` - Resume playback\n`!skip` - Skip current song\n`!stop` - Stop and disconnect\n`!queue` - Show queue\n`!nowplaying` - Current song\n`!loop` - Toggle loop mode\n`!volume <0-100>` - Adjust volume",
+        name="🎵 MUSIC SYSTEM (🎥 YouTube • 🟢 Spotify • ☁️ SoundCloud)",
+        value="`/play <song>` - Play music from any platform\n`/pause` `/resume` - Pause/resume playback\n`/skip` - Skip to next song\n`/stop` - Stop and disconnect\n`/queue` - Show music queue\n`/nowplaying` - Current track info\n`/loop` - Toggle loop mode\n`/volume <0-100>` - Adjust volume\n*Also supports `!` prefix for all commands*",
         inline=False
     )
     
@@ -158,7 +158,7 @@ async def help_command(ctx):
         inline=False
     )
     
-    embed.set_footer(text="⚡ Made by MoonlightVFX | 37 Slash Commands Ready ⚡")
+    embed.set_footer(text="⚡ Made by MoonlightVFX | 46 Slash Commands Ready ⚡")
     embed.set_thumbnail(url=ctx.bot.user.display_avatar.url)
     
     await ctx.send(embed=embed)

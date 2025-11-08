@@ -79,7 +79,7 @@ class SlashCommands(commands.Cog):
             inline=False
         )
         
-        embed.set_footer(text="⚡ Made by MoonlightVFX | 37 Slash Commands Ready ⚡")
+        embed.set_footer(text="⚡ Made by MoonlightVFX | 46 Slash Commands Ready ⚡")
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
     
@@ -970,6 +970,127 @@ class SlashCommands(commands.Cog):
             await interaction.channel.delete(reason="Ticket closed")
         else:
             await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="play", description="Play music from YouTube, Spotify, or SoundCloud / Zene lejátszása")
+    @app_commands.describe(query="Song name or URL / Dal neve vagy URL")
+    async def slash_play(self, interaction: discord.Interaction, query: str):
+        music_cog = self.bot.get_cog('Music')
+        if music_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.author = interaction.user
+            ctx.guild = interaction.guild
+            ctx.voice_client = interaction.guild.voice_client
+            
+            await interaction.response.defer()
+            await music_cog.play(ctx, query=query)
+        else:
+            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="pause", description="Pause the current playback / Lejátszás szüneteltetése")
+    async def slash_pause(self, interaction: discord.Interaction):
+        music_cog = self.bot.get_cog('Music')
+        if music_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.author = interaction.user
+            ctx.guild = interaction.guild
+            ctx.voice_client = interaction.guild.voice_client
+            
+            await music_cog.pause(ctx)
+            await interaction.response.send_message("⏸️ Paused playback", ephemeral=True)
+        else:
+            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="resume", description="Resume paused playback / Lejátszás folytatása")
+    async def slash_resume(self, interaction: discord.Interaction):
+        music_cog = self.bot.get_cog('Music')
+        if music_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.author = interaction.user
+            ctx.guild = interaction.guild
+            ctx.voice_client = interaction.guild.voice_client
+            
+            await music_cog.resume(ctx)
+            await interaction.response.send_message("▶️ Resumed playback", ephemeral=True)
+        else:
+            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="skip", description="Skip to the next song / Következő dal")
+    async def slash_skip(self, interaction: discord.Interaction):
+        music_cog = self.bot.get_cog('Music')
+        if music_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.author = interaction.user
+            ctx.guild = interaction.guild
+            ctx.voice_client = interaction.guild.voice_client
+            
+            await music_cog.skip(ctx)
+            await interaction.response.send_message("⏭️ Skipped to next song", ephemeral=True)
+        else:
+            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="stop", description="Stop playback and disconnect / Lejátszás leállítása")
+    async def slash_stop(self, interaction: discord.Interaction):
+        music_cog = self.bot.get_cog('Music')
+        if music_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.author = interaction.user
+            ctx.guild = interaction.guild
+            ctx.voice_client = interaction.guild.voice_client
+            
+            await music_cog.stop(ctx)
+            await interaction.response.send_message("⏹️ Stopped playback", ephemeral=True)
+        else:
+            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="queue", description="Display the music queue / Zene sor megjelenítése")
+    async def slash_queue(self, interaction: discord.Interaction):
+        music_cog = self.bot.get_cog('Music')
+        if music_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.guild = interaction.guild
+            
+            await interaction.response.defer()
+            await music_cog.queue(ctx)
+        else:
+            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="nowplaying", description="Show currently playing track / Jelenlegi dal megjelenítése")
+    async def slash_nowplaying(self, interaction: discord.Interaction):
+        music_cog = self.bot.get_cog('Music')
+        if music_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.guild = interaction.guild
+            
+            await interaction.response.defer()
+            await music_cog.nowplaying(ctx)
+        else:
+            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="loop", description="Toggle loop mode / Ismétlés be/ki")
+    async def slash_loop(self, interaction: discord.Interaction):
+        music_cog = self.bot.get_cog('Music')
+        if music_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.guild = interaction.guild
+            
+            await interaction.response.defer()
+            await music_cog.loop(ctx)
+        else:
+            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="volume", description="Adjust playback volume / Hangerő beállítása")
+    @app_commands.describe(volume="Volume level (0-100) / Hangerő szint (0-100)")
+    async def slash_volume(self, interaction: discord.Interaction, volume: int):
+        music_cog = self.bot.get_cog('Music')
+        if music_cog:
+            ctx = await self.bot.get_context(interaction)
+            ctx.guild = interaction.guild
+            ctx.voice_client = interaction.guild.voice_client
+            
+            await music_cog.volume(ctx, volume=volume)
+            await interaction.response.send_message(f"🔊 Volume set to {volume}%", ephemeral=True)
+        else:
+            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))
