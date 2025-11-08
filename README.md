@@ -146,12 +146,13 @@ python main.py
 
 ### Fun Commands
 ```
-!meme              or  /meme      - Get a random meme
+!meme              or  /meme      - Generate a language-aware meme 🌍
 !sound                            - Random sound effect
 !8ball <question>  or  /8ball     - Ask the magic 8-ball
 !coinflip          or  /coinflip  - Flip a coin
 !roll 2d6                         - Roll dice
 ```
+**🌍 Meme Generator:** Automatically generates memes in **English** or **Hungarian** based on your server language!
 
 ### Poll Commands
 ```

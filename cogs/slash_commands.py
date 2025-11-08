@@ -90,27 +90,50 @@ class SlashCommands(commands.Cog):
     
     @app_commands.command(name="meme", description="Get a random meme / Véletlen meme lekérése")
     async def slash_meme(self, interaction: discord.Interaction):
-        import aiohttp
         import random
+        from urllib.parse import quote
+        import aiohttp
         
         guild_id = interaction.guild.id
+        lang = translations.get_guild_language(guild_id)
+        
+        fun_cog = self.bot.get_cog('Fun')
+        if not fun_cog:
+            await interaction.response.send_message("❌ Meme feature unavailable", ephemeral=True)
+            return
+        
+        templates = fun_cog.meme_templates_hu if lang == 'hu' else fun_cog.meme_templates_en
+        template_name, top_text, bottom_text = random.choice(templates)
+        
+        top_text_encoded = quote(top_text, safe='')
+        bottom_text_encoded = quote(bottom_text, safe='')
+        
+        meme_url = f"https://api.memegen.link/images/{template_name}/{top_text_encoded}/{bottom_text_encoded}.png"
+        
         await interaction.response.defer()
         
-        async with aiohttp.ClientSession() as session:
-            async with session.get('https://meme-api.com/gimme') as response:
-                if response.status == 200:
-                    data = await response.json()
-                    
-                    embed = discord.Embed(
-                        title=data['title'],
-                        color=discord.Color.random()
-                    )
-                    embed.set_image(url=data['url'])
-                    embed.set_footer(text=translations.get_text(guild_id, 'meme_footer', data['subreddit'], data['ups']))
-                    
-                    await interaction.followup.send(embed=embed)
-                else:
-                    await interaction.followup.send(translations.get_text(guild_id, 'meme_error'))
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.head(meme_url, timeout=aiohttp.ClientTimeout(total=5)) as response:
+                    if response.status != 200:
+                        raise Exception("Meme API unavailable")
+            
+            embed = discord.Embed(
+                title=translations.get_text(guild_id, 'meme_title'),
+                color=discord.Color.random()
+            )
+            embed.set_image(url=meme_url)
+            embed.set_footer(text=translations.get_text(guild_id, 'generated_meme'))
+            
+            await interaction.followup.send(embed=embed)
+        except Exception:
+            embed = discord.Embed(
+                title=translations.get_text(guild_id, 'meme_title'),
+                description=f"**{top_text}**\n\n*{bottom_text}*",
+                color=discord.Color.random()
+            )
+            embed.set_footer(text=translations.get_text(guild_id, 'generated_meme'))
+            await interaction.followup.send(embed=embed)
     
     @app_commands.command(name="8ball", description="Ask the magic 8-ball / Kérdezd a varázs labdát")
     @app_commands.describe(question="Your question / A kérdésed")

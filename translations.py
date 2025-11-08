@@ -55,6 +55,8 @@ TRANSLATIONS = {
         'tails': 'Tails',
         'meme_error': "❌ Couldn't fetch a meme right now!",
         'meme_footer': 'From r/{} | 👍 {}',
+        'meme_title': '😂 Generated Meme',
+        'generated_meme': 'Generated meme',
         
         # Configuration
         'webhook_set': '✅ Webhook Set',
@@ -167,6 +169,8 @@ TRANSLATIONS = {
         'tails': 'Írás',
         'meme_error': '❌ Nem sikerült meme-et lekérni!',
         'meme_footer': 'r/{} -ból/-ből | 👍 {}',
+        'meme_title': '😂 Generált Meme',
+        'generated_meme': 'Generált meme',
         
         # Configuration
         'webhook_set': '✅ Webhook Beállítva',

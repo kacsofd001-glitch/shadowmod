@@ -2,6 +2,9 @@ import discord
 from discord.ext import commands
 import aiohttp
 import random
+import config
+from translations import get_text, get_guild_language
+from urllib.parse import quote
 
 class Fun(commands.Cog):
     def __init__(self, bot):
@@ -18,48 +21,68 @@ class Fun(commands.Cog):
             "📢 *Honk honk!*",
             "🔊 *Beep boop!*"
         ]
+        
+        self.meme_templates_en = [
+            ("drake", "Old boring way", "Cool new way"),
+            ("buzz", "Memes", "Memes everywhere"),
+            ("doge", "Such wow", "Very meme"),
+            ("yoda", "Do or do not", "There is no try"),
+            ("both", "Why not both?", "Both is good"),
+            ("aliens", "I'm not saying it was", "But it was"),
+            ("interesting", "That's very", "Interesting"),
+            ("disaster", "I see this as", "An absolute win"),
+            ("fine", "This is fine", "Everything is fine"),
+            ("think", "Modern problems", "Modern solutions"),
+        ]
+        
+        self.meme_templates_hu = [
+            ("drake", "Régi unalmas módszer", "Menő új módszer"),
+            ("buzz", "Mémek", "Mémek mindenhol"),
+            ("doge", "Ilyen hűha", "Nagyon mém"),
+            ("yoda", "Tedd vagy ne tedd", "Nincs próba"),
+            ("both", "Miért ne mindkettő?", "Mindkettő jó"),
+            ("aliens", "Nem azt mondom hogy az volt", "De az volt"),
+            ("interesting", "Ez nagyon", "Érdekes"),
+            ("disaster", "Ezt úgy látom", "Abszolút győzelem"),
+            ("fine", "Ez rendben van", "Minden rendben"),
+            ("think", "Modern problémák", "Modern megoldások"),
+        ]
     
     @commands.command(name='meme')
     async def random_meme(self, ctx):
-        async with aiohttp.ClientSession() as session:
-            try:
-                async with session.get('https://meme-api.com/gimme') as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        
-                        embed = discord.Embed(
-                            title=data['title'],
-                            url=data['postLink'],
-                            color=discord.Color.random()
-                        )
-                        embed.set_image(url=data['url'])
-                        embed.set_footer(text=f"👍 {data['ups']} upvotes | r/{data['subreddit']}")
-                        
-                        await ctx.send(embed=embed)
-                    else:
-                        await self.fallback_meme(ctx)
-            except Exception as e:
-                await self.fallback_meme(ctx)
+        lang = get_guild_language(ctx.guild.id)
+        
+        templates = self.meme_templates_hu if lang == 'hu' else self.meme_templates_en
+        template_name, top_text, bottom_text = random.choice(templates)
+        
+        top_text_encoded = quote(top_text, safe='')
+        bottom_text_encoded = quote(bottom_text, safe='')
+        
+        meme_url = f"https://api.memegen.link/images/{template_name}/{top_text_encoded}/{bottom_text_encoded}.png"
+        
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.head(meme_url, timeout=aiohttp.ClientTimeout(total=5)) as response:
+                    if response.status != 200:
+                        raise Exception("Meme API unavailable")
+            
+            embed = discord.Embed(
+                title=get_text(ctx.guild.id, 'meme_title'),
+                color=discord.Color.random()
+            )
+            embed.set_image(url=meme_url)
+            embed.set_footer(text=get_text(ctx.guild.id, 'generated_meme'))
+            
+            await ctx.send(embed=embed)
+        except Exception:
+            embed = discord.Embed(
+                title=get_text(ctx.guild.id, 'meme_title'),
+                description=f"**{top_text}**\n\n*{bottom_text}*",
+                color=discord.Color.random()
+            )
+            embed.set_footer(text=get_text(ctx.guild.id, 'generated_meme'))
+            await ctx.send(embed=embed)
     
-    async def fallback_meme(self, ctx):
-        meme_texts = [
-            ("When you're debugging at 3 AM", "And you find the bug was a typo"),
-            ("Nobody:", "Discord bots: I'm gonna crash for no reason"),
-            ("Me: writes 1000 lines of code", "Also me: forgets semicolon"),
-            ("Code on my machine:", "Code on production:"),
-            ("Client: Can you make a small change?", "The codebase:")
-        ]
-        
-        meme = random.choice(meme_texts)
-        
-        embed = discord.Embed(
-            title="😂 Random Meme",
-            description=f"**{meme[0]}**\n\n*{meme[1]}*",
-            color=discord.Color.random()
-        )
-        embed.set_footer(text="Generated meme")
-        
-        await ctx.send(embed=embed)
     
     @commands.command(name='sound')
     async def random_sound(self, ctx):
@@ -74,7 +97,7 @@ class Fun(commands.Cog):
         await ctx.send(embed=embed)
     
     @commands.command(name='8ball')
-    async def eight_ball(self, ctx, *, question: str = None):
+    async def eight_ball(self, ctx, *, question: str = ""):
         if not question:
             await ctx.send("❌ Please ask a question!")
             return
