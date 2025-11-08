@@ -30,19 +30,31 @@ class NameAutomation(commands.Cog):
             
             current_nick = member.display_name
             
-            while any(current_nick.startswith(p + ' ') for p in all_prefixes):
+            # Remove all existing prefixes from the nickname
+            changed = True
+            while changed:
+                changed = False
                 for p in all_prefixes:
-                    if current_nick.startswith(p + ' '):
-                        current_nick = current_nick[len(p):].strip()
+                    prefix_with_space = f"{p} "
+                    if current_nick.startswith(prefix_with_space):
+                        current_nick = current_nick[len(prefix_with_space):]
+                        changed = True
                         break
+            
+            # Remove any leading/trailing whitespace
+            current_nick = current_nick.strip()
             
             if prefix:
                 new_nick = f"{prefix} {current_nick}"
             else:
                 new_nick = current_nick
             
+            # Limit to 32 characters (Discord's nickname limit)
+            new_nick = new_nick[:32]
+            
+            # Only update if the nickname actually changed
             if member.nick != new_nick:
-                await member.edit(nick=new_nick[:32])
+                await member.edit(nick=new_nick)
         except discord.Forbidden:
             pass
         except Exception:
