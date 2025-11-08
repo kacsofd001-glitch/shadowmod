@@ -19,7 +19,7 @@ A comprehensive Discord bot built with Python featuring a cyberpunk neon theme a
 - Giveaway system with automatic winner selection
 - Name automation with role-based prefixes
 - **Dual prefix support (! and /) for active developer badge**
-- **25 slash commands for Active Developer Badge maintenance**
+- **28 slash commands for Active Developer Badge maintenance**
 - **Verification system** - Button-based verification with anti-alt checks
 - **Information Commands** - Server info, bot info, user info with badges
 - **Support & Web Links** - Quick access to support server and live dashboard
@@ -69,8 +69,9 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
-- **📊 INFORMATION COMMANDS** - Added serverinfo, botinfo, userinfo (with badges), support, and webpage commands (now 25 slash commands!)
-- **🔄 UPDATED HELP COMMAND** - Both !help and /help now show all 25 commands organized by futuristic categories with neon cyan theme
+- **🏷️ ROLE PREFIX SLASH COMMANDS** - Added /setprefix, /removeprefix, /viewprefixes for name automation (now 28 slash commands!)
+- **📊 INFORMATION COMMANDS** - Added serverinfo, botinfo, userinfo (with badges), support, and webpage commands
+- **🔄 UPDATED HELP COMMAND** - Both !help and /help now show all commands organized by futuristic categories with neon cyan theme
 - **🎨 FUTURISTIC THEME** - Complete UI overhaul with cyberpunk neon colors (cyan, pink, purple, blue)
 - **🌐 Live Web Stats Page** - Public dashboard showing real-time bot statistics at port 5000
 - **Updated tempmute** - Now uses Discord's native timeout feature (max 28 days) instead of role-based muting

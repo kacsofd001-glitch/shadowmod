@@ -67,7 +67,7 @@ class SlashCommands(commands.Cog):
             inline=False
         )
         
-        embed.set_footer(text="⚡ 25 Slash Commands | Active Developer Ready | v2.0 FUTURISTIC ⚡")
+        embed.set_footer(text="⚡ 28 Slash Commands | Active Developer Ready | v2.0 FUTURISTIC ⚡")
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
     
@@ -603,6 +603,109 @@ class SlashCommands(commands.Cog):
             await info_cog.webpage(ctx)
         else:
             await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="setprefix", description="Set role prefix for nicknames / Szerep prefix beállítása")
+    @app_commands.describe(role="The role to set prefix for / Szerep", prefix="Prefix text (max 10 chars) / Prefix szöveg")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_setprefix(self, interaction: discord.Interaction, role: discord.Role, prefix: str):
+        nameauto_cog = self.bot.get_cog('NameAutomation')
+        if nameauto_cog:
+            if len(prefix) > 10:
+                await interaction.response.send_message("❌ Prefix must be 10 characters or less!", ephemeral=True)
+                return
+            
+            import config as cfg_module
+            cfg = cfg_module.load_config()
+            if 'role_prefixes' not in cfg:
+                cfg['role_prefixes'] = {}
+            
+            cfg['role_prefixes'][str(role.id)] = prefix
+            cfg_module.save_config(cfg)
+            
+            embed = discord.Embed(
+                title="✅ Prefix Set",
+                description=f"Members with {role.mention} will have `{prefix}` prefix in their nickname!",
+                color=0x00F3FF
+            )
+            embed.add_field(name="Example", value=f"{prefix} Username", inline=False)
+            
+            await interaction.response.send_message(embed=embed)
+            
+            await interaction.followup.send("🔄 Updating member nicknames...", ephemeral=True)
+            count = 0
+            for member in interaction.guild.members:
+                if role in member.roles:
+                    await nameauto_cog.update_member_nickname(member)
+                    count += 1
+            
+            embed.add_field(name="Updated", value=f"{count} members updated!", inline=False)
+            await interaction.edit_original_response(embed=embed)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="removeprefix", description="Remove role prefix / Szerep prefix eltávolítása")
+    @app_commands.describe(role="The role to remove prefix from / Szerep")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_removeprefix(self, interaction: discord.Interaction, role: discord.Role):
+        nameauto_cog = self.bot.get_cog('NameAutomation')
+        if nameauto_cog:
+            import config as cfg_module
+            cfg = cfg_module.load_config()
+            role_prefixes = cfg.get('role_prefixes', {})
+            
+            if str(role.id) not in role_prefixes:
+                await interaction.response.send_message(f"❌ {role.mention} doesn't have a prefix set!", ephemeral=True)
+                return
+            
+            del cfg['role_prefixes'][str(role.id)]
+            cfg_module.save_config(cfg)
+            
+            embed = discord.Embed(
+                title="✅ Prefix Removed",
+                description=f"Prefix removed from {role.mention}",
+                color=0x00F3FF
+            )
+            
+            await interaction.response.send_message(embed=embed)
+            
+            await interaction.followup.send("🔄 Updating member nicknames...", ephemeral=True)
+            count = 0
+            for member in interaction.guild.members:
+                if role in member.roles:
+                    await nameauto_cog.update_member_nickname(member)
+                    count += 1
+            
+            embed.add_field(name="Updated", value=f"{count} members updated!", inline=False)
+            await interaction.edit_original_response(embed=embed)
+        else:
+            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+    
+    @app_commands.command(name="viewprefixes", description="View all role prefixes / Összes szerep prefix megtekintése")
+    async def slash_viewprefixes(self, interaction: discord.Interaction):
+        import config as cfg_module
+        cfg = cfg_module.load_config()
+        role_prefixes = cfg.get('role_prefixes', {})
+        
+        if not role_prefixes:
+            await interaction.response.send_message("❌ No role prefixes configured!", ephemeral=True)
+            return
+        
+        embed = discord.Embed(
+            title="📋 Role Prefixes",
+            description="Current role prefix configuration:",
+            color=0x8B00FF
+        )
+        
+        for role_id, prefix in role_prefixes.items():
+            role = interaction.guild.get_role(int(role_id))
+            if role:
+                embed.add_field(
+                    name=role.name,
+                    value=f"Prefix: `{prefix}`",
+                    inline=False
+                )
+        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))

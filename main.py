@@ -133,7 +133,7 @@ async def help_command(ctx):
         inline=False
     )
     
-    embed.set_footer(text="⚡ 25 Slash Commands | Active Developer Ready | v2.0 FUTURISTIC ⚡")
+    embed.set_footer(text="⚡ 28 Slash Commands | Active Developer Ready | v2.0 FUTURISTIC ⚡")
     embed.set_thumbnail(url=ctx.bot.user.display_avatar.url)
     
     await ctx.send(embed=embed)

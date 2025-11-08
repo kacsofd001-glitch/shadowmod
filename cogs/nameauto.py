@@ -75,7 +75,7 @@ class NameAutomation(commands.Cog):
         embed = discord.Embed(
             title="✅ Prefix Set",
             description=f"Members with {role.mention} will have `{prefix}` prefix in their nickname!",
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         embed.add_field(name="Example", value=f"{prefix} Username", inline=False)
         
@@ -107,7 +107,7 @@ class NameAutomation(commands.Cog):
         embed = discord.Embed(
             title="✅ Prefix Removed",
             description=f"Prefix removed from {role.mention}",
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         
         msg = await ctx.send(embed=embed)
@@ -135,7 +135,7 @@ class NameAutomation(commands.Cog):
         embed = discord.Embed(
             title="✅ Nicknames Updated",
             description=f"Updated nicknames for {count} members!",
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         
         await ctx.send(embed=embed)
@@ -152,7 +152,7 @@ class NameAutomation(commands.Cog):
         embed = discord.Embed(
             title="📋 Role Prefixes",
             description="Current role prefix configuration:",
-            color=discord.Color.blue()
+            color=0x8B00FF
         )
         
         for role_id, prefix in role_prefixes.items():
