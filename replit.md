@@ -6,6 +6,7 @@
 A comprehensive Discord bot built with Python featuring a cyberpunk neon theme and:
 - **Multilanguage support (English & Hungarian)**
 - **AI Chat Assistant** - OpenAI-powered responses in designated channels
+- **Music System** - Play music from YouTube, Spotify, and SoundCloud with queue management
 - **Verification system** - Button-based member verification with anti-alt protection
 - Automated ticket system with buttons
 - Anti-alt account detection
@@ -57,6 +58,7 @@ All features use Discord embeds and button components for a modern user experien
 │   ├── aichat.py        # AI chat assistant with OpenAI
 │   ├── verify.py        # Member verification with anti-alt checks
 │   ├── info.py          # Information commands (serverinfo, botinfo, userinfo, etc)
+│   ├── music.py         # Music player (YouTube, Spotify, SoundCloud)
 │   └── slash_commands.py  # Slash command implementations (25 commands)
 ├── .env                 # Environment variables (DISCORD_TOKEN)
 ├── bot_config.json      # Runtime configuration (auto-generated)
@@ -66,10 +68,12 @@ All features use Discord embeds and button components for a modern user experien
 ## Setup Requirements
 1. Discord bot token must be set in environment as `DISCORD_TOKEN`
 2. **Optional:** OpenAI API key as `OPENAI_API_KEY` for AI chat feature
-3. Bot requires these Discord intents: members, messages, message_content, guilds
-4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
+3. **Optional:** Spotify API credentials (`SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`) for Spotify track metadata
+4. Bot requires these Discord intents: members, messages, message_content, guilds
+5. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages, connect, speak)
 
 ## Recent Changes (November 2025)
+- **🎵 MUSIC SYSTEM** - Added complete music player with YouTube, Spotify, and SoundCloud support. Features: play, pause, resume, skip, stop, queue, nowplaying, loop, and volume commands
 - **👤 CREATOR BRANDING** - Updated all "v2.0 FUTURISTIC" references to "Made by MoonlightVFX" across website, bot commands, and documentation
 - **📱 MOBILE-RESPONSIVE NAV** - Navigation bar now fully responsive with tablet (768px) and mobile (480px) breakpoints, smaller buttons and text on mobile, emoji-only mode for tiny screens
 - **🎨 CSS CLASSES** - Converted inline navigation styles to proper CSS classes for better maintainability and responsive design

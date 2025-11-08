@@ -38,6 +38,7 @@ class DiscordBot(commands.Bot):
         await self.load_extension('cogs.aichat')
         await self.load_extension('cogs.verify')
         await self.load_extension('cogs.info')
+        await self.load_extension('cogs.music')
         await self.load_extension('cogs.slash_commands')
         print("All cogs loaded successfully!")
         
