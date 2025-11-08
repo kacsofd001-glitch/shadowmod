@@ -70,6 +70,8 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **📱 MOBILE-RESPONSIVE NAV** - Navigation bar now fully responsive with tablet (768px) and mobile (480px) breakpoints, smaller buttons and text on mobile, emoji-only mode for tiny screens
+- **🎨 CSS CLASSES** - Converted inline navigation styles to proper CSS classes for better maintainability and responsive design
 - **🌐 LANGUAGE TOGGLE** - Added EN/HU language switcher slider on website with localStorage persistence and full Hungarian translations
 - **📋 NAVIGATION MENU** - Added sticky navigation bar to both pages with links to Dashboard, Commands, Support Server, and Add Bot
 - **🔗 QUICK LINKS & OWNER PROFILE** - Added support server, bot invite links, and developer profile section to both dashboard and help page
