@@ -44,6 +44,10 @@ TRANSLATIONS = {
         'user_not_muted': 'User is not muted!',
         'ban_failed': 'Failed to ban user: {}',
         'kick_failed': 'Failed to kick user: {}',
+        'messages_purged': '🗑️ Messages Purged',
+        'messages_purged_desc': 'Deleted {} messages from this channel.',
+        'purge_limit': 'You can only delete up to 100 messages at once!',
+        'purge_invalid': 'Please provide a valid number of messages to delete (1-100).',
         
         # Fun commands
         'magic_8ball': '🎱 Magic 8-Ball',
@@ -158,6 +162,10 @@ TRANSLATIONS = {
         'user_not_muted': 'A felhasználó nincs némítva!',
         'ban_failed': 'Nem sikerült kitiltani a felhasználót: {}',
         'kick_failed': 'Nem sikerült kirúgni a felhasználót: {}',
+        'messages_purged': '🗑️ Üzenetek Törölve',
+        'messages_purged_desc': '{} üzenet törölve ebből a csatornából.',
+        'purge_limit': 'Egyszerre maximum 100 üzenetet törölhetsz!',
+        'purge_invalid': 'Kérlek adj meg egy érvényes számot (1-100).',
         
         # Fun commands
         'magic_8ball': '🎱 Varázs 8-as Labda',

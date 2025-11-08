@@ -16,7 +16,7 @@ A comprehensive Discord bot built with Python featuring:
 - Giveaway system with automatic winner selection
 - Name automation with role-based prefixes
 - **Dual prefix support (! and /) for active developer badge**
-- **17 slash commands for Active Developer Badge maintenance**
+- **19 slash commands for Active Developer Badge maintenance**
 
 All features use Discord embeds and button components for a modern user experience.
 
@@ -53,8 +53,9 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **Added /purge command** - Bulk message deletion (1-100 messages) with multilingual support (now 19 slash commands!)
 - **Added AI Chat Assistant** - OpenAI-powered responses in designated channels with language support (en/hu)
-- **Added /ping command** - For Active Developer Badge maintenance (now 18 total slash commands)
+- **Added /ping command** - For Active Developer Badge maintenance
 - **Added multilingual meme generator** - Memes automatically generate in English or Hungarian based on server language
 - **Fixed role prefix duplication bug** - Role prefixes no longer duplicate when updated; auto-updates all members on prefix change
 - **Updated moderation commands** - All slash commands (/ban, /kick, /mute, /unmute, /warn) now accept both user mentions and user IDs

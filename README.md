@@ -135,7 +135,8 @@ python main.py
 !lock                 or  /lock                  - Lock current channel
 !unlock               or  /unlock                - Unlock current channel
 !warn @user [reason]  or  /warn <@user or ID>    - Warn a user
-!warnings @user                     - Check user's warnings
+!warnings @user                                  - Check user's warnings
+!purge <amount>       or  /purge <amount>        - Delete 1-100 messages 🗑️
 ```
 
 ### Game Commands

@@ -491,6 +491,54 @@ class SlashCommands(commands.Cog):
         )
         
         await interaction.response.send_message(embed=embed)
+    
+    @app_commands.command(name="purge", description="Delete multiple messages / Több üzenet törlése")
+    @app_commands.describe(amount="Number of messages to delete (1-100) / Törölni kívánt üzenetek száma")
+    @app_commands.checks.has_permissions(manage_messages=True)
+    async def slash_purge(self, interaction: discord.Interaction, amount: int):
+        import asyncio
+        
+        guild_id = interaction.guild.id
+        
+        if amount < 1 or amount > 100:
+            await interaction.response.send_message(
+                translations.get_text(guild_id, 'purge_invalid'),
+                ephemeral=True
+            )
+            return
+        
+        await interaction.response.defer(ephemeral=True)
+        
+        try:
+            deleted = await interaction.channel.purge(limit=amount)
+            
+            embed = discord.Embed(
+                title=translations.get_text(guild_id, 'messages_purged'),
+                description=translations.get_text(guild_id, 'messages_purged_desc', len(deleted)),
+                color=discord.Color.orange(),
+                timestamp=datetime.now(timezone.utc)
+            )
+            embed.add_field(
+                name=translations.get_text(guild_id, 'moderator'),
+                value=interaction.user.mention
+            )
+            
+            await interaction.followup.send(embed=embed, ephemeral=True)
+            
+            mod_cog = self.bot.get_cog('Moderation')
+            if mod_cog:
+                await mod_cog.send_log(embed)
+                
+        except discord.Forbidden:
+            await interaction.followup.send(
+                "❌ I don't have permission to delete messages!",
+                ephemeral=True
+            )
+        except Exception as e:
+            await interaction.followup.send(
+                f"❌ An error occurred: {str(e)}",
+                ephemeral=True
+            )
 
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))

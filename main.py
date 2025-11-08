@@ -69,7 +69,7 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🛡️ Moderation",
-        value="`!ban <user> [reason]` or `/ban` - Ban a user\n`!kick <user>` or `/kick` - Kick a user\n`!mute <user>` or `/mute` - Mute a user\n`!unmute <user>` or `/unmute` - Unmute a user\n`!lock` or `/lock` - Lock channel\n`!unlock` or `/unlock` - Unlock channel\n`!warn <user>` or `/warn` - Warn a user",
+        value="`!ban <user>` or `/ban` - Ban a user\n`!kick <user>` or `/kick` - Kick a user\n`!mute <user>` or `/mute` - Mute a user\n`!purge <amount>` or `/purge` - Delete messages (1-100)\n`!warn <user>` or `/warn` - Warn a user",
         inline=False
     )
     

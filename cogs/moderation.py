@@ -347,6 +347,37 @@ class Moderation(commands.Cog):
             )
         
         await ctx.send(embed=embed)
+    
+    @commands.command(name='purge')
+    @commands.has_permissions(manage_messages=True)
+    async def purge_messages(self, ctx, amount: int):
+        from translations import get_text
+        
+        if amount < 1 or amount > 100:
+            await ctx.send(get_text(ctx.guild.id, 'purge_invalid'))
+            return
+        
+        try:
+            deleted = await ctx.channel.purge(limit=amount + 1)
+            
+            embed = discord.Embed(
+                title=get_text(ctx.guild.id, 'messages_purged'),
+                description=get_text(ctx.guild.id, 'messages_purged_desc', len(deleted) - 1),
+                color=discord.Color.orange(),
+                timestamp=datetime.now(timezone.utc)
+            )
+            embed.add_field(name=get_text(ctx.guild.id, 'moderator'), value=ctx.author.mention)
+            
+            msg = await ctx.send(embed=embed)
+            await asyncio.sleep(5)
+            await msg.delete()
+            
+            await self.send_log(embed)
+            
+        except discord.Forbidden:
+            await ctx.send("❌ I don't have permission to delete messages!")
+        except Exception as e:
+            await ctx.send(f"❌ An error occurred: {str(e)}")
 
 async def setup(bot):
     await bot.add_cog(Moderation(bot))
