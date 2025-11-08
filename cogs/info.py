@@ -185,7 +185,7 @@ class Info(commands.Cog):
         
         embed.add_field(
             name="🔗 Links",
-            value=f"[Web Dashboard]({self.replit_domain})\n[Support Server](https://discord.gg/your-invite)\n[Add Bot](https://discord.com/api/oauth2/authorize?client_id={self.bot.user.id}&permissions=8&scope=bot%20applications.commands)",
+            value=f"[Web Dashboard]({self.replit_domain})\n[Support Server](https://discord.gg/w6s6qA4E7E)\n[Add Bot](https://discord.com/api/oauth2/authorize?client_id={self.bot.user.id}&permissions=8&scope=bot%20applications.commands)",
             inline=True
         )
         
@@ -337,7 +337,7 @@ class Info(commands.Cog):
         
         embed.add_field(
             name="🔗 Invite Link",
-            value="[Click here to join!](https://discord.gg/your-invite)",
+            value="[Click here to join!](https://discord.gg/w6s6qA4E7E)",
             inline=False
         )
         
