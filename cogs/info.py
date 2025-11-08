@@ -11,6 +11,8 @@ class Info(commands.Cog):
         self.replit_domain = os.getenv('REPLIT_DOMAINS', 'localhost:5000')
         if not self.replit_domain.startswith('http'):
             self.replit_domain = f'https://{self.replit_domain}'
+        # Add /dashboard path to URL
+        self.dashboard_url = f'{self.replit_domain}/dashboard'
     
     @commands.command(name='serverinfo', aliases=['si'])
     async def serverinfo(self, ctx):
@@ -185,7 +187,7 @@ class Info(commands.Cog):
         
         embed.add_field(
             name="🔗 Links",
-            value=f"[Web Dashboard]({self.replit_domain})\n[Support Server](https://discord.gg/w6s6qA4E7E)\n[Add Bot](https://discord.com/api/oauth2/authorize?client_id={self.bot.user.id}&permissions=8&scope=bot%20applications.commands)",
+            value=f"[Web Dashboard]({self.dashboard_url})\n[Support Server](https://discord.gg/w6s6qA4E7E)\n[Add Bot](https://discord.com/api/oauth2/authorize?client_id={self.bot.user.id}&permissions=8&scope=bot%20applications.commands)",
             inline=True
         )
         
@@ -362,7 +364,7 @@ class Info(commands.Cog):
         
         embed.add_field(
             name="🔗 Dashboard Link",
-            value=f"[Click here to view]({self.replit_domain})",
+            value=f"[Click here to view]({self.dashboard_url})",
             inline=False
         )
         

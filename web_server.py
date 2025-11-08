@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, redirect
 from flask_cors import CORS
 from datetime import datetime, timezone
 import json
@@ -31,6 +31,11 @@ def get_bot_stats():
 
 @app.route('/')
 def index():
+    """Redirect root path to dashboard"""
+    return redirect('/dashboard', code=302)
+
+@app.route('/dashboard')
+def dashboard():
     stats = get_bot_stats()
     uptime = datetime.now(timezone.utc) - stats['start_time']
     hours, remainder = divmod(int(uptime.total_seconds()), 3600)
