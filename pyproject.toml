@@ -13,5 +13,6 @@ dependencies = [
     "pynacl>=1.6.0",
     "python-dotenv>=1.1.1",
     "spotipy>=2.25.1",
+    "wavelink>=3.4.1",
     "yt-dlp>=2025.10.22",
 ]

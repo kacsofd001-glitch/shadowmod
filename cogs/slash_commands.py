@@ -1000,129 +1000,170 @@ class SlashCommands(commands.Cog):
     
     @app_commands.command(name="pause", description="Pause the current playback / Lejátszás szüneteltetése")
     async def slash_pause(self, interaction: discord.Interaction):
-        if interaction.guild.voice_client and interaction.guild.voice_client.is_playing():
-            interaction.guild.voice_client.pause()
-            await interaction.response.send_message("⏸️ Paused playback", ephemeral=True)
-        else:
+        import wavelink
+        vc: wavelink.Player = interaction.guild.voice_client
+        
+        if not vc or not vc.playing:
             await interaction.response.send_message("❌ Nothing is playing", ephemeral=True)
+            return
+        
+        await vc.pause(True)
+        await interaction.response.send_message("⏸️ Paused playback", ephemeral=True)
     
     @app_commands.command(name="resume", description="Resume paused playback / Lejátszás folytatása")
     async def slash_resume(self, interaction: discord.Interaction):
-        if interaction.guild.voice_client and interaction.guild.voice_client.is_paused():
-            interaction.guild.voice_client.resume()
-            await interaction.response.send_message("▶️ Resumed playback", ephemeral=True)
-        else:
+        import wavelink
+        vc: wavelink.Player = interaction.guild.voice_client
+        
+        if not vc or not vc.paused:
             await interaction.response.send_message("❌ Nothing is paused", ephemeral=True)
+            return
+        
+        await vc.pause(False)
+        await interaction.response.send_message("▶️ Resumed playback", ephemeral=True)
     
     @app_commands.command(name="skip", description="Skip to the next song / Következő dal")
     async def slash_skip(self, interaction: discord.Interaction):
-        if interaction.guild.voice_client and interaction.guild.voice_client.is_playing():
-            interaction.guild.voice_client.stop()
-            await interaction.response.send_message("⏭️ Skipped to next song", ephemeral=True)
-        else:
+        import wavelink
+        vc: wavelink.Player = interaction.guild.voice_client
+        
+        if not vc or not vc.playing:
             await interaction.response.send_message("❌ Nothing is playing", ephemeral=True)
+            return
+        
+        await vc.skip(force=True)
+        await interaction.response.send_message("⏭️ Skipped to next song", ephemeral=True)
     
     @app_commands.command(name="stop", description="Stop playback and disconnect / Lejátszás leállítása")
     async def slash_stop(self, interaction: discord.Interaction):
-        music_cog = self.bot.get_cog('Music')
-        if music_cog and interaction.guild.voice_client:
-            queue = music_cog.get_queue(interaction.guild.id)
-            queue.clear()
-            await interaction.guild.voice_client.disconnect()
-            await interaction.response.send_message("⏹️ Stopped playback and disconnected", ephemeral=True)
-        else:
+        import wavelink
+        vc: wavelink.Player = interaction.guild.voice_client
+        
+        if not vc:
             await interaction.response.send_message("❌ Not connected to voice", ephemeral=True)
+            return
+        
+        await vc.disconnect()
+        await interaction.response.send_message("⏹️ Stopped playback and disconnected", ephemeral=True)
     
     @app_commands.command(name="queue", description="Display the music queue / Zene sor megjelenítése")
     async def slash_queue(self, interaction: discord.Interaction):
-        music_cog = self.bot.get_cog('Music')
-        if music_cog:
-            queue = music_cog.get_queue(interaction.guild.id)
-            
-            embed = discord.Embed(
-                title="🎵 Music Queue",
-                color=0x8B00FF
+        import wavelink
+        vc: wavelink.Player = interaction.guild.voice_client
+        
+        if not vc:
+            await interaction.response.send_message("❌ Not connected to voice", ephemeral=True)
+            return
+        
+        embed = discord.Embed(
+            title="🎵 Music Queue",
+            color=0x8B00FF
+        )
+        
+        if vc.current:
+            embed.add_field(
+                name="Now Playing",
+                value=f"🎶 **{vc.current.title}**\n`{vc.current.author}`",
+                inline=False
             )
+        
+        if vc.queue:
+            queue_list = []
+            for i, track in enumerate(vc.queue[:10], 1):
+                queue_list.append(f"{i}. **{track.title}** - `{track.author}`")
             
-            if queue.current:
-                embed.add_field(
-                    name="Now Playing",
-                    value=f"🎶 {queue.current.get('title', 'Unknown')}",
-                    inline=False
-                )
-            
-            if queue.queue:
-                queue_list = "\n".join([f"{i+1}. {song.get('title', 'Unknown')}" for i, song in enumerate(queue.queue[:10])])
-                embed.add_field(
-                    name=f"Up Next ({len(queue.queue)} songs)",
-                    value=queue_list,
-                    inline=False
-                )
-            else:
-                if not queue.current:
-                    embed.description = "Queue is empty"
-            
-            if queue.loop:
-                embed.set_footer(text="🔁 Loop: ON")
-            
-            await interaction.response.send_message(embed=embed)
+            embed.add_field(
+                name=f"Up Next ({vc.queue.count} songs)",
+                value="\n".join(queue_list),
+                inline=False
+            )
         else:
-            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+            if not vc.current:
+                embed.description = "Queue is empty"
+        
+        if vc.queue.mode == wavelink.QueueMode.loop:
+            embed.set_footer(text="🔁 Loop: ON")
+        
+        await interaction.response.send_message(embed=embed)
     
     @app_commands.command(name="nowplaying", description="Show currently playing track / Jelenlegi dal megjelenítése")
     async def slash_nowplaying(self, interaction: discord.Interaction):
-        music_cog = self.bot.get_cog('Music')
-        if music_cog:
-            queue = music_cog.get_queue(interaction.guild.id)
-            
-            if queue.current:
-                embed = discord.Embed(
-                    title="🎵 Now Playing",
-                    description=f"**{queue.current.get('title', 'Unknown')}**",
-                    color=0x8B00FF
-                )
-                
-                if queue.current.get('thumbnail'):
-                    embed.set_thumbnail(url=queue.current['thumbnail'])
-                
-                if queue.current.get('webpage_url'):
-                    embed.add_field(name="URL", value=queue.current['webpage_url'], inline=False)
-                
-                if queue.loop:
-                    embed.set_footer(text="🔁 Loop: ON")
-                
-                await interaction.response.send_message(embed=embed)
-            else:
-                await interaction.response.send_message("❌ Nothing is playing", ephemeral=True)
-        else:
-            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+        import wavelink
+        vc: wavelink.Player = interaction.guild.voice_client
+        
+        if not vc or not vc.current:
+            await interaction.response.send_message("❌ Nothing is playing", ephemeral=True)
+            return
+        
+        track = vc.current
+        
+        position = vc.position
+        duration = track.length
+        
+        progress_bar_length = 20
+        progress = int((position / duration) * progress_bar_length) if duration > 0 else 0
+        bar = "█" * progress + "░" * (progress_bar_length - progress)
+        
+        position_str = f"{int(position // 60)}:{int(position % 60):02d}"
+        duration_str = f"{int(duration // 60)}:{int(duration % 60):02d}"
+        
+        embed = discord.Embed(
+            title="🎵 Now Playing",
+            description=f"**{track.title}**\n`{track.author}`",
+            color=0x00F3FF
+        )
+        
+        embed.add_field(
+            name="Progress",
+            value=f"`{position_str}` {bar} `{duration_str}`",
+            inline=False
+        )
+        
+        if hasattr(track, 'artwork') and track.artwork:
+            embed.set_thumbnail(url=track.artwork)
+        
+        if vc.queue.mode == wavelink.QueueMode.loop:
+            embed.set_footer(text="🔁 Loop: ON")
+        
+        await interaction.response.send_message(embed=embed)
     
     @app_commands.command(name="loop", description="Toggle loop mode / Ismétlés be/ki")
     async def slash_loop(self, interaction: discord.Interaction):
-        music_cog = self.bot.get_cog('Music')
-        if music_cog:
-            queue = music_cog.get_queue(interaction.guild.id)
-            queue.loop = not queue.loop
-            
-            status = "enabled" if queue.loop else "disabled"
-            emoji = "🔁" if queue.loop else "➡️"
-            
-            await interaction.response.send_message(f"{emoji} Loop mode {status}", ephemeral=True)
+        import wavelink
+        vc: wavelink.Player = interaction.guild.voice_client
+        
+        if not vc:
+            await interaction.response.send_message("❌ Not connected to voice", ephemeral=True)
+            return
+        
+        if vc.queue.mode == wavelink.QueueMode.loop:
+            vc.queue.mode = wavelink.QueueMode.normal
+            status = "disabled"
+            emoji = "➡️"
         else:
-            await interaction.response.send_message("❌ Music feature unavailable", ephemeral=True)
+            vc.queue.mode = wavelink.QueueMode.loop
+            status = "enabled"
+            emoji = "🔁"
+        
+        await interaction.response.send_message(f"{emoji} Loop mode {status}", ephemeral=True)
     
     @app_commands.command(name="volume", description="Adjust playback volume / Hangerő beállítása")
     @app_commands.describe(volume="Volume level (0-100) / Hangerő szint (0-100)")
     async def slash_volume(self, interaction: discord.Interaction, volume: int):
+        import wavelink
+        
         if volume < 0 or volume > 100:
             await interaction.response.send_message("❌ Volume must be between 0 and 100", ephemeral=True)
             return
         
-        if interaction.guild.voice_client and interaction.guild.voice_client.source:
-            interaction.guild.voice_client.source.volume = volume / 100
-            await interaction.response.send_message(f"🔊 Volume set to {volume}%", ephemeral=True)
-        else:
-            await interaction.response.send_message("❌ Nothing is playing", ephemeral=True)
+        vc: wavelink.Player = interaction.guild.voice_client
+        
+        if not vc:
+            await interaction.response.send_message("❌ Not connected to voice", ephemeral=True)
+            return
+        
+        await vc.set_volume(volume)
+        await interaction.response.send_message(f"🔊 Volume set to {volume}%", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))
