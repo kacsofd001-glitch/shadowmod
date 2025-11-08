@@ -111,7 +111,7 @@ async def help_command(ctx):
     
     embed.add_field(
         name="⚔️ MODERATION MATRIX",
-        value="`/ban` `/kick` `/mute` `/unmute` - User management\n`/tempmute <user> <time>` - Discord timeout (max 28d)\n`/purge <1-100>` - Bulk message deletion\n`/warn` `/lock` `/unlock` - Warnings & channel control",
+        value="`/ban` - Ban user\n`/kick` - Kick user\n`/mute` `/unmute` - Mute/unmute user\n`/tempmute <user> <time>` - Discord timeout (max 28d)\n`/purge <1-100>` - Bulk message deletion\n`/warn` - Warn user\n`/lock` `/unlock` - Lock/unlock channel",
         inline=False
     )
     
@@ -123,13 +123,13 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🎮 ENTERTAINMENT SYSTEMS",
-        value="`/rps` Rock-Paper-Scissors • `/tictactoe` Tic-Tac-Toe\n`/meme` Generate memes • `/8ball` Magic 8-ball\n`/coinflip` Flip coin • `/dice` Roll dice",
+        value="`/rps` - Rock-Paper-Scissors\n`/tictactoe` - Tic-Tac-Toe\n`/meme` - Generate memes\n`/8ball` - Magic 8-ball\n`/coinflip` - Flip coin\n`/dice` - Roll dice",
         inline=False
     )
     
     embed.add_field(
         name="🎁 ENGAGEMENT PROTOCOLS",
-        value="`/poll` Interactive polls • `/giveaway` Prize systems\n`/ticket` Support tickets • `/createrole` Role management",
+        value="`/poll` - Interactive polls\n`/giveaway` - Prize systems\n`/ticket` - Support tickets\n`/createrole` - Role management",
         inline=False
     )
     
@@ -141,7 +141,7 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🌐 SYSTEM CONFIGURATION",
-        value="`/setlang <en/hu>` - Language switch\n`/setwebhook <url>` - Logging system\n`/ping` - Latency check",
+        value="`/setlang <en/hu>` - Language switch\n`/setwebhook <url>` - Logging webhook\n`/ping` - Check latency",
         inline=False
     )
     
