@@ -37,10 +37,10 @@ class RPSView(View):
              (choice == 'paper' and bot_choice == 'rock') or \
              (choice == 'scissors' and bot_choice == 'paper'):
             result = "You win! 🎉"
-            color = discord.Color.green()
+            color = 0x00F3FF
         else:
             result = "You lose! 😢"
-            color = discord.Color.red()
+            color = 0xFF006E
         
         embed = discord.Embed(
             title="🎮 Rock Paper Scissors",
@@ -90,7 +90,7 @@ class TicTacToeButton(Button):
                 embed = discord.Embed(
                     title="🎮 Tic Tac Toe - Winner!",
                     description=f"{winner_player.mention} wins! 🎉",
-                    color=discord.Color.green()
+                    color=0x00F3FF
                 )
             
             await interaction.response.edit_message(embed=embed, view=view)
@@ -102,7 +102,7 @@ class TicTacToeButton(Button):
             embed = discord.Embed(
                 title="🎮 Tic Tac Toe",
                 description=f"**Current turn:** {view.current_player.mention} ({'X' if view.current_marker == 1 else 'O'})",
-                color=discord.Color.blue()
+                color=0x8B00FF
             )
             embed.add_field(name="Players", value=f"❌ {view.player1.mention}\n⭕ {view.player2.mention}")
             
@@ -150,7 +150,7 @@ class Games(commands.Cog):
         embed = discord.Embed(
             title="🎮 Rock Paper Scissors",
             description="Choose your move!",
-            color=discord.Color.blue()
+            color=0x8B00FF
         )
         
         view = RPSView(ctx)
@@ -169,7 +169,7 @@ class Games(commands.Cog):
         embed = discord.Embed(
             title="🎮 Tic Tac Toe",
             description=f"**Current turn:** {ctx.author.mention} (X)",
-            color=discord.Color.blue()
+            color=0x8B00FF
         )
         embed.add_field(name="Players", value=f"❌ {ctx.author.mention}\n⭕ {opponent.mention}")
         

@@ -67,7 +67,7 @@ class PollView(View):
         embed = discord.Embed(
             title="Poll Results",
             description=results,
-            color=discord.Color.blue(),
+            color=0x8B00FF,
             timestamp=datetime.now(timezone.utc)
         )
         
@@ -103,7 +103,7 @@ class Polls(commands.Cog):
         embed = discord.Embed(
             title=f"📊 {question}",
             description="Click the buttons below to vote!",
-            color=discord.Color.blue(),
+            color=0x8B00FF,
             timestamp=datetime.now(timezone.utc)
         )
         
@@ -122,7 +122,7 @@ class Polls(commands.Cog):
         embed = discord.Embed(
             title="📊 Quick Poll",
             description=question,
-            color=discord.Color.blue(),
+            color=0x8B00FF,
             timestamp=datetime.now(timezone.utc)
         )
         embed.set_footer(text=f"Poll created by {ctx.author}")

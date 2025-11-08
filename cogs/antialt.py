@@ -20,7 +20,7 @@ class AntiAlt(commands.Cog):
             embed = discord.Embed(
                 title="🚨 Possible Alt Account Detected",
                 description=f"**User:** {member.mention} ({member})\n**ID:** {member.id}",
-                color=discord.Color.red(),
+                color=0xFF006E,
                 timestamp=datetime.now(timezone.utc)
             )
             embed.add_field(
@@ -50,7 +50,7 @@ class AntiAlt(commands.Cog):
                 welcome_embed = discord.Embed(
                     title="⚠️ Account Age Warning",
                     description=f"Your account is only {age_in_days} days old. Please be aware that you may have limited permissions until your account ages.",
-                    color=discord.Color.orange()
+                    color=0xFF006E
                 )
                 await member.send(embed=welcome_embed)
             except:
@@ -68,7 +68,7 @@ class AntiAlt(commands.Cog):
         embed = discord.Embed(
             title="✅ Anti-Alt Configuration Updated",
             description=f"Minimum account age set to **{days} days**",
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         await ctx.send(embed=embed)
 

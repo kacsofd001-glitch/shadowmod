@@ -16,20 +16,29 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Discord Bot"
+args = "Futuristic Bot"
 
 [[workflows.workflow]]
-name = "Discord Bot"
+name = "Futuristic Bot"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python main.py"
+args = "python bot_launcher.py"
+waitForPort = 5000
 
 [workflows.workflow.metadata]
-outputType = "console"
+outputType = "webview"
 
 [deployment]
 deploymentTarget = "gce"
 run = ["python", "main.py"]
 ignorePorts = true
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 34957
+externalPort = 3000

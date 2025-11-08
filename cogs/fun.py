@@ -161,7 +161,7 @@ class Fun(commands.Cog):
             embed = discord.Embed(
                 title="🎲 Dice Roll",
                 description=f"Rolling {rolls}d{sides}",
-                color=discord.Color.blue()
+                color=0x8B00FF
             )
             
             if len(results) <= 20:

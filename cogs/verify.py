@@ -57,7 +57,7 @@ class VerifyButton(discord.ui.View):
         embed = discord.Embed(
             title="✅ Verified Successfully!",
             description=f"Welcome {interaction.user.mention}! You have been verified.",
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         
         if added_roles:
@@ -70,7 +70,7 @@ class VerifyButton(discord.ui.View):
         log_embed = discord.Embed(
             title="✅ Member Verified",
             description=f"{interaction.user.mention} has been verified",
-            color=discord.Color.green(),
+            color=0x00F3FF,
             timestamp=datetime.now(timezone.utc)
         )
         log_embed.add_field(name="User", value=f"{interaction.user} ({interaction.user.id})", inline=False)
@@ -142,7 +142,7 @@ class Verify(commands.Cog):
         verify_embed = discord.Embed(
             title="✅ Verification",
             description=f"Click the button below to verify yourself!\n\n**Requirements:**\n• Account must be at least {min_age} days old",
-            color=discord.Color.blue()
+            color=0x8B00FF
         )
         verify_embed.add_field(
             name="What happens when you verify?",
@@ -156,7 +156,7 @@ class Verify(commands.Cog):
         config_embed = discord.Embed(
             title="✅ Verification System Configured",
             description=f"Verification panel sent to {channel.mention}",
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         config_embed.add_field(name="Minimum Account Age", value=f"{min_age} days", inline=False)
         

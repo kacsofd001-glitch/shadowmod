@@ -57,7 +57,7 @@ class Moderation(commands.Cog):
         embed = discord.Embed(
             title="🔨 User Banned",
             description=f"**User:** {member.mention}\n**Reason:** {reason}\n**Moderator:** {ctx.author.mention}",
-            color=discord.Color.red(),
+            color=0xFF006E,
             timestamp=datetime.now(timezone.utc)
         )
         
@@ -75,7 +75,7 @@ class Moderation(commands.Cog):
         embed = discord.Embed(
             title="👢 User Kicked",
             description=f"**User:** {member.mention}\n**Reason:** {reason}\n**Moderator:** {ctx.author.mention}",
-            color=discord.Color.orange(),
+            color=0xFF006E,
             timestamp=datetime.now(timezone.utc)
         )
         
@@ -91,7 +91,7 @@ class Moderation(commands.Cog):
         muted_role_id = muted_roles.get(str(ctx.guild.id))
         
         if not muted_role_id:
-            muted_role = await ctx.guild.create_role(name="Muted", color=discord.Color.dark_gray())
+            muted_role = await ctx.guild.create_role(name="Muted", color=discord.Color(0x0066FF))
             
             for channel in ctx.guild.channels:
                 await channel.set_permissions(muted_role, send_messages=False, speak=False)
@@ -104,7 +104,7 @@ class Moderation(commands.Cog):
             muted_role = ctx.guild.get_role(int(muted_role_id))
             if not muted_role:
                 await ctx.send("❌ Muted role not found! Creating new one...")
-                muted_role = await ctx.guild.create_role(name="Muted", color=discord.Color.dark_gray())
+                muted_role = await ctx.guild.create_role(name="Muted", color=discord.Color(0x0066FF))
                 for channel in ctx.guild.channels:
                     await channel.set_permissions(muted_role, send_messages=False, speak=False)
                 cfg['muted_roles'][str(ctx.guild.id)] = muted_role.id
@@ -115,7 +115,7 @@ class Moderation(commands.Cog):
         embed = discord.Embed(
             title="🔇 User Muted",
             description=f"**User:** {member.mention}\n**Moderator:** {ctx.author.mention}",
-            color=discord.Color.dark_gray(),
+            color=0x0066FF,
             timestamp=datetime.now(timezone.utc)
         )
         
@@ -144,7 +144,7 @@ class Moderation(commands.Cog):
             embed = discord.Embed(
                 title="🔊 User Unmuted",
                 description=f"**User:** {member.mention}\n**Moderator:** {ctx.author.mention}",
-                color=discord.Color.green(),
+                color=0x00F3FF,
                 timestamp=datetime.now(timezone.utc)
             )
             
@@ -187,7 +187,7 @@ class Moderation(commands.Cog):
             embed = discord.Embed(
                 title="⏱️ User Timed Out",
                 description=f"**User:** {member.mention}\n**Duration:** {duration}\n**Moderator:** {ctx.author.mention}",
-                color=discord.Color.dark_gray(),
+                color=0x0066FF,
                 timestamp=datetime.now(timezone.utc)
             )
             embed.add_field(name="Timeout Until", value=f"<t:{int(timeout_until.timestamp())}:F>", inline=False)
@@ -226,7 +226,7 @@ class Moderation(commands.Cog):
         embed = discord.Embed(
             title="🔨 User Temporarily Banned",
             description=f"**User:** {member.mention}\n**Duration:** {duration}\n**Reason:** {reason}\n**Moderator:** {ctx.author.mention}",
-            color=discord.Color.red(),
+            color=0xFF006E,
             timestamp=datetime.now(timezone.utc)
         )
         
@@ -241,7 +241,7 @@ class Moderation(commands.Cog):
         embed = discord.Embed(
             title="🔒 Channel Locked",
             description=f"This channel has been locked by {ctx.author.mention}",
-            color=discord.Color.red()
+            color=0xFF006E
         )
         await ctx.send(embed=embed)
     
@@ -253,7 +253,7 @@ class Moderation(commands.Cog):
         embed = discord.Embed(
             title="🔓 Channel Unlocked",
             description=f"This channel has been unlocked by {ctx.author.mention}",
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         await ctx.send(embed=embed)
     
@@ -330,7 +330,7 @@ class Moderation(commands.Cog):
             embed = discord.Embed(
                 title=get_text(ctx.guild.id, 'messages_purged'),
                 description=get_text(ctx.guild.id, 'messages_purged_desc', len(deleted) - 1),
-                color=discord.Color.orange(),
+                color=0xFF006E,
                 timestamp=datetime.now(timezone.utc)
             )
             embed.add_field(name=get_text(ctx.guild.id, 'moderator'), value=ctx.author.mention)

@@ -24,7 +24,7 @@ class Logging(commands.Cog):
         embed = discord.Embed(
             title="🗑️ Message Deleted",
             description=f"**Author:** {message.author.mention}\n**Channel:** {message.channel.mention}",
-            color=discord.Color.red(),
+            color=0xFF006E,
             timestamp=datetime.now(timezone.utc)
         )
         embed.add_field(
@@ -44,7 +44,7 @@ class Logging(commands.Cog):
         embed = discord.Embed(
             title="📝 Message Edited",
             description=f"**Author:** {before.author.mention}\n**Channel:** {before.channel.mention}",
-            color=discord.Color.orange(),
+            color=0xFF006E,
             timestamp=datetime.now(timezone.utc)
         )
         embed.add_field(
@@ -66,7 +66,7 @@ class Logging(commands.Cog):
         embed = discord.Embed(
             title="📥 Member Joined",
             description=f"**User:** {member.mention} ({member})",
-            color=discord.Color.green(),
+            color=0x00F3FF,
             timestamp=datetime.now(timezone.utc)
         )
         embed.add_field(
@@ -84,7 +84,7 @@ class Logging(commands.Cog):
         embed = discord.Embed(
             title="📤 Member Left",
             description=f"**User:** {member.mention} ({member})",
-            color=discord.Color.red(),
+            color=0xFF006E,
             timestamp=datetime.now(timezone.utc)
         )
         embed.set_thumbnail(url=member.display_avatar.url)
@@ -113,14 +113,14 @@ class Logging(commands.Cog):
         embed = discord.Embed(
             title="✅ Log Channel Set",
             description=f"Log channel has been set to {channel.mention}",
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         await ctx.send(embed=embed)
         
         welcome_embed = discord.Embed(
             title="📋 Logging System Activated",
             description="This channel will now receive all bot logs including:\n• Message deletions and edits\n• Member joins and leaves\n• Bans and kicks\n• Anti-alt detections\n• Moderation actions",
-            color=discord.Color.blue()
+            color=0x8B00FF
         )
         await channel.send(embed=welcome_embed)
 

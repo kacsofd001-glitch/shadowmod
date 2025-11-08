@@ -3,10 +3,15 @@ from discord.ext import commands
 import asyncio
 import os
 from dotenv import load_dotenv
+from datetime import datetime, timezone
+import json
 
 load_dotenv()
 
 intents = discord.Intents.all()
+
+# Shared stats file for web server
+STATS_FILE = 'bot_stats.json'
 
 class DiscordBot(commands.Bot):
     def __init__(self):
@@ -15,6 +20,7 @@ class DiscordBot(commands.Bot):
             intents=intents,
             help_command=None
         )
+        self.start_time = datetime.now(timezone.utc)
         
     async def setup_hook(self):
         await self.load_extension('cogs.tickets')
@@ -48,69 +54,80 @@ class DiscordBot(commands.Bot):
         await self.change_presence(
             activity=discord.Activity(
                 type=discord.ActivityType.watching,
-                name="your server | !help or /help"
+                name="🌐 /help | Futuristic Bot"
             )
         )
+        
+        # Update stats file for web server
+        self.update_stats_file()
+    
+    def update_stats_file(self):
+        """Update bot stats for web server"""
+        total_members = sum(guild.member_count for guild in self.guilds)
+        total_channels = sum(len(guild.channels) for guild in self.guilds)
+        
+        stats = {
+            'start_time': self.start_time.isoformat(),
+            'guilds': len(self.guilds),
+            'users': total_members,
+            'channels': total_channels,
+            'status': 'online'
+        }
+        
+        try:
+            with open(STATS_FILE, 'w') as f:
+                json.dump(stats, f)
+        except:
+            pass
 
 bot = DiscordBot()
 
 @bot.command(name='help')
 async def help_command(ctx):
     embed = discord.Embed(
-        title="🤖 Bot Commands Help",
-        description="Here are all available commands:",
-        color=discord.Color.blue()
+        title="⚡ SHADOW-MOD ✨ | COMMAND DATABASE",
+        description="━━━━━━━━━━━━━━━━━━━━━━━━━\n`Next-Gen Discord Moderation System`\n━━━━━━━━━━━━━━━━━━━━━━━━━",
+        color=0x00F3FF  # Neon cyan
     )
     
     embed.add_field(
-        name="🎫 Ticket System",
-        value="`!ticket` or `/ticket` - Create a ticket panel",
+        name="🔐 SECURITY & VERIFICATION",
+        value="`/setupverify` - Deploy verification system\n`!setaltage <days>` - Configure anti-alt protection",
         inline=False
     )
     
     embed.add_field(
-        name="🛡️ Moderation",
-        value="`!ban <user>` or `/ban` - Ban a user\n`!kick <user>` or `/kick` - Kick a user\n`!mute <user>` or `/mute` - Mute a user\n`!purge <amount>` or `/purge` - Delete messages (1-100)\n`!warn <user>` or `/warn` - Warn a user",
+        name="⚔️ MODERATION MATRIX",
+        value="`/ban` `/kick` `/mute` `/unmute` - User management\n`!tempmute <user> <time>` - Discord timeout (max 28d)\n`/purge <1-100>` - Bulk message deletion\n`/warn` - Issue warning • `/lock` `/unlock` - Channel control",
         inline=False
     )
     
     embed.add_field(
-        name="🎮 Games",
-        value="`!rps` - Play Rock Paper Scissors\n`!tictactoe <@user>` - Play Tic Tac Toe",
+        name="🧠 AI NEURAL LINK",
+        value="**Mention me anywhere** to activate AI assistant\n`Responds in EN/HU based on server language`",
         inline=False
     )
     
     embed.add_field(
-        name="😄 Fun",
-        value="`!meme` or `/meme` - Generate a meme 🌍\n`!8ball <question>` or `/8ball` - Magic 8-ball\n`!coinflip` or `/coinflip` - Flip a coin\n`!ping` or `/ping` - Check bot latency",
+        name="🎮 ENTERTAINMENT SYSTEMS",
+        value="`!rps` Rock-Paper-Scissors • `!tictactoe` Tic-Tac-Toe\n`/meme` Generate memes • `!8ball` Magic 8-ball\n`!coinflip` • `!dice` - Randomizers",
         inline=False
     )
     
     embed.add_field(
-        name="📊 Polls & Roles",
-        value="`!poll <question> <opt1> <opt2>` - Create poll\n`!addrole <@user> <@role>` - Add role to user",
+        name="🎁 ENGAGEMENT PROTOCOLS",
+        value="`/poll` Interactive polls • `/giveaway` Prize systems\n`/ticket` Support tickets • `/role` Role management",
         inline=False
     )
     
     embed.add_field(
-        name="🎉 Giveaways",
-        value="`!giveaway <time> <winners> <prize>` - Start giveaway\n`!reroll <message_id>` - Reroll giveaway",
+        name="🌐 SYSTEM CONFIGURATION",
+        value="`/setlang <en/hu>` - Language matrix\n`!setwebhook` - Logging system\n`/ping` - Latency check",
         inline=False
     )
     
-    embed.add_field(
-        name="🤖 AI Chat",
-        value="Mention me anywhere (@bot) and I'll respond with AI! 🧠\nResponds in your server's language (en/hu)",
-        inline=False
-    )
-    
-    embed.add_field(
-        name="⚙️ Configuration (Admin)",
-        value="`/setupverify` - Setup verification system\n`!setlang <en/hu>` or `/setlang` - Change language\n`!setaltage <days>` - Set account age for anti-alt\n`!setwebhook <url>` - Set webhook logging",
-        inline=False
-    )
-    
-    embed.set_footer(text="Use / for slash commands to keep Active Developer Badge! 🌟")
+    embed.set_footer(text="⚡ 20 Slash Commands | Active Developer Ready | v2.0 FUTURISTIC ⚡")
+    embed.set_thumbnail(url="https://i.imgur.com/placeholder.png")  # Bot avatar
     
     await ctx.send(embed=embed)
 
@@ -118,11 +135,25 @@ async def help_command(ctx):
 async def ping_command(ctx):
     latency = round(bot.latency * 1000)
     
+    # Determine latency color
+    if latency < 100:
+        color = 0x00F3FF  # Neon cyan - excellent
+        status = "⚡ OPTIMAL"
+    elif latency < 200:
+        color = 0x8B00FF  # Neon purple - good
+        status = "✅ STABLE"
+    else:
+        color = 0xFF006E  # Neon pink - slow
+        status = "⚠️ DEGRADED"
+    
     embed = discord.Embed(
-        title="🏓 Pong!",
-        description=f"Bot latency: **{latency}ms**",
-        color=discord.Color.green()
+        title=f"📡 SYSTEM RESPONSE | {status}",
+        description=f"```ansi\n\u001b[1;36mLatency: {latency}ms\u001b[0m\n```",
+        color=color
     )
+    embed.add_field(name="Status", value=status, inline=True)
+    embed.add_field(name="Response Time", value=f"{latency}ms", inline=True)
+    embed.set_footer(text="⚡ Neural Network Active")
     
     await ctx.send(embed=embed)
 

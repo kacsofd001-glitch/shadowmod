@@ -16,7 +16,7 @@ class SlashCommands(commands.Cog):
         embed = discord.Embed(
             title=translations.get_text(guild_id, 'help_title'),
             description=translations.get_text(guild_id, 'help_description'),
-            color=discord.Color.blue()
+            color=0x8B00FF
         )
         
         embed.add_field(
@@ -78,7 +78,7 @@ class SlashCommands(commands.Cog):
             embed = discord.Embed(
                 title=translations.get_text(guild_id, 'ticket_title'),
                 description=translations.get_text(guild_id, 'ticket_description'),
-                color=discord.Color.blue()
+                color=0x8B00FF
             )
             embed.add_field(
                 name=translations.get_text(guild_id, 'ticket_how_it_works'),
@@ -199,7 +199,7 @@ class SlashCommands(commands.Cog):
             embed = discord.Embed(
                 title=translations.get_text(guild_id, 'user_banned'),
                 description=translations.get_text(guild_id, 'user_banned_desc', target_user.mention),
-                color=discord.Color.red()
+                color=0xFF006E
             )
             if reason:
                 embed.add_field(name=translations.get_text(guild_id, 'reason'), value=reason, inline=False)
@@ -235,7 +235,7 @@ class SlashCommands(commands.Cog):
             embed = discord.Embed(
                 title=translations.get_text(guild_id, 'user_kicked'),
                 description=translations.get_text(guild_id, 'user_kicked_desc', target_user.mention),
-                color=discord.Color.orange()
+                color=0xFF006E
             )
             if reason:
                 embed.add_field(name=translations.get_text(guild_id, 'reason'), value=reason, inline=False)
@@ -328,7 +328,7 @@ class SlashCommands(commands.Cog):
                 embed = discord.Embed(
                     title=translations.get_text(guild_id_int, 'user_unmuted'),
                     description=translations.get_text(guild_id_int, 'user_unmuted_desc', target_user.mention),
-                    color=discord.Color.green()
+                    color=0x00F3FF
                 )
                 
                 await interaction.response.send_message(embed=embed)
@@ -350,7 +350,7 @@ class SlashCommands(commands.Cog):
         embed = discord.Embed(
             title=translations.get_text(guild_id, 'channel_locked'),
             description=translations.get_text(guild_id, 'channel_locked_desc'),
-            color=discord.Color.red()
+            color=0xFF006E
         )
         
         await interaction.response.send_message(embed=embed)
@@ -368,7 +368,7 @@ class SlashCommands(commands.Cog):
         embed = discord.Embed(
             title=translations.get_text(guild_id, 'channel_unlocked'),
             description=translations.get_text(guild_id, 'channel_unlocked_desc'),
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         
         await interaction.response.send_message(embed=embed)
@@ -432,7 +432,7 @@ class SlashCommands(commands.Cog):
         embed = discord.Embed(
             title=translations.get_text(guild_id, 'log_channel_set'),
             description=translations.get_text(guild_id, 'log_channel_desc', channel.mention),
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         
         await interaction.response.send_message(embed=embed)
@@ -450,7 +450,7 @@ class SlashCommands(commands.Cog):
             test_embed = discord.Embed(
                 title=translations.get_text(guild_id, 'webhook_set'),
                 description=translations.get_text(guild_id, 'webhook_set_desc'),
-                color=discord.Color.green(),
+                color=0x00F3FF,
                 timestamp=datetime.now(timezone.utc)
             )
             test_embed.add_field(
@@ -471,7 +471,7 @@ class SlashCommands(commands.Cog):
             test_embed = discord.Embed(
                 title=translations.get_text(guild_id, 'webhook_test'),
                 description=translations.get_text(guild_id, 'webhook_test_desc'),
-                color=discord.Color.blue(),
+                color=0x8B00FF,
                 timestamp=datetime.now(timezone.utc)
             )
             test_embed.add_field(name=translations.get_text(guild_id, 'tested_by'), value=str(interaction.user), inline=True)
@@ -487,7 +487,7 @@ class SlashCommands(commands.Cog):
         embed = discord.Embed(
             title="🏓 Pong!",
             description=f"Bot latency: **{latency}ms**",
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         
         await interaction.response.send_message(embed=embed)
@@ -515,7 +515,7 @@ class SlashCommands(commands.Cog):
             embed = discord.Embed(
                 title=translations.get_text(guild_id, 'messages_purged'),
                 description=translations.get_text(guild_id, 'messages_purged_desc', len(deleted)),
-                color=discord.Color.orange(),
+                color=0xFF006E,
                 timestamp=datetime.now(timezone.utc)
             )
             embed.add_field(

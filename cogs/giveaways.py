@@ -97,7 +97,7 @@ class Giveaways(commands.Cog):
                         embed = discord.Embed(
                             title="🎉 Giveaway Ended!",
                             description=f"**Prize:** {data['prize']}\n\n**Winner:** No valid entries!",
-                            color=discord.Color.red(),
+                            color=0xFF006E,
                             timestamp=datetime.now(timezone.utc)
                         )
                         embed.set_footer(text=f"Hosted by {data['host']}")
@@ -146,7 +146,7 @@ class Giveaways(commands.Cog):
         embed = discord.Embed(
             title="🎉 GIVEAWAY! 🎉",
             description=f"**Prize:** {prize}\n**Winners:** {winners}\n**Ends:** <t:{int(end_time.timestamp())}:R>",
-            color=discord.Color.blue(),
+            color=0x8B00FF,
             timestamp=datetime.now(timezone.utc)
         )
         embed.set_footer(text=f"Hosted by {ctx.author}")

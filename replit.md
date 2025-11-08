@@ -1,7 +1,9 @@
-# Discord Bot Project
+# ⚡ SHADOW-MOD ✨ | Futuristic Discord Bot
 
 ## Overview
-A comprehensive Discord bot built with Python featuring:
+**Next-Gen Discord Moderation System v2.0 FUTURISTIC**
+
+A comprehensive Discord bot built with Python featuring a cyberpunk neon theme and:
 - **Multilanguage support (English & Hungarian)**
 - **AI Chat Assistant** - OpenAI-powered responses in designated channels
 - **Verification system** - Button-based member verification with anti-alt protection
@@ -25,9 +27,17 @@ All features use Discord embeds and button components for a modern user experien
 ## Project Structure
 ```
 .
+├── bot_launcher.py      # Combined launcher for bot + web server
 ├── main.py              # Main bot entry point (dual prefix support)
+├── web_server.py        # Flask web server for stats dashboard
+├── bot_stats.json       # Shared stats file between bot and web server
 ├── config.py            # Configuration management
 ├── translations.py      # Multilanguage translation system
+├── templates/           # HTML templates for web dashboard
+│   └── index.html       # Futuristic stats page
+├── static/              # Static assets for web server
+│   ├── css/style.css    # Cyberpunk neon theme styles
+│   └── js/script.js     # Interactive dashboard animations
 ├── cogs/                # Bot feature modules
 │   ├── tickets.py       # Ticket system
 │   ├── antialt.py       # Anti-alt detection
@@ -55,6 +65,8 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **🎨 FUTURISTIC THEME** - Complete UI overhaul with cyberpunk neon colors (cyan, pink, purple, blue)
+- **🌐 Live Web Stats Page** - Public dashboard showing real-time bot statistics at port 5000
 - **Updated tempmute** - Now uses Discord's native timeout feature (max 28 days) instead of role-based muting
 - **Enhanced AI Chat** - Bot now responds when mentioned anywhere (mention-only mode)
 - **Added verification system** - Button-based member verification with anti-alt protection (now 20 slash commands!)

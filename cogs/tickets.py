@@ -35,7 +35,7 @@ class TicketView(View):
         embed = discord.Embed(
             title=f"🎫 Ticket #{ticket_num}",
             description=f"Welcome {user.mention}!\n\nPlease describe your issue and our staff will assist you shortly.",
-            color=discord.Color.green()
+            color=0x00F3FF
         )
         embed.set_footer(text="Click the button below to close this ticket")
         
@@ -56,7 +56,7 @@ class CloseTicketView(View):
         embed = discord.Embed(
             title="🔒 Ticket Closed",
             description=f"Ticket closed by {interaction.user.mention}",
-            color=discord.Color.red()
+            color=0xFF006E
         )
         
         await interaction.response.send_message(embed=embed)
@@ -72,7 +72,7 @@ class Tickets(commands.Cog):
         embed = discord.Embed(
             title="🎫 Support Tickets",
             description="Need help? Click the button below to create a support ticket!\n\nOur staff team will assist you as soon as possible.",
-            color=discord.Color.blue()
+            color=0x8B00FF
         )
         embed.set_footer(text="One ticket per person")
         
@@ -87,7 +87,7 @@ class Tickets(commands.Cog):
             embed = discord.Embed(
                 title="🔒 Ticket Closed",
                 description=f"Ticket closed by {ctx.author.mention}",
-                color=discord.Color.red()
+                color=0xFF006E
             )
             await ctx.send(embed=embed)
             await ctx.channel.delete(reason=f"Ticket closed by {ctx.author}")

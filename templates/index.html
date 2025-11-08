@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow-MOD ✨ | Futuristic Discord Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo-glow"></div>
+                <h1 class="title">
+                    <span class="cyber-glitch" data-text="SHADOW-MOD">SHADOW-MOD</span>
+                    <span class="sparkle">✨</span>
+                </h1>
+            </div>
+            <p class="subtitle">Next-Gen Discord Moderation System</p>
+            <div class="status-badge {{ status }}">
+                <span class="pulse"></span>
+                SYSTEM {{ status | upper }}
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card" data-aos="fade-up">
+                <div class="stat-icon">🌐</div>
+                <div class="stat-value">{{ guilds }}</div>
+                <div class="stat-label">Active Servers</div>
+                <div class="stat-glow"></div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value">{{ users }}</div>
+                <div class="stat-label">Total Users</div>
+                <div class="stat-glow"></div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-icon">📡</div>
+                <div class="stat-value">{{ channels }}</div>
+                <div class="stat-label">Active Channels</div>
+                <div class="stat-glow"></div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value">{{ uptime }}</div>
+                <div class="stat-label">System Uptime</div>
+                <div class="stat-glow"></div>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h2 class="section-title">
+                <span class="cyber-line"></span>
+                CORE FEATURES
+                <span class="cyber-line"></span>
+            </h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Verification System</h3>
+                    <p>Anti-alt protection with button verification</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>AI Assistant</h3>
+                    <p>OpenAI-powered chat responses</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Advanced Moderation</h3>
+                    <p>Ban, kick, timeout, warnings & more</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3>Interactive Games</h3>
+                    <p>RPS, Tic-Tac-Toe & mini-games</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Multilingual</h3>
+                    <p>Full English & Hungarian support</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>20 Slash Commands</h3>
+                    <p>Active Developer Badge ready</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <div class="tech-item">
+                <span class="tech-dot"></span>
+                Python 3.11
+            </div>
+            <div class="tech-item">
+                <span class="tech-dot"></span>
+                Discord.py
+            </div>
+            <div class="tech-item">
+                <span class="tech-dot"></span>
+                OpenAI API
+            </div>
+            <div class="tech-item">
+                <span class="tech-dot"></span>
+                Flask
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>Powered by Replit • Created with 💜</p>
+            <p class="version">v2.0 FUTURISTIC</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
