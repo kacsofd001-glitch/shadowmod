@@ -5,6 +5,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import os
 import re
+import asyncio
 
 class Music(commands.Cog):
     def __init__(self, bot):
@@ -28,23 +29,56 @@ class Music(commands.Cog):
         """Connect to Lavalink nodes when cog loads"""
         nodes = [
             wavelink.Node(
-                uri='http://lavalink.oops.wtf:2333',
-                password='www.freelavalink.ga'
+                uri='https://lava-v4.ajieblogs.eu.org:443',
+                password='https://dsc.gg/ajidevserver'
             ),
             wavelink.Node(
-                uri='http://lava.link:80',
-                password='youshallnotpass'
+                uri='http://lava-us.catfein.co.id:5000',
+                password='catfein'
+            ),
+            wavelink.Node(
+                uri='http://lavalink.divahost.net:60002',
+                password='divahostv4'
+            ),
+            wavelink.Node(
+                uri='https://lavalink-v2.pericsq.ro:443',
+                password='wwweasycodero'
+            ),
+            wavelink.Node(
+                uri='http://publicnode.nextgencoders.xyz:2336',
+                password='nextgencoders'
             )
         ]
         
-        for node in nodes:
-            try:
-                await wavelink.Pool.connect(client=self.bot, nodes=[node])
-                print(f"✅ Connected to Lavalink node: {node.uri}")
-                break
-            except Exception as e:
-                print(f"⚠️ Failed to connect to {node.uri}: {e}")
-                continue
+        try:
+            await asyncio.wait_for(
+                wavelink.Pool.connect(client=self.bot, nodes=nodes),
+                timeout=15.0
+            )
+            print(f"✅ Connected to Lavalink pool with {len(nodes)} nodes")
+        except asyncio.TimeoutError:
+            print("⚠️ Lavalink connection timed out")
+            print("⚠️ Music features will be unavailable")
+        except Exception as e:
+            print(f"⚠️ Failed to connect to Lavalink nodes: {e}")
+            print("⚠️ Music features will be unavailable")
+    
+    @commands.Cog.listener()
+    async def on_wavelink_track_end(self, payload: wavelink.TrackEndEventPayload):
+        """Auto-play next track when current track finishes naturally"""
+        player = payload.player
+        if not player:
+            return
+        
+        if payload.reason is not wavelink.TrackEndReason.FINISHED:
+            return
+        
+        if player.current:
+            return
+        
+        if player.queue:
+            next_track = await player.queue.get_wait()
+            await player.play(next_track)
     
     def parse_spotify_url(self, url):
         """Extract Spotify track ID from URL"""

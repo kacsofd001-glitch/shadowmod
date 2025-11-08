@@ -72,11 +72,13 @@ All features use Discord embeds and button components for a modern user experien
 3. **Optional:** Spotify API credentials (`SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`) for Spotify track metadata
 4. Bot requires these Discord intents: members, messages, message_content, guilds
 5. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages, connect, speak)
+6. **Music System:** Uses public Lavalink nodes (automatically connects to available nodes). No additional setup required for basic music functionality.
 
 ## Recent Changes (November 2025)
+- **🎵 LAVALINK INTEGRATION** - Migrated music system to Lavalink for cloud environment compatibility. Uses public Lavalink nodes with automatic fallback. Supports YouTube, Spotify (metadata), and SoundCloud playback via wavelink library.
 - **🎵 MUSIC SLASH COMMANDS** - Added 9 music slash commands (/play, /pause, /resume, /skip, /stop, /queue, /nowplaying, /loop, /volume). Total slash commands: 46
 - **📖 UPDATED HELP SYSTEM** - Refreshed !help, /help, and help.html to prominently display music platform support (YouTube, Spotify, SoundCloud) with dual prefix info
-- **🎵 MUSIC SYSTEM** - Added complete music player with YouTube, Spotify, and SoundCloud support. Features: play, pause, resume, skip, stop, queue, nowplaying, loop, and volume commands
+- **🎵 MUSIC SYSTEM** - Complete music player with YouTube, Spotify, and SoundCloud support via Lavalink. Features: play, pause, resume, skip, stop, queue, nowplaying, loop, and volume commands
 - **👤 CREATOR BRANDING** - Updated all "v2.0 FUTURISTIC" references to "Made by MoonlightVFX" across website, bot commands, and documentation
 - **📱 MOBILE-RESPONSIVE NAV** - Navigation bar now fully responsive with tablet (768px) and mobile (480px) breakpoints, smaller buttons and text on mobile, emoji-only mode for tiny screens
 - **🎨 CSS CLASSES** - Converted inline navigation styles to proper CSS classes for better maintainability and responsive design
