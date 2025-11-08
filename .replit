@@ -31,8 +31,8 @@ waitForPort = 5000
 outputType = "webview"
 
 [deployment]
-deploymentTarget = "gce"
-run = ["python", "main.py"]
+deploymentTarget = "vm"
+run = ["python", "bot_launcher.py"]
 ignorePorts = true
 
 [[ports]]
