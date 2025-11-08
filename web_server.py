@@ -51,6 +51,11 @@ def dashboard():
                          uptime=uptime_str,
                          status=stats['status'])
 
+@app.route('/help')
+def help_page():
+    """Display bot commands and help information"""
+    return render_template('help.html')
+
 @app.route('/api/stats')
 def api_stats():
     try:
