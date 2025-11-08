@@ -44,17 +44,25 @@ def dashboard():
     
     uptime_str = f"{days}d {hours}h {minutes}m {seconds}s"
     
-    return render_template('index.html', 
+    response = app.make_response(render_template('index.html', 
                          guilds=stats['guilds'],
                          users=stats['users'],
                          channels=stats['channels'],
                          uptime=uptime_str,
-                         status=stats['status'])
+                         status=stats['status']))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/help')
 def help_page():
     """Display bot commands and help information"""
-    return render_template('help.html')
+    response = app.make_response(render_template('help.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/api/stats')
 def api_stats():
