@@ -99,31 +99,37 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🔐 SECURITY & VERIFICATION",
-        value="`/setupverify` - Deploy verification system\n`!setaltage <days>` - Configure anti-alt protection",
+        value="`/setupverify` - Deploy verification system\n`/setlog #channel` - Set log channel for alerts",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="🛡️ ANTI-ALT SYSTEM",
+        value="`Auto-detects new accounts on join`\n`/setaltage <days>` - Set min account age (default: 7d)\nAlerts sent to log channel automatically",
         inline=False
     )
     
     embed.add_field(
         name="⚔️ MODERATION MATRIX",
-        value="`/ban` `/kick` `/mute` `/unmute` - User management\n`!tempmute <user> <time>` - Discord timeout (max 28d)\n`/purge <1-100>` - Bulk message deletion\n`/warn` - Issue warning • `/lock` `/unlock` - Channel control",
+        value="`/ban` `/kick` `/mute` `/unmute` - User management\n`/tempmute <user> <time>` - Discord timeout (max 28d)\n`/purge <1-100>` - Bulk message deletion\n`/warn` `/lock` `/unlock` - Warnings & channel control",
         inline=False
     )
     
     embed.add_field(
         name="🧠 AI NEURAL LINK",
-        value="**Mention me anywhere** to activate AI assistant\n`Responds in EN/HU based on server language`",
+        value="**@mention me** to activate AI assistant\n`Responds in EN/HU based on server language`",
         inline=False
     )
     
     embed.add_field(
         name="🎮 ENTERTAINMENT SYSTEMS",
-        value="`!rps` Rock-Paper-Scissors • `!tictactoe` Tic-Tac-Toe\n`/meme` Generate memes • `!8ball` Magic 8-ball\n`!coinflip` • `!dice` - Randomizers",
+        value="`/rps` Rock-Paper-Scissors • `/tictactoe` Tic-Tac-Toe\n`/meme` Generate memes • `/8ball` Magic 8-ball\n`/coinflip` Flip coin • `/dice` Roll dice",
         inline=False
     )
     
     embed.add_field(
         name="🎁 ENGAGEMENT PROTOCOLS",
-        value="`/poll` Interactive polls • `/giveaway` Prize systems\n`/ticket` Support tickets • `/role` Role management",
+        value="`/poll` Interactive polls • `/giveaway` Prize systems\n`/ticket` Support tickets • `/createrole` Role management",
         inline=False
     )
     
@@ -135,7 +141,7 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🌐 SYSTEM CONFIGURATION",
-        value="`/setlang <en/hu>` - Language matrix\n`!setwebhook` - Logging system\n`/ping` - Latency check",
+        value="`/setlang <en/hu>` - Language switch\n`/setwebhook <url>` - Logging system\n`/ping` - Latency check",
         inline=False
     )
     

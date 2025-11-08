@@ -69,6 +69,7 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **🔧 HELP COMMAND UPDATE** - Added anti-alt system section, standardized all commands with slash notation, reorganized categories for clarity
 - **🏷️ ROLE PREFIX SLASH COMMANDS** - Added /setprefix, /removeprefix, /viewprefixes for name automation (now 28 slash commands!)
 - **📊 INFORMATION COMMANDS** - Added serverinfo, botinfo, userinfo (with badges), support, and webpage commands
 - **🔄 UPDATED HELP COMMAND** - Both !help and /help now show all commands organized by futuristic categories with neon cyan theme

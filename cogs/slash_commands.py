@@ -26,6 +26,18 @@ class SlashCommands(commands.Cog):
         )
         
         embed.add_field(
+            name=translations.get_text(guild_id, 'help_security'),
+            value=translations.get_text(guild_id, 'help_security_desc'),
+            inline=False
+        )
+        
+        embed.add_field(
+            name=translations.get_text(guild_id, 'help_antialt'),
+            value=translations.get_text(guild_id, 'help_antialt_desc'),
+            inline=False
+        )
+        
+        embed.add_field(
             name=translations.get_text(guild_id, 'help_tickets'),
             value=translations.get_text(guild_id, 'help_tickets_desc'),
             inline=False
@@ -44,20 +56,8 @@ class SlashCommands(commands.Cog):
         )
         
         embed.add_field(
-            name=translations.get_text(guild_id, 'help_fun'),
-            value=translations.get_text(guild_id, 'help_fun_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_polls_roles'),
-            value=translations.get_text(guild_id, 'help_polls_roles_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_giveaways'),
-            value=translations.get_text(guild_id, 'help_giveaways_desc'),
+            name=translations.get_text(guild_id, 'help_engagement'),
+            value=translations.get_text(guild_id, 'help_engagement_desc'),
             inline=False
         )
         

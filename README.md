@@ -134,15 +134,16 @@ python main.py
 **Note:** All key commands support both `!` prefix and `/` slash commands for Discord's Active Developer badge!
 
 ### Help Command
-Both `!help` and `/help` now include all 28 commands organized by category:
-- **📊 Information Systems** - serverinfo, botinfo, userinfo, support, webpage
-- **🔐 Security & Verification** - setupverify, setaltage
-- **⚔️ Moderation Matrix** - ban, kick, mute, unmute, tempmute, purge, warn, lock, unlock
-- **🧠 AI Neural Link** - Mention the bot anywhere for AI chat
-- **🎮 Entertainment Systems** - Games and fun commands
-- **🎁 Engagement Protocols** - Polls, giveaways, tickets, roles
-- **🏷️ Name Automation** - setprefix, removeprefix, viewprefixes
-- **🌐 System Configuration** - Language, logging, webhook, ping
+Both `!help` and `/help` now include all 28 slash commands organized by category:
+- **📊 INFORMATION SYSTEMS** - `/serverinfo`, `/botinfo`, `/userinfo`, `/support`, `/webpage`
+- **🔐 SECURITY & VERIFICATION** - `/setupverify`, `/setlog`
+- **🛡️ ANTI-ALT SYSTEM** - Auto-detects new accounts, `/setaltage`
+- **⚔️ MODERATION MATRIX** - `/ban`, `/kick`, `/mute`, `/unmute`, `/tempmute`, `/purge`, `/warn`, `/lock`, `/unlock`
+- **🧠 AI NEURAL LINK** - @mention the bot anywhere for AI chat
+- **🎮 ENTERTAINMENT SYSTEMS** - `/rps`, `/tictactoe`, `/meme`, `/8ball`, `/coinflip`, `/dice`
+- **🎁 ENGAGEMENT PROTOCOLS** - `/poll`, `/giveaway`, `/ticket`, `/createrole`
+- **🏷️ NAME AUTOMATION** - `/setprefix`, `/removeprefix`, `/viewprefixes`
+- **🌐 SYSTEM CONFIGURATION** - `/setlang`, `/setwebhook`, `/ping`
 
 ### Setup Commands (Admin Only)
 - `!setlog #channel` or `/setlog` - Set the channel for bot logs
