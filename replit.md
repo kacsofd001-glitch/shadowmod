@@ -36,7 +36,8 @@ All features use Discord embeds and button components for a modern user experien
 ├── config.py            # Configuration management
 ├── translations.py      # Multilanguage translation system
 ├── templates/           # HTML templates for web dashboard
-│   └── index.html       # Futuristic stats page
+│   ├── index.html       # Futuristic stats page
+│   └── help.html        # Command documentation page
 ├── static/              # Static assets for web server
 │   ├── css/style.css    # Cyberpunk neon theme styles
 │   └── js/script.js     # Interactive dashboard animations
@@ -69,6 +70,7 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **📖 HELP PAGE** - Created shadowmod.net/help with full command documentation in futuristic theme, linked in !help, /help, /botinfo, and dashboard
 - **🌐 CUSTOM DOMAIN** - Bot now uses shadowmod.net as custom domain for web dashboard
 - **🌐 DASHBOARD PATH UPDATE** - Web dashboard moved to `/dashboard` path with automatic redirect from root for backward compatibility
 - **🔧 HELP COMMAND UPDATE** - Added anti-alt system section, standardized all commands with slash notation, reorganized categories for clarity
