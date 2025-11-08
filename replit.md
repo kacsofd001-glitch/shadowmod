@@ -55,6 +55,7 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **Enhanced AI Chat** - Bot now responds when mentioned anywhere, not just in configured channels
 - **Added verification system** - Button-based member verification with anti-alt protection (now 20 slash commands!)
 - **Added /purge command** - Bulk message deletion (1-100 messages) with multilingual support
 - **Added AI Chat Assistant** - OpenAI-powered responses in designated channels with language support (en/hu)

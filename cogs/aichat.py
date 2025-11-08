@@ -90,22 +90,35 @@ class AIChat(commands.Cog):
         ai_channels = cfg.get('ai_chat_channels', {})
         channel_id = str(message.channel.id)
         
-        if channel_id not in ai_channels:
+        is_bot_mentioned = self.bot.user.mentioned_in(message) and not message.mention_everyone
+        is_ai_channel = channel_id in ai_channels
+        
+        if not is_bot_mentioned and not is_ai_channel:
             return
         
-        channel_config = ai_channels[channel_id]
-        
-        if str(message.guild.id) != channel_config.get('guild_id'):
-            return
-        
-        if not channel_config.get('enabled', False):
-            return
+        if is_ai_channel:
+            channel_config = ai_channels[channel_id]
+            
+            if str(message.guild.id) != channel_config.get('guild_id'):
+                return
+            
+            if not channel_config.get('enabled', False):
+                return
+            
+            ai_language = channel_config.get('language', 'en')
+        else:
+            guild_lang = get_guild_language(str(message.guild.id))
+            ai_language = guild_lang if guild_lang in ['en', 'hu'] else 'en'
         
         async with message.channel.typing():
             try:
+                clean_content = message.content
+                if is_bot_mentioned:
+                    clean_content = message.content.replace(f'<@{self.bot.user.id}>', '').replace(f'<@!{self.bot.user.id}>', '').strip()
+                
                 response_text = await self.get_ai_response(
-                    message.content,
-                    channel_config.get('language', 'en')
+                    clean_content,
+                    ai_language
                 )
                 
                 if len(response_text) > 2000:

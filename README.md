@@ -192,6 +192,8 @@ python main.py
 ```
 **Admin only.** Enable AI chat in specific channels! The bot will respond to all messages in configured channels with AI-powered responses in the selected language.
 
+**✨ NEW: Mention Feature!** You can also mention the bot anywhere in any channel (e.g., `@YourBot hello!`) and it will respond with AI-powered responses in your server's language (English or Hungarian)!
+
 ### Verification System (NEW! 🔐)
 ```
 /setupverify <#channel> <@roles_to_add> <@roles_to_remove>  - Setup member verification
