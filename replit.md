@@ -70,6 +70,7 @@ All features use Discord embeds and button components for a modern user experien
 4. Recommended permissions: Administrator (or manage_channels, ban_members, kick_members, manage_roles, manage_messages)
 
 ## Recent Changes (November 2025)
+- **🔗 QUICK LINKS & OWNER PROFILE** - Added support server, bot invite links, and developer profile section to both dashboard and help page
 - **📖 HELP PAGE** - Created shadowmod.net/help with full command documentation in futuristic theme, linked in !help, /help, /botinfo, and dashboard
 - **🌐 CUSTOM DOMAIN** - Bot now uses shadowmod.net as custom domain for web dashboard
 - **🌐 DASHBOARD PATH UPDATE** - Web dashboard moved to `/dashboard` path with automatic redirect from root for backward compatibility
