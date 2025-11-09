@@ -513,18 +513,18 @@ body {
     
     /* Mobile Navigation */
     .navbar {
-        padding: 10px 0;
+        padding: 12px 0;
     }
     
     .nav-container {
-        gap: 10px;
+        gap: 12px;
         padding: 0 10px;
     }
     
     .nav-link {
-        font-size: 0.9em;
-        padding: 10px 16px;
-        min-height: 40px;
+        font-size: 1em;
+        padding: 14px 20px;
+        min-height: 48px;
     }
     
     .lang-toggle-container {
@@ -550,9 +550,9 @@ body {
 @media (max-width: 480px) {
     /* Extra small mobile screens */
     .nav-link {
-        font-size: 0.8em;
-        padding: 8px 12px;
-        min-height: 36px;
+        font-size: 1.2em;
+        padding: 12px 16px;
+        min-height: 44px;
     }
     
     .nav-link span {
@@ -560,6 +560,6 @@ body {
     }
     
     .nav-container {
-        gap: 8px;
+        gap: 10px;
     }
 }
