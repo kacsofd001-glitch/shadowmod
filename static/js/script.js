@@ -1,23 +1,25 @@
-// Auto-refresh stats every 30 seconds
-setInterval(async () => {
-    try {
-        const response = await fetch('/api/stats');
-        const data = await response.json();
-        
-        // Update stats if they've changed
-        updateStat('guilds', data.guilds);
-        updateStat('users', data.users);
-        updateStat('channels', data.channels);
-        
-        // Update uptime
-        const uptimeStr = formatUptime(data.uptime_seconds);
-        const uptimeElements = document.querySelectorAll('.stat-card:nth-child(4) .stat-value');
-        uptimeElements.forEach(el => el.textContent = uptimeStr);
-        
-    } catch (error) {
-        console.error('Failed to fetch stats:', error);
-    }
-}, 30000);
+// Auto-refresh stats every 30 seconds (prevent multiple intervals)
+if (!window.statsRefreshInterval) {
+    window.statsRefreshInterval = setInterval(async () => {
+        try {
+            const response = await fetch('/api/stats');
+            const data = await response.json();
+            
+            // Update stats if they've changed
+            updateStat('guilds', data.guilds);
+            updateStat('users', data.users);
+            updateStat('channels', data.channels);
+            
+            // Update uptime
+            const uptimeStr = formatUptime(data.uptime_seconds);
+            const uptimeElements = document.querySelectorAll('.stat-card:nth-child(4) .stat-value');
+            uptimeElements.forEach(el => el.textContent = uptimeStr);
+            
+        } catch (error) {
+            console.error('Failed to fetch stats:', error);
+        }
+    }, 30000);
+}
 
 function updateStat(statName, value) {
     const statMap = {
