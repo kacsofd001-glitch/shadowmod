@@ -71,6 +71,13 @@ body {
     margin-bottom: 60px;
     position: relative;
     z-index: 10;
+    border: none !important;
+    outline: none !important;
+}
+
+.header::before,
+.header::after {
+    display: none !important;
 }
 
 .logo-container {
