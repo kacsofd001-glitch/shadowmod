@@ -63,15 +63,28 @@ class Logging(commands.Cog):
     
     @commands.Cog.listener()
     async def on_member_join(self, member):
+        cfg = config.load_config()
+        min_age_days = cfg.get('min_account_age_days', 7)
+        
+        account_age = datetime.now(timezone.utc) - member.created_at
+        age_in_days = account_age.days
+        
+        is_alt = age_in_days < min_age_days
+        
         embed = discord.Embed(
-            title="📥 Member Joined",
+            title="🚨 Possible Alt Account Detected - Member Joined" if is_alt else "📥 Member Joined",
             description=f"**User:** {member.mention} ({member})",
-            color=0x00F3FF,
+            color=0xFF006E if is_alt else 0x00F3FF,
             timestamp=datetime.now(timezone.utc)
         )
         embed.add_field(
             name="Account Created",
-            value=f"{member.created_at.strftime('%Y-%m-%d')}",
+            value=f"{member.created_at.strftime('%Y-%m-%d %H:%M:%S')} UTC",
+            inline=True
+        )
+        embed.add_field(
+            name="Account Age",
+            value=f"{age_in_days} days old" + (f" ⚠️ (Required: {min_age_days}+ days)" if is_alt else ""),
             inline=True
         )
         embed.set_thumbnail(url=member.display_avatar.url)

@@ -11,41 +11,11 @@ class AntiAlt(commands.Cog):
     async def on_member_join(self, member):
         cfg = config.load_config()
         min_age_days = cfg.get('min_account_age_days', 7)
-        log_channel_id = cfg.get('log_channel_id')
         
         account_age = datetime.now(timezone.utc) - member.created_at
         age_in_days = account_age.days
         
         if age_in_days < min_age_days:
-            embed = discord.Embed(
-                title="🚨 Possible Alt Account Detected",
-                description=f"**User:** {member.mention} ({member})\n**ID:** {member.id}",
-                color=0xFF006E,
-                timestamp=datetime.now(timezone.utc)
-            )
-            embed.add_field(
-                name="Account Created",
-                value=f"{member.created_at.strftime('%Y-%m-%d %H:%M:%S')} UTC",
-                inline=False
-            )
-            embed.add_field(
-                name="Account Age",
-                value=f"{age_in_days} days old",
-                inline=True
-            )
-            embed.add_field(
-                name="Required Age",
-                value=f"{min_age_days} days",
-                inline=True
-            )
-            embed.set_thumbnail(url=member.display_avatar.url)
-            embed.set_footer(text=f"User ID: {member.id}")
-            
-            if log_channel_id:
-                log_channel = self.bot.get_channel(log_channel_id)
-                if log_channel:
-                    await log_channel.send(embed=embed)
-            
             try:
                 welcome_embed = discord.Embed(
                     title="⚠️ Account Age Warning",
