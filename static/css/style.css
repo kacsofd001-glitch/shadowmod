@@ -80,6 +80,28 @@ body {
     display: none !important;
 }
 
+.command-button {
+    display: inline-block;
+    padding: 10px 25px;
+    background: linear-gradient(135deg, #8B00FF, #FF006E);
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(139, 0, 255, 0.4);
+    border: none !important;
+    outline: none !important;
+}
+
+.command-button:focus,
+.command-button:active,
+.command-button:visited {
+    outline: none !important;
+    border: none !important;
+    box-shadow: 0 5px 15px rgba(139, 0, 255, 0.4);
+}
+
 .logo-container {
     position: relative;
     display: inline-block;
