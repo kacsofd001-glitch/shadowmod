@@ -85,6 +85,19 @@ TRANSLATIONS = {
         'language_hungarian': 'Hungarian',
         'current_language': 'Current language',
         
+        # Admin/Owner Commands
+        'servers_title': '🌐 Server List',
+        'servers_description': 'I am in **{}** servers:',
+        'servers_footer': 'Total Servers: {}',
+        'invite_created': '🔗 Invite Created',
+        'invite_created_desc': 'Invite created for **{}**',
+        'invite_link': 'Invite Link',
+        'invite_expires': 'Expires',
+        'invite_never': 'Never',
+        'no_permission_invite': '❌ I don\'t have permission to create invites in **{}**',
+        'server_not_found': '❌ Server not found! Please provide a valid server ID.',
+        'owner_only': '❌ This command can only be used by the bot owner!',
+        
         # 8ball responses
         '8ball_responses': [
             "It is certain.", "It is decidedly so.", "Without a doubt.",
@@ -208,6 +221,19 @@ TRANSLATIONS = {
         'language_english': 'Angol',
         'language_hungarian': 'Magyar',
         'current_language': 'Jelenlegi nyelv',
+        
+        # Admin/Owner Commands
+        'servers_title': '🌐 Szerver Lista',
+        'servers_description': '**{}** szerverben vagyok:',
+        'servers_footer': 'Összes Szerver: {}',
+        'invite_created': '🔗 Meghívó Létrehozva',
+        'invite_created_desc': 'Meghívó létrehozva: **{}**',
+        'invite_link': 'Meghívó Link',
+        'invite_expires': 'Lejár',
+        'invite_never': 'Soha',
+        'no_permission_invite': '❌ Nincs jogosultságom meghívó létrehozására itt: **{}**',
+        'server_not_found': '❌ Szerver nem található! Adj meg egy érvényes szerver ID-t.',
+        'owner_only': '❌ Ezt a parancsot csak a bot tulajdonosa használhatja!',
         
         # 8ball responses
         '8ball_responses': [
