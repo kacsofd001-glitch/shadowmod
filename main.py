@@ -159,7 +159,7 @@ async def help_command(ctx):
         inline=False
     )
     
-    embed.set_footer(text="⚡ Made by MoonlightVFX | 46 Slash Commands Ready ⚡")
+    embed.set_footer(text="⚡ Made by MoonlightVFX | 48 Slash Commands Ready ⚡")
     embed.set_thumbnail(url=ctx.bot.user.display_avatar.url)
     
     await ctx.send(embed=embed)

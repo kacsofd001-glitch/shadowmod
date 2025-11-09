@@ -79,7 +79,7 @@ class SlashCommands(commands.Cog):
             inline=False
         )
         
-        embed.set_footer(text="⚡ Made by MoonlightVFX | 46 Slash Commands Ready ⚡")
+        embed.set_footer(text="⚡ Made by MoonlightVFX | 48 Slash Commands Ready ⚡")
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
     
