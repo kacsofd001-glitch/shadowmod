@@ -70,6 +70,7 @@ body {
     text-align: center;
     margin-bottom: 60px;
     position: relative;
+    z-index: 10;
 }
 
 .logo-container {
@@ -143,13 +144,14 @@ body {
     padding: 10px 30px;
     border-radius: 30px;
     font-weight: 600;
-    border: 2px solid var(--neon-cyan);
+    border: none;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,243,255,0.3);
 }
 
 .status-badge.online {
-    background: linear-gradient(90deg, rgba(0,243,255,0.1), rgba(0,243,255,0.05));
+    background: linear-gradient(90deg, rgba(0,243,255,0.2), rgba(0,243,255,0.1));
     color: var(--neon-cyan);
 }
 
@@ -176,6 +178,8 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 30px;
     margin-bottom: 80px;
+    position: relative;
+    z-index: 1;
 }
 
 .stat-card {
