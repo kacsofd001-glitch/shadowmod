@@ -77,6 +77,7 @@ All features use Discord embeds and button components for a modern user experien
 6. **Music System:** Uses public Lavalink nodes (automatically connects to available nodes). No additional setup required for basic music functionality.
 
 ## Recent Changes (November 2025)
+- **🎨 UI/UX IMPROVEMENTS** - Reduced excessive glow effects on text, slowed down and dimmed animated starfield background for better eye comfort, added dark text outlines/shadows for improved readability against all backgrounds. Website is now easier on the eyes while maintaining cyberpunk aesthetic.
 - **📬 SERVER JOIN NOTIFICATIONS** - Bot now sends DM notification to owner when invited to new servers. Includes server info (name, ID, member count, owner details, creation date) and updated total server count.
 - **📋 LOGGING OPTIMIZATION** - Fixed duplicate logging when members join. Consolidated logging.py and antialt.py into single comprehensive message that shows join info + alt detection warning (if applicable) in one embed. Cleaner log channel with no duplication.
 - **🔧 ADMIN COMMANDS** - Added owner-only server management commands: /servers (list all servers with name/ID) and /createinvite <server_id> (create permanent invite). Total slash commands: 48
