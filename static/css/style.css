@@ -507,8 +507,13 @@ body {
         font-size: 2.5rem;
     }
     
+    .header {
+        margin-bottom: 80px;
+    }
+    
     .stats-grid {
         grid-template-columns: 1fr;
+        margin-top: 40px;
     }
     
     .features-grid {
