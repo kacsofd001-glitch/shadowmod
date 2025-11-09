@@ -25,7 +25,7 @@ body {
     min-height: 100vh;
 }
 
-/* Animated Starfield Background */
+/* Animated Starfield Background - Reduced intensity */
 .stars, .stars2, .stars3 {
     position: fixed;
     top: 0;
@@ -37,18 +37,18 @@ body {
 }
 
 .stars {
-    background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="2" height="2"><circle cx="1" cy="1" r="1" fill="white" opacity="0.8"/></svg>') repeat;
-    animation: starsMove 50s linear infinite;
+    background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="2" height="2"><circle cx="1" cy="1" r="1" fill="white" opacity="0.3"/></svg>') repeat;
+    animation: starsMove 120s linear infinite;
 }
 
 .stars2 {
-    background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="3" height="3"><circle cx="1.5" cy="1.5" r="1" fill="%2300f3ff" opacity="0.5"/></svg>') repeat;
-    animation: starsMove 100s linear infinite;
+    background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="3" height="3"><circle cx="1.5" cy="1.5" r="1" fill="%2300f3ff" opacity="0.2"/></svg>') repeat;
+    animation: starsMove 180s linear infinite;
 }
 
 .stars3 {
-    background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><circle cx="2" cy="2" r="1.5" fill="%238b00ff" opacity="0.3"/></svg>') repeat;
-    animation: starsMove 150s linear infinite;
+    background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><circle cx="2" cy="2" r="1.5" fill="%238b00ff" opacity="0.15"/></svg>') repeat;
+    animation: starsMove 240s linear infinite;
 }
 
 @keyframes starsMove {
@@ -85,7 +85,7 @@ body {
     width: 300px;
     height: 300px;
     background: radial-gradient(circle, var(--neon-cyan) 0%, transparent 70%);
-    opacity: 0.3;
+    opacity: 0.1;
     animation: pulse 3s ease-in-out infinite;
 }
 
@@ -101,11 +101,12 @@ body {
     position: relative;
     color: var(--neon-cyan);
     text-shadow: 
+        0 0 5px var(--neon-cyan),
         0 0 10px var(--neon-cyan),
-        0 0 20px var(--neon-cyan),
-        0 0 40px var(--neon-cyan),
-        0 0 80px var(--neon-cyan);
+        2px 2px 4px rgba(0, 0, 0, 0.8),
+        -1px -1px 2px rgba(0, 0, 0, 0.8);
     animation: glitch 5s infinite;
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes glitch {
@@ -132,6 +133,9 @@ body {
     letter-spacing: 4px;
     text-transform: uppercase;
     margin-bottom: 20px;
+    text-shadow: 
+        1px 1px 3px rgba(0, 0, 0, 0.9),
+        -1px -1px 2px rgba(0, 0, 0, 0.9);
 }
 
 .status-badge {
@@ -218,7 +222,10 @@ body {
     font-weight: 700;
     color: var(--neon-cyan);
     margin-bottom: 10px;
-    text-shadow: 0 0 10px var(--neon-cyan);
+    text-shadow: 
+        0 0 5px var(--neon-cyan),
+        2px 2px 4px rgba(0, 0, 0, 0.8);
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.5);
 }
 
 .stat-label {
@@ -226,6 +233,9 @@ body {
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 2px;
+    text-shadow: 
+        1px 1px 2px rgba(0, 0, 0, 0.9),
+        -1px -1px 2px rgba(0, 0, 0, 0.9);
 }
 
 /* Features Section */
@@ -243,7 +253,10 @@ body {
     justify-content: center;
     gap: 20px;
     color: var(--neon-pink);
-    text-shadow: 0 0 10px var(--neon-pink);
+    text-shadow: 
+        0 0 5px var(--neon-pink),
+        2px 2px 4px rgba(0, 0, 0, 0.8);
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.5);
 }
 
 .cyber-line {
@@ -282,11 +295,17 @@ body {
     font-size: 1.3rem;
     margin-bottom: 10px;
     color: var(--neon-purple);
+    text-shadow: 
+        1px 1px 3px rgba(0, 0, 0, 0.9),
+        -1px -1px 2px rgba(0, 0, 0, 0.9);
 }
 
 .feature-card p {
     color: var(--text-secondary);
     line-height: 1.6;
+    text-shadow: 
+        1px 1px 2px rgba(0, 0, 0, 0.9),
+        -1px -1px 2px rgba(0, 0, 0, 0.9);
 }
 
 /* Tech Stack */
