@@ -20,8 +20,9 @@ A comprehensive Discord bot built with Python featuring a cyberpunk neon theme a
 - Giveaway system with automatic winner selection
 - Name automation with role-based prefixes
 - **Dual prefix support (! and /) for active developer badge**
-- **46 slash commands for Active Developer Badge maintenance**
+- **48 slash commands for Active Developer Badge maintenance**
 - **Music slash commands** - All music features now support both ! and / prefixes
+- **Admin Commands** - Owner-only server management (list servers, create invites)
 - **Verification system** - Button-based verification with anti-alt checks
 - **Information Commands** - Server info, bot info, user info with badges
 - **Support & Web Links** - Quick access to support server and live dashboard
@@ -60,7 +61,8 @@ All features use Discord embeds and button components for a modern user experien
 │   ├── verify.py        # Member verification with anti-alt checks
 │   ├── info.py          # Information commands (serverinfo, botinfo, userinfo, etc)
 │   ├── music.py         # Music player (YouTube, Spotify, SoundCloud)
-│   └── slash_commands.py  # Slash command implementations (46 commands total)
+│   ├── admin.py         # Owner-only admin commands (servers, createinvite)
+│   └── slash_commands.py  # Slash command implementations (48 commands total)
 ├── .env                 # Environment variables (DISCORD_TOKEN)
 ├── bot_config.json      # Runtime configuration (auto-generated)
 └── README.md            # User documentation
@@ -75,8 +77,9 @@ All features use Discord embeds and button components for a modern user experien
 6. **Music System:** Uses public Lavalink nodes (automatically connects to available nodes). No additional setup required for basic music functionality.
 
 ## Recent Changes (November 2025)
+- **🔧 ADMIN COMMANDS** - Added owner-only server management commands: /servers (list all servers with name/ID) and /createinvite <server_id> (create permanent invite). Total slash commands: 48
 - **🎵 LAVALINK INTEGRATION** - Migrated music system to Lavalink for cloud environment compatibility. Uses public Lavalink nodes with automatic fallback. Supports YouTube, Spotify (metadata), and SoundCloud playback via wavelink library.
-- **🎵 MUSIC SLASH COMMANDS** - Added 9 music slash commands (/play, /pause, /resume, /skip, /stop, /queue, /nowplaying, /loop, /volume). Total slash commands: 46
+- **🎵 MUSIC SLASH COMMANDS** - Added 9 music slash commands (/play, /pause, /resume, /skip, /stop, /queue, /nowplaying, /loop, /volume)
 - **📖 UPDATED HELP SYSTEM** - Refreshed !help, /help, and help.html to prominently display music platform support (YouTube, Spotify, SoundCloud) with dual prefix info
 - **🎵 MUSIC SYSTEM** - Complete music player with YouTube, Spotify, and SoundCloud support via Lavalink. Features: play, pause, resume, skip, stop, queue, nowplaying, loop, and volume commands
 - **👤 CREATOR BRANDING** - Updated all "v2.0 FUTURISTIC" references to "Made by MoonlightVFX" across website, bot commands, and documentation
