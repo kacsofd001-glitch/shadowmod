@@ -77,6 +77,7 @@ All features use Discord embeds and button components for a modern user experien
 6. **Music System:** Uses public Lavalink nodes (automatically connects to available nodes). No additional setup required for basic music functionality.
 
 ## Recent Changes (November 2025)
+- **📋 LOGGING OPTIMIZATION** - Fixed duplicate logging when members join. Consolidated logging.py and antialt.py into single comprehensive message that shows join info + alt detection warning (if applicable) in one embed. Cleaner log channel with no duplication.
 - **🔧 ADMIN COMMANDS** - Added owner-only server management commands: /servers (list all servers with name/ID) and /createinvite <server_id> (create permanent invite). Total slash commands: 48
 - **🎵 LAVALINK INTEGRATION** - Migrated music system to Lavalink for cloud environment compatibility. Uses public Lavalink nodes with automatic fallback. Supports YouTube, Spotify (metadata), and SoundCloud playback via wavelink library.
 - **🎵 MUSIC SLASH COMMANDS** - Added 9 music slash commands (/play, /pause, /resume, /skip, /stop, /queue, /nowplaying, /loop, /volume)
