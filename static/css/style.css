@@ -376,39 +376,62 @@ body {
 }
 
 .nav-link {
+    display: inline-block;
     color: #00F3FF;
     text-decoration: none;
     font-weight: bold;
     font-size: 1.1em;
-    padding: 8px 20px;
+    padding: 12px 28px;
     border-radius: 15px;
     transition: all 0.3s ease;
     background: rgba(0, 243, 255, 0.1);
-    border: 1px solid rgba(0, 243, 255, 0.3);
+    border: 2px solid rgba(0, 243, 255, 0.3);
     white-space: nowrap;
+    cursor: pointer;
+    min-height: 44px;
+    line-height: 1.5;
 }
 
 .nav-link:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 243, 255, 0.4);
+    border-color: rgba(0, 243, 255, 0.6);
+    background: rgba(0, 243, 255, 0.15);
 }
 
 .nav-link.pink {
     color: #FF006E;
     background: rgba(255, 0, 110, 0.1);
-    border: 1px solid rgba(255, 0, 110, 0.3);
+    border: 2px solid rgba(255, 0, 110, 0.3);
+}
+
+.nav-link.pink:hover {
+    border-color: rgba(255, 0, 110, 0.6);
+    background: rgba(255, 0, 110, 0.15);
+    box-shadow: 0 5px 15px rgba(255, 0, 110, 0.4);
 }
 
 .nav-link.purple {
     color: #8B00FF;
     background: rgba(139, 0, 255, 0.1);
-    border: 1px solid rgba(139, 0, 255, 0.3);
+    border: 2px solid rgba(139, 0, 255, 0.3);
+}
+
+.nav-link.purple:hover {
+    border-color: rgba(139, 0, 255, 0.6);
+    background: rgba(139, 0, 255, 0.15);
+    box-shadow: 0 5px 15px rgba(139, 0, 255, 0.4);
 }
 
 .nav-link.gradient {
     color: #00F3FF;
     background: linear-gradient(135deg, #FF006E, #8B00FF);
-    border: 1px solid rgba(255, 0, 110, 0.5);
+    border: 2px solid rgba(255, 0, 110, 0.5);
+}
+
+.nav-link.gradient:hover {
+    border-color: rgba(255, 0, 110, 0.8);
+    box-shadow: 0 5px 15px rgba(255, 0, 110, 0.6);
 }
 
 .lang-toggle-container {
@@ -499,8 +522,9 @@ body {
     }
     
     .nav-link {
-        font-size: 0.85em;
-        padding: 6px 12px;
+        font-size: 0.9em;
+        padding: 10px 16px;
+        min-height: 40px;
     }
     
     .lang-toggle-container {
@@ -526,8 +550,9 @@ body {
 @media (max-width: 480px) {
     /* Extra small mobile screens */
     .nav-link {
-        font-size: 0.75em;
-        padding: 5px 10px;
+        font-size: 0.8em;
+        padding: 8px 12px;
+        min-height: 36px;
     }
     
     .nav-link span {
