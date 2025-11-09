@@ -66,7 +66,7 @@ class DiscordBot(commands.Bot):
     
     def update_stats_file(self):
         """Update bot stats for web server"""
-        total_members = sum(guild.member_count for guild in self.guilds)
+        total_members = sum(guild.member_count or 0 for guild in self.guilds)
         total_channels = sum(len(guild.channels) for guild in self.guilds)
         
         stats = {
@@ -150,6 +150,12 @@ async def help_command(ctx):
     embed.add_field(
         name="🌐 SYSTEM CONFIGURATION",
         value="`/setlang <en/hu>` - Language switch\n`/setwebhook <url>` - Logging webhook\n`/ping` - Check latency",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="👑 OWNER COMMANDS (Bot Owner Only)",
+        value="`/servers` - List all servers (name + ID)\n`/createinvite <server_id>` - Create permanent invite",
         inline=False
     )
     

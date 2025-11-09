@@ -36,7 +36,8 @@ class Admin(commands.Cog):
                 )
         
         embed.set_footer(text=get_text(guild_id, 'servers_footer', len(self.bot.guilds)))
-        embed.set_thumbnail(url=self.bot.user.avatar.url if self.bot.user.avatar else None)
+        if self.bot.user.avatar:
+            embed.set_thumbnail(url=self.bot.user.avatar.url)
         
         await ctx.send(embed=embed)
     
@@ -48,12 +49,8 @@ class Admin(commands.Cog):
     
     @commands.command(name='createinvite')
     @is_bot_owner()
-    async def create_invite(self, ctx, server_id: int = None):
+    async def create_invite(self, ctx, server_id: int):
         guild_id = ctx.guild.id if ctx.guild else None
-        
-        if server_id is None:
-            await ctx.send(get_text(guild_id, 'server_not_found'))
-            return
         
         guild = self.bot.get_guild(server_id)
         
