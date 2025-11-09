@@ -79,7 +79,8 @@ class Admin(commands.Cog):
             )
             embed.add_field(name=get_text(guild_id, 'invite_link'), value=invite.url, inline=False)
             embed.add_field(name=get_text(guild_id, 'invite_expires'), value=get_text(guild_id, 'invite_never'), inline=True)
-            embed.set_thumbnail(url=guild.icon.url if guild.icon else None)
+            if guild.icon:
+                embed.set_thumbnail(url=guild.icon.url)
             
             await ctx.send(embed=embed)
         
