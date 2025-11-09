@@ -515,12 +515,16 @@ body {
     }
     
     .header {
-        margin-bottom: 80px;
+        margin-bottom: 100px;
     }
     
     .stats-grid {
         grid-template-columns: 1fr;
-        margin-top: 40px;
+        margin-top: 60px;
+    }
+    
+    .stat-card {
+        border-color: rgba(139,0,255,0.3);
     }
     
     .features-grid {
