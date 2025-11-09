@@ -130,6 +130,8 @@ TRANSLATIONS = {
         'help_nameauto_desc': '`/setprefix <@role> <prefix>` - Set role prefix\n`/removeprefix <@role>` - Remove role prefix\n`/viewprefixes` - View all prefixes',
         'help_config': '🌐 System Configuration',
         'help_config_desc': '`/setlang <en/hu>` - Language switch\n`/setwebhook <url>` - Logging system\n`/ping` - Latency check',
+        'help_admin': '👑 Owner Commands',
+        'help_admin_desc': '`/servers` - List all servers (name + ID)\n`/createinvite <server_id>` - Create permanent invite\n*Bot Owner Only*',
         'no_reason_provided': 'No reason provided',
         
         # Errors
@@ -267,6 +269,8 @@ TRANSLATIONS = {
         'help_nameauto_desc': '`/setprefix <@role> <prefix>` - Szerep prefix beállítása\n`/removeprefix <@role>` - Szerep prefix eltávolítása\n`/viewprefixes` - Összes prefix megtekintése',
         'help_config': '🌐 Rendszer Konfiguráció',
         'help_config_desc': '`/setlang <en/hu>` - Nyelv váltás\n`/setwebhook <url>` - Naplózó rendszer\n`/ping` - Késleltetés ellenőrzés',
+        'help_admin': '👑 Tulajdonos Parancsok',
+        'help_admin_desc': '`/servers` - Összes szerver listázása (név + ID)\n`/createinvite <server_id>` - Végleges meghívó létrehozása\n*Csak Bot Tulajdonosnak*',
         'no_reason_provided': 'Nincs megadva indok',
         
         # Errors

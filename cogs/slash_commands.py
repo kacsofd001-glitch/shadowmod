@@ -79,6 +79,12 @@ class SlashCommands(commands.Cog):
             inline=False
         )
         
+        embed.add_field(
+            name=translations.get_text(guild_id, 'help_admin'),
+            value=translations.get_text(guild_id, 'help_admin_desc'),
+            inline=False
+        )
+        
         embed.set_footer(text="⚡ Made by MoonlightVFX | 48 Slash Commands Ready ⚡")
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
