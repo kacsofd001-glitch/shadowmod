@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Shadow-MOD ✨ | Futuristic Discord Bot</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=202511092410">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=202511092430">
 </head>
 <body>
     <div class="stars"></div>
@@ -51,15 +51,14 @@
                 </h1>
             </div>
             <p class="subtitle" data-translate="subtitle">Next-Gen Discord Moderation System</p>
-            <div style="margin: 15px 0; border: none !important; outline: none !important;">
-                <a href="/help" class="command-button">
-                    📖 <span data-translate="view_all_commands">View All Commands</span>
-                </a>
-            </div>
-            <div class="status-badge {{ status }}">
+            <a href="/help" class="command-button" style="margin: 20px 0;">
+                📖 <span data-translate="view_all_commands">View All Commands</span>
+            </a>
+            <br><br>
+            <span class="status-badge {{ status }}">
                 <span class="pulse"></span>
                 <span data-translate="status_online">SYSTEM {{ status | upper }}</span>
-            </div>
+            </span>
         </header>
 
         <div class="stats-grid">
@@ -200,6 +199,6 @@
         </footer>
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}?v=202511092410"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=202511092430"></script>
 </body>
 </html>
