@@ -1410,5 +1410,333 @@ class SlashCommands(commands.Cog):
         
         await interaction.response.send_message(embed=embed)
 
+    # ==================== AUTO-MODERATION COMMANDS ====================
+    
+    @app_commands.command(name="automod", description="Configure auto-moderation system")
+    @app_commands.describe(
+        action="Action to perform",
+        setting="Setting to modify (optional)",
+        value="Value to set (optional)"
+    )
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_automod(self, interaction: discord.Interaction, action: str, setting: str = None, value: str = None):
+        automod_cog = self.bot.get_cog('AutoMod')
+        if not automod_cog:
+            await interaction.response.send_message("❌ AutoMod system not loaded!", ephemeral=True)
+            return
+        
+        settings = automod_cog.get_automod_config(interaction.guild.id)
+        
+        if action == "enable":
+            settings['enabled'] = True
+            automod_cog.save_automod_config(interaction.guild.id, settings)
+            await interaction.response.send_message("✅ Auto-moderation enabled!")
+        
+        elif action == "disable":
+            settings['enabled'] = False
+            automod_cog.save_automod_config(interaction.guild.id, settings)
+            await interaction.response.send_message("✅ Auto-moderation disabled!")
+        
+        elif action == "settings":
+            embed = discord.Embed(title="🛡️ Auto-Moderation Settings", color=0x00F3FF)
+            embed.add_field(name="Enabled", value="✅ Yes" if settings['enabled'] else "❌ No", inline=True)
+            embed.add_field(name="Spam Detection", value="✅ Yes" if settings['spam_detection'] else "❌ No", inline=True)
+            embed.add_field(name="Link Filter", value="✅ Yes" if settings['link_filter'] else "❌ No", inline=True)
+            embed.add_field(name="Caps Filter", value="✅ Yes" if settings['caps_filter'] else "❌ No", inline=True)
+            embed.add_field(name="Emoji Spam", value="✅ Yes" if settings['emoji_spam'] else "❌ No", inline=True)
+            embed.add_field(name="Punishment", value=settings['punishment'].upper(), inline=True)
+            embed.add_field(name="Bad Words", value=f"{len(settings['bad_words'])} words", inline=True)
+            await interaction.response.send_message(embed=embed)
+        
+        else:
+            await interaction.response.send_message("❌ Invalid action! Use: enable, disable, or settings", ephemeral=True)
+
+    # ==================== WELCOME/GOODBYE COMMANDS ====================
+    
+    @app_commands.command(name="setwelcome", description="Setup welcome message system")
+    @app_commands.describe(
+        channel="Channel for welcome messages",
+        message="Welcome message ({user}, {server}, {count})"
+    )
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_setwelcome(self, interaction: discord.Interaction, channel: discord.TextChannel, message: str = None):
+        welcome_cog = self.bot.get_cog('Welcome')
+        if not welcome_cog:
+            await interaction.response.send_message("❌ Welcome system not loaded!", ephemeral=True)
+            return
+        
+        settings = welcome_cog.get_welcome_config(interaction.guild.id)
+        settings['enabled'] = True
+        settings['channel_id'] = channel.id
+        if message:
+            settings['message'] = message
+        
+        welcome_cog.save_welcome_config(interaction.guild.id, settings)
+        
+        embed = discord.Embed(
+            title="✅ Welcome System Configured",
+            description=f"Welcome messages will be sent to {channel.mention}",
+            color=0x00FF00
+        )
+        embed.add_field(name="Message", value=settings['message'], inline=False)
+        await interaction.response.send_message(embed=embed)
+    
+    @app_commands.command(name="setgoodbye", description="Setup goodbye message system")
+    @app_commands.describe(
+        enabled="Enable goodbye messages",
+        message="Goodbye message ({user}, {server})"
+    )
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_setgoodbye(self, interaction: discord.Interaction, enabled: bool, message: str = None):
+        welcome_cog = self.bot.get_cog('Welcome')
+        if not welcome_cog:
+            await interaction.response.send_message("❌ Welcome system not loaded!", ephemeral=True)
+            return
+        
+        settings = welcome_cog.get_welcome_config(interaction.guild.id)
+        settings['goodbye_enabled'] = enabled
+        if message:
+            settings['goodbye_message'] = message
+        
+        welcome_cog.save_welcome_config(interaction.guild.id, settings)
+        
+        status = "enabled" if enabled else "disabled"
+        await interaction.response.send_message(f"✅ Goodbye messages {status}!")
+
+    # ==================== REACTION ROLES COMMANDS ====================
+    
+    @app_commands.command(name="reactionrole", description="Setup reaction roles")
+    @app_commands.describe(
+        message_id="Message ID to add reaction role to",
+        emoji="Emoji for the role",
+        role="Role to assign"
+    )
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_reactionrole(self, interaction: discord.Interaction, message_id: str, emoji: str, role: discord.Role):
+        rr_cog = self.bot.get_cog('ReactionRoles')
+        if not rr_cog:
+            await interaction.response.send_message("❌ Reaction Roles system not loaded!", ephemeral=True)
+            return
+        
+        try:
+            msg_id = int(message_id)
+            message = await interaction.channel.fetch_message(msg_id)
+        except:
+            await interaction.response.send_message("❌ Invalid message ID or message not found!", ephemeral=True)
+            return
+        
+        reaction_roles = rr_cog.get_reaction_roles()
+        message_key = str(msg_id)
+        
+        if message_key not in reaction_roles:
+            reaction_roles[message_key] = {}
+        
+        reaction_roles[message_key][emoji] = role.id
+        rr_cog.save_reaction_roles(reaction_roles)
+        
+        try:
+            await message.add_reaction(emoji)
+        except:
+            pass
+        
+        await interaction.response.send_message(f"✅ Reaction role added! React with {emoji} to get {role.mention}")
+
+    # ==================== LEVELING COMMANDS ====================
+    
+    @app_commands.command(name="rank", description="Check your rank and level")
+    @app_commands.describe(user="User to check (optional)")
+    async def slash_rank(self, interaction: discord.Interaction, user: discord.Member = None):
+        leveling_cog = self.bot.get_cog('Leveling')
+        if not leveling_cog:
+            await interaction.response.send_message("❌ Leveling system not loaded!", ephemeral=True)
+            return
+        
+        target = user or interaction.user
+        user_data = leveling_cog.get_user_xp(interaction.guild.id, target.id)
+        
+        xp_needed = leveling_cog.xp_for_level(user_data['level'] + 1) - user_data['xp']
+        
+        embed = discord.Embed(
+            title=f"📊 {target.name}'s Rank",
+            color=0x00F3FF
+        )
+        embed.add_field(name="Level", value=f"⭐ {user_data['level']}", inline=True)
+        embed.add_field(name="XP", value=f"{user_data['xp']} / {leveling_cog.xp_for_level(user_data['level'] + 1)}", inline=True)
+        embed.add_field(name="Total XP", value=f"{user_data['total_xp']}", inline=True)
+        embed.add_field(name="XP Until Next Level", value=f"{xp_needed} XP", inline=False)
+        embed.set_thumbnail(url=target.display_avatar.url)
+        
+        await interaction.response.send_message(embed=embed)
+    
+    @app_commands.command(name="leaderboard", description="Show server XP leaderboard")
+    async def slash_leaderboard(self, interaction: discord.Interaction):
+        leveling_cog = self.bot.get_cog('Leveling')
+        if not leveling_cog:
+            await interaction.response.send_message("❌ Leveling system not loaded!", ephemeral=True)
+            return
+        
+        cfg = config.load_config()
+        guild_data = cfg.get('user_xp', {}).get(str(interaction.guild.id), {})
+        
+        # Sort by total XP
+        sorted_users = sorted(
+            guild_data.items(),
+            key=lambda x: x[1].get('total_xp', 0),
+            reverse=True
+        )[:10]
+        
+        embed = discord.Embed(
+            title=f"🏆 {interaction.guild.name} Leaderboard",
+            color=0xFFD700
+        )
+        
+        for i, (user_id, data) in enumerate(sorted_users, 1):
+            user = interaction.guild.get_member(int(user_id))
+            if user:
+                embed.add_field(
+                    name=f"{i}. {user.name}",
+                    value=f"Level {data['level']} • {data['total_xp']} total XP",
+                    inline=False
+                )
+        
+        if not sorted_users:
+            embed.description = "No data yet! Start chatting to earn XP!"
+        
+        await interaction.response.send_message(embed=embed)
+
+    # ==================== REMINDER COMMANDS ====================
+    
+    @app_commands.command(name="remind", description="Set a reminder")
+    @app_commands.describe(
+        time="Time (e.g., 1h, 30m, 2d)",
+        message="Reminder message"
+    )
+    async def slash_remind(self, interaction: discord.Interaction, time: str, message: str):
+        reminders_cog = self.bot.get_cog('Reminders')
+        if not reminders_cog:
+            await interaction.response.send_message("❌ Reminders system not loaded!", ephemeral=True)
+            return
+        
+        # Parse time
+        time_units = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
+        
+        try:
+            time_amount = int(time[:-1])
+            time_unit = time[-1]
+        except:
+            await interaction.response.send_message("❌ Invalid time format! Use: 10s, 5m, 2h, 1d", ephemeral=True)
+            return
+        
+        if time_unit not in time_units:
+            await interaction.response.send_message("❌ Invalid time format! Use: 10s, 5m, 2h, 1d", ephemeral=True)
+            return
+        
+        seconds = time_amount * time_units[time_unit]
+        remind_at = datetime.now(timezone.utc) + timedelta(seconds=seconds)
+        
+        reminder_id = reminders_cog.add_reminder(
+            interaction.user.id,
+            interaction.channel.id,
+            interaction.guild.id,
+            message,
+            remind_at
+        )
+        
+        embed = discord.Embed(
+            title="⏰ Reminder Set!",
+            description=f"I'll remind you in {time}",
+            color=0x00F3FF
+        )
+        embed.add_field(name="Message", value=message, inline=False)
+        embed.add_field(name="Time", value=remind_at.strftime('%Y-%m-%d %H:%M UTC'), inline=False)
+        
+        await interaction.response.send_message(embed=embed)
+
+    # ==================== AFK COMMAND ====================
+    
+    @app_commands.command(name="afk", description="Set your AFK status")
+    @app_commands.describe(reason="Reason for being AFK")
+    async def slash_afk(self, interaction: discord.Interaction, reason: str = "AFK"):
+        afk_cog = self.bot.get_cog('AFK')
+        if not afk_cog:
+            await interaction.response.send_message("❌ AFK system not loaded!", ephemeral=True)
+            return
+        
+        afk_cog.set_afk(interaction.user.id, reason)
+        
+        await interaction.response.send_message(f"💤 You are now AFK: {reason}")
+
+    # ==================== SERVER STATS COMMANDS ====================
+    
+    @app_commands.command(name="serverstats", description="Show server statistics")
+    async def slash_serverstats(self, interaction: discord.Interaction):
+        stats_cog = self.bot.get_cog('ServerStats')
+        if not stats_cog:
+            await interaction.response.send_message("❌ Server Stats system not loaded!", ephemeral=True)
+            return
+        
+        stats = stats_cog.get_server_stats(interaction.guild.id)
+        
+        # Get top 5 most active users
+        top_users = sorted(
+            stats.get('most_active_users', {}).items(),
+            key=lambda x: x[1],
+            reverse=True
+        )[:5]
+        
+        embed = discord.Embed(
+            title=f"📊 {interaction.guild.name} Statistics",
+            color=0x00F3FF
+        )
+        embed.add_field(name="Total Messages", value=f"{stats.get('total_messages', 0):,}", inline=True)
+        embed.add_field(name="Members", value=f"{interaction.guild.member_count}", inline=True)
+        embed.add_field(name="Channels", value=f"{len(interaction.guild.channels)}", inline=True)
+        
+        if top_users:
+            users_text = "\n".join([
+                f"{i+1}. <@{user_id}>: {count} msgs"
+                for i, (user_id, count) in enumerate(top_users)
+            ])
+            embed.add_field(name="🔥 Most Active Users", value=users_text, inline=False)
+        
+        await interaction.response.send_message(embed=embed)
+
+    # ==================== SUGGESTION COMMANDS ====================
+    
+    @app_commands.command(name="suggest", description="Submit a suggestion")
+    @app_commands.describe(suggestion="Your suggestion")
+    async def slash_suggest(self, interaction: discord.Interaction, suggestion: str):
+        suggestions_cog = self.bot.get_cog('Suggestions')
+        if not suggestions_cog:
+            await interaction.response.send_message("❌ Suggestions system not loaded!", ephemeral=True)
+            return
+        
+        suggestion_id = await suggestions_cog.create_suggestion(
+            interaction.guild,
+            interaction.user,
+            suggestion
+        )
+        
+        if suggestion_id:
+            await interaction.response.send_message(f"✅ Your suggestion has been submitted! (ID: #{suggestion_id})", ephemeral=True)
+        else:
+            await interaction.response.send_message("❌ Suggestions are not set up on this server!", ephemeral=True)
+    
+    @app_commands.command(name="setupsuggestions", description="Setup suggestion system")
+    @app_commands.describe(channel="Channel for suggestions")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_setupsuggestions(self, interaction: discord.Interaction, channel: discord.TextChannel):
+        suggestions_cog = self.bot.get_cog('Suggestions')
+        if not suggestions_cog:
+            await interaction.response.send_message("❌ Suggestions system not loaded!", ephemeral=True)
+            return
+        
+        settings = suggestions_cog.get_suggestion_config(interaction.guild.id)
+        settings['enabled'] = True
+        settings['channel_id'] = channel.id
+        suggestions_cog.save_suggestion_config(interaction.guild.id, settings)
+        
+        await interaction.response.send_message(f"✅ Suggestions channel set to {channel.mention}!")
+
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))
