@@ -77,6 +77,7 @@ All features use Discord embeds and button components for a modern user experien
 6. **Music System:** Uses public Lavalink nodes (automatically connects to available nodes). No additional setup required for basic music functionality.
 
 ## Recent Changes (November 2025)
+- **📖 HELP PAGE UPDATE** - Added /help command to the Information Systems section of the command documentation page (help.html)
 - **🔧 DUPLICATE API CALLS FIX** - Fixed multiple API stats requests happening simultaneously. Root cause: setInterval auto-refresh running multiple instances when script loaded multiple times. Solution: added window-level flag check to prevent duplicate intervals.
 - **🎨 CYAN BOX FIX (RESOLVED)** - Fixed persistent cyan bordered rectangle around hero section. Root cause: `.logo-glow` element with radial-gradient cyan background (300px x 300px) was rendering as visible frame effect around the SHADOW-MOD title area. Solution: disabled `.logo-glow` element entirely. (User discovered the root cause!)
 - **📱 MOBILE NAVIGATION FIX** - Significantly enlarged mobile navigation buttons for better tap targets. Tablet (768px): 48px height with larger padding (14x20px). Small mobile (480px): 44px height meeting WCAG standards with 1.2em emoji icons. Buttons now 22-50% larger and much easier to click on all mobile devices.
