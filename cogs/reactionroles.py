@@ -19,7 +19,17 @@ class ReactionRoles(commands.Cog):
     
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        if payload.member.bot:
+        # Get guild and member (payload.member may be None for uncached users)
+        guild = self.bot.get_guild(payload.guild_id)
+        if not guild:
+            return
+        
+        try:
+            member = payload.member or await guild.fetch_member(payload.user_id)
+        except:
+            return
+        
+        if not member or member.bot:
             return
         
         reaction_roles = self.get_reaction_roles()
@@ -32,17 +42,20 @@ class ReactionRoles(commands.Cog):
         role_id = reaction_roles[message_key].get(emoji_key)
         
         if role_id:
-            guild = self.bot.get_guild(payload.guild_id)
             role = guild.get_role(role_id)
             
             if role:
                 try:
-                    await payload.member.add_roles(role, reason="Reaction role")
+                    await member.add_roles(role, reason="Reaction role")
                 except:
                     pass
     
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
+        guild = self.bot.get_guild(payload.guild_id)
+        if not guild:
+            return
+        
         reaction_roles = self.get_reaction_roles()
         message_key = f"{payload.message_id}"
         
@@ -53,11 +66,17 @@ class ReactionRoles(commands.Cog):
         role_id = reaction_roles[message_key].get(emoji_key)
         
         if role_id:
-            guild = self.bot.get_guild(payload.guild_id)
-            member = guild.get_member(payload.user_id)
+            try:
+                member = guild.get_member(payload.user_id) or await guild.fetch_member(payload.user_id)
+            except:
+                return
+            
+            if not member or member.bot:
+                return
+            
             role = guild.get_role(role_id)
             
-            if role and member and not member.bot:
+            if role:
                 try:
                     await member.remove_roles(role, reason="Reaction role removed")
                 except:

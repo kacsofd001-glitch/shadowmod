@@ -72,7 +72,17 @@ class Suggestions(commands.Cog):
     
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        if payload.member.bot:
+        # Get guild and member (payload.member may be None for uncached users)
+        guild = self.bot.get_guild(payload.guild_id)
+        if not guild:
+            return
+        
+        try:
+            member = payload.member or await guild.fetch_member(payload.user_id)
+        except:
+            return
+        
+        if not member or member.bot:
             return
         
         # Check all guilds for suggestions
@@ -111,6 +121,19 @@ class Suggestions(commands.Cog):
     
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
+        # Get guild and member (payload.member not available in remove event)
+        guild = self.bot.get_guild(payload.guild_id)
+        if not guild:
+            return
+        
+        try:
+            member = await guild.fetch_member(payload.user_id)
+        except:
+            return
+        
+        if not member or member.bot:
+            return
+        
         # Check all guilds for suggestions
         for guild in self.bot.guilds:
             settings = self.get_suggestion_config(guild.id)
