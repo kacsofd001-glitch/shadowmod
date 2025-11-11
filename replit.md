@@ -20,7 +20,8 @@ A comprehensive Discord bot built with Python featuring a cyberpunk neon theme a
 - Giveaway system with automatic winner selection
 - Name automation with role-based prefixes
 - **Dual prefix support (! and /) for active developer badge**
-- **48 slash commands for Active Developer Badge maintenance**
+- **52 slash commands for Active Developer Badge maintenance**
+- **Custom Commands** - Owner can create custom text commands with /addcc, /rcc, /mcc
 - **Music slash commands** - All music features now support both ! and / prefixes
 - **Admin Commands** - Owner-only server management (list servers, create invites)
 - **Verification system** - Button-based verification with anti-alt checks
@@ -62,7 +63,8 @@ All features use Discord embeds and button components for a modern user experien
 │   ├── info.py          # Information commands (serverinfo, botinfo, userinfo, etc)
 │   ├── music.py         # Music player (YouTube, Spotify, SoundCloud)
 │   ├── admin.py         # Owner-only admin commands (servers, createinvite)
-│   └── slash_commands.py  # Slash command implementations (48 commands total)
+│   ├── customcommands.py  # Custom command management system
+│   └── slash_commands.py  # Slash command implementations (52 commands total)
 ├── .env                 # Environment variables (DISCORD_TOKEN)
 ├── bot_config.json      # Runtime configuration (auto-generated)
 └── README.md            # User documentation
@@ -77,6 +79,7 @@ All features use Discord embeds and button components for a modern user experien
 6. **Music System:** Uses public Lavalink nodes (automatically connects to available nodes). No additional setup required for basic music functionality.
 
 ## Recent Changes (November 2025)
+- **🎨 CUSTOM COMMANDS SYSTEM** - Added 3 owner-only commands for custom command management: /addcc (add), /rcc (remove), /mcc (modify). Bot owner can create custom text-based commands that users can trigger with the server's prefix. Commands stored in bot_config.json, fully integrated with dynamic prefix system.
 - **⚙️ CUSTOM PREFIX SYSTEM** - Added /setbotprefix command allowing server admins to change the bot's command prefix (default: !). Help command now displays the current prefix for each server. Slash commands (/) always work regardless of prefix setting.
 - **📖 HELP PAGE UPDATE** - Added /help command to the Information Systems section of the command documentation page (help.html)
 - **🔧 DUPLICATE API CALLS FIX** - Fixed multiple API stats requests happening simultaneously. Root cause: setInterval auto-refresh running multiple instances when script loaded multiple times. Solution: added window-level flag check to prevent duplicate intervals.
