@@ -1253,6 +1253,132 @@ class SlashCommands(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"❌ Error creating invite: {e}", ephemeral=True)
 
+    @app_commands.command(name="addcc", description="Add a custom command (Owner Only) / Egyéni parancs hozzáadása")
+    @app_commands.describe(
+        name="Command name (without prefix) / Parancs neve (prefix nélkül)",
+        response="Command response text / Parancs válasz szövege"
+    )
+    async def slash_addcc(self, interaction: discord.Interaction, name: str, response: str):
+        if not await self.bot.is_owner(interaction.user):
+            await interaction.response.send_message(translations.get_text(interaction.guild.id, 'owner_only'), ephemeral=True)
+            return
+        
+        guild_id = interaction.guild.id
+        name = name.lower().strip()
+        
+        # Validate command name
+        if len(name) == 0:
+            await interaction.response.send_message("❌ Command name cannot be empty!", ephemeral=True)
+            return
+        
+        if ' ' in name:
+            await interaction.response.send_message("❌ Command name cannot contain spaces!", ephemeral=True)
+            return
+        
+        # Get custom commands cog
+        cc_cog = self.bot.get_cog('CustomCommands')
+        if not cc_cog:
+            await interaction.response.send_message("❌ Custom commands system not loaded!", ephemeral=True)
+            return
+        
+        # Check if command already exists
+        if name in cc_cog.custom_commands:
+            await interaction.response.send_message(f"❌ Custom command `{name}` already exists! Use `/mcc` to modify it.", ephemeral=True)
+            return
+        
+        # Add custom command
+        cc_cog.custom_commands[name] = response
+        cc_cog.save_custom_commands()
+        
+        embed = discord.Embed(
+            title="✅ Custom Command Added",
+            description=f"**Command:** `{name}`\n**Response:** {response}",
+            color=0x00FF00
+        )
+        embed.add_field(
+            name="Usage",
+            value=f"Users can now use: `!{name}` (or your custom prefix)",
+            inline=False
+        )
+        embed.set_footer(text=f"Total custom commands: {len(cc_cog.custom_commands)}")
+        
+        await interaction.response.send_message(embed=embed)
+    
+    @app_commands.command(name="rcc", description="Remove a custom command (Owner Only) / Egyéni parancs eltávolítása")
+    @app_commands.describe(name="Command name to remove / Eltávolítandó parancs neve")
+    async def slash_rcc(self, interaction: discord.Interaction, name: str):
+        if not await self.bot.is_owner(interaction.user):
+            await interaction.response.send_message(translations.get_text(interaction.guild.id, 'owner_only'), ephemeral=True)
+            return
+        
+        guild_id = interaction.guild.id
+        name = name.lower().strip()
+        
+        # Get custom commands cog
+        cc_cog = self.bot.get_cog('CustomCommands')
+        if not cc_cog:
+            await interaction.response.send_message("❌ Custom commands system not loaded!", ephemeral=True)
+            return
+        
+        # Check if command exists
+        if name not in cc_cog.custom_commands:
+            await interaction.response.send_message(f"❌ Custom command `{name}` does not exist!", ephemeral=True)
+            return
+        
+        # Remove custom command
+        old_response = cc_cog.custom_commands[name]
+        del cc_cog.custom_commands[name]
+        cc_cog.save_custom_commands()
+        
+        embed = discord.Embed(
+            title="🗑️ Custom Command Removed",
+            description=f"**Command:** `{name}`\n**Old Response:** {old_response}",
+            color=0xFF0000
+        )
+        embed.set_footer(text=f"Total custom commands: {len(cc_cog.custom_commands)}")
+        
+        await interaction.response.send_message(embed=embed)
+    
+    @app_commands.command(name="mcc", description="Modify a custom command (Owner Only) / Egyéni parancs módosítása")
+    @app_commands.describe(
+        name="Command name to modify / Módosítandó parancs neve",
+        response="New response text / Új válasz szövege"
+    )
+    async def slash_mcc(self, interaction: discord.Interaction, name: str, response: str):
+        if not await self.bot.is_owner(interaction.user):
+            await interaction.response.send_message(translations.get_text(interaction.guild.id, 'owner_only'), ephemeral=True)
+            return
+        
+        guild_id = interaction.guild.id
+        name = name.lower().strip()
+        
+        # Get custom commands cog
+        cc_cog = self.bot.get_cog('CustomCommands')
+        if not cc_cog:
+            await interaction.response.send_message("❌ Custom commands system not loaded!", ephemeral=True)
+            return
+        
+        # Check if command exists
+        if name not in cc_cog.custom_commands:
+            await interaction.response.send_message(f"❌ Custom command `{name}` does not exist! Use `/addcc` to create it.", ephemeral=True)
+            return
+        
+        # Modify custom command
+        old_response = cc_cog.custom_commands[name]
+        cc_cog.custom_commands[name] = response
+        cc_cog.save_custom_commands()
+        
+        embed = discord.Embed(
+            title="✏️ Custom Command Modified",
+            description=f"**Command:** `{name}`",
+            color=0xFFFF00
+        )
+        embed.add_field(name="Old Response", value=old_response[:1024], inline=False)
+        embed.add_field(name="New Response", value=response[:1024], inline=False)
+        embed.set_footer(text=f"Total custom commands: {len(cc_cog.custom_commands)}")
+        
+        await interaction.response.send_message(embed=embed)
+
     @app_commands.command(name="setbotprefix", description="Change the bot command prefix / Bot parancs prefix megváltoztatása")
     @app_commands.describe(prefix="New prefix for bot commands / Új prefix a bot parancsokhoz")
     @app_commands.checks.has_permissions(administrator=True)
