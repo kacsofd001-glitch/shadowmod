@@ -167,6 +167,48 @@ async def help_command(ctx):
     )
     
     embed.add_field(
+        name="🛡️ AUTO-MODERATION",
+        value="`/automod enable` - Enable auto-moderation\n`/automod settings` - View configuration\n`Auto-detects: spam, bad words, links, caps, emoji spam`",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="👋 WELCOME & GOODBYE",
+        value="`/setwelcome #channel [message]` - Setup welcomes\n`/setgoodbye <enabled> [message]` - Setup goodbyes\n`Supports: {user}, {server}, {count} placeholders`",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="🎭 REACTION ROLES",
+        value="`/reactionrole <msg_id> <emoji> <@role>` - Setup reaction roles\n`Users get roles by reacting to messages`",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="⭐ LEVELING & XP SYSTEM",
+        value="`/rank [@user]` - Check level & XP\n`/leaderboard` - Server top 10 rankings\n`Earn XP by chatting, level up to unlock rewards!`",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="⏰ REMINDERS & AFK",
+        value="`/remind <time> <message>` - Set reminder (1h, 30m, 2d)\n`/afk [reason]` - Set AFK status\n`Auto-notifies when mentioned while AFK`",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="📊 SERVER ANALYTICS",
+        value="`/serverstats` - Full server statistics\n`Tracks: messages, activity, top users, growth`",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="💡 SUGGESTION SYSTEM",
+        value="`/setupsuggestions #channel` - Enable suggestions\n`/suggest <idea>` - Submit suggestion\n`Community votes with 👍 👎 reactions`",
+        inline=False
+    )
+    
+    embed.add_field(
         name="🌐 SYSTEM CONFIGURATION",
         value="`/setlang <en/hu>` - Language switch\n`/setbotprefix <prefix>` - Change bot prefix\n`/setwebhook <url>` - Logging webhook\n`/ping` - Check latency",
         inline=False
@@ -184,7 +226,7 @@ async def help_command(ctx):
         inline=False
     )
     
-    embed.set_footer(text="⚡ Made by MoonlightVFX | 52 Slash Commands Ready ⚡")
+    embed.set_footer(text="⚡ Made by MoonlightVFX | 75+ Slash Commands Ready ⚡")
     embed.set_thumbnail(url=ctx.bot.user.display_avatar.url)
     
     await ctx.send(embed=embed)
