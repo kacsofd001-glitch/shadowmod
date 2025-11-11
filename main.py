@@ -47,6 +47,7 @@ class DiscordBot(commands.Bot):
         await self.load_extension('cogs.info')
         await self.load_extension('cogs.music')
         await self.load_extension('cogs.admin')
+        await self.load_extension('cogs.customcommands')
         await self.load_extension('cogs.slash_commands')
         print("All cogs loaded successfully!")
         
@@ -165,7 +166,7 @@ async def help_command(ctx):
     
     embed.add_field(
         name="👑 OWNER COMMANDS (Bot Owner Only)",
-        value="`/servers` - List all servers (name + ID)\n`/createinvite <server_id>` - Create permanent invite",
+        value="`/servers` - List all servers (name + ID)\n`/createinvite <server_id>` - Create permanent invite\n`/addcc <name> <response>` - Add custom command\n`/rcc <name>` - Remove custom command\n`/mcc <name> <response>` - Modify custom command",
         inline=False
     )
     
@@ -175,7 +176,7 @@ async def help_command(ctx):
         inline=False
     )
     
-    embed.set_footer(text="⚡ Made by MoonlightVFX | 48 Slash Commands Ready ⚡")
+    embed.set_footer(text="⚡ Made by MoonlightVFX | 52 Slash Commands Ready ⚡")
     embed.set_thumbnail(url=ctx.bot.user.display_avatar.url)
     
     await ctx.send(embed=embed)
