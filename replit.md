@@ -77,6 +77,7 @@ All features use Discord embeds and button components for a modern user experien
 6. **Music System:** Uses public Lavalink nodes (automatically connects to available nodes). No additional setup required for basic music functionality.
 
 ## Recent Changes (November 2025)
+- **⚙️ CUSTOM PREFIX SYSTEM** - Added /setbotprefix command allowing server admins to change the bot's command prefix (default: !). Help command now displays the current prefix for each server. Slash commands (/) always work regardless of prefix setting.
 - **📖 HELP PAGE UPDATE** - Added /help command to the Information Systems section of the command documentation page (help.html)
 - **🔧 DUPLICATE API CALLS FIX** - Fixed multiple API stats requests happening simultaneously. Root cause: setInterval auto-refresh running multiple instances when script loaded multiple times. Solution: added window-level flag check to prevent duplicate intervals.
 - **🎨 CYAN BOX FIX (RESOLVED)** - Fixed persistent cyan bordered rectangle around hero section. Root cause: `.logo-glow` element with radial-gradient cyan background (300px x 300px) was rendering as visible frame effect around the SHADOW-MOD title area. Solution: disabled `.logo-glow` element entirely. (User discovered the root cause!)

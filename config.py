@@ -16,7 +16,8 @@ DEFAULT_CONFIG = {
     'completed_giveaways': {},
     'role_prefixes': {},
     'webhook_url': None,
-    'guild_languages': {}
+    'guild_languages': {},
+    'guild_prefixes': {}
 }
 
 def load_config():
@@ -37,3 +38,18 @@ def update_config(key, value):
     config[key] = value
     save_config(config)
     return config
+
+def get_guild_prefix(guild_id):
+    """Get the prefix for a specific guild"""
+    config = load_config()
+    guild_prefixes = config.get('guild_prefixes', {})
+    return guild_prefixes.get(str(guild_id), '!')
+
+def set_guild_prefix(guild_id, prefix):
+    """Set the prefix for a specific guild"""
+    config = load_config()
+    if 'guild_prefixes' not in config:
+        config['guild_prefixes'] = {}
+    config['guild_prefixes'][str(guild_id)] = prefix
+    save_config(config)
+    return prefix

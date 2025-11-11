@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 import json
+import config
 
 load_dotenv()
 
@@ -13,10 +14,16 @@ intents = discord.Intents.all()
 # Shared stats file for web server
 STATS_FILE = 'bot_stats.json'
 
+def get_prefix(bot, message):
+    """Dynamic prefix per guild"""
+    if message.guild:
+        return config.get_guild_prefix(message.guild.id)
+    return '!'
+
 class DiscordBot(commands.Bot):
     def __init__(self):
         super().__init__(
-            command_prefix='!',
+            command_prefix=get_prefix,
             intents=intents,
             help_command=None
         )
@@ -87,9 +94,12 @@ bot = DiscordBot()
 
 @bot.command(name='help')
 async def help_command(ctx):
+    # Get current prefix for this server
+    prefix = config.get_guild_prefix(ctx.guild.id) if ctx.guild else '!'
+    
     embed = discord.Embed(
         title="⚡ SHADOW-MOD ✨ | COMMAND DATABASE",
-        description="━━━━━━━━━━━━━━━━━━━━━━━━━\n`Next-Gen Discord Moderation System`\n━━━━━━━━━━━━━━━━━━━━━━━━━",
+        description=f"━━━━━━━━━━━━━━━━━━━━━━━━━\n`Next-Gen Discord Moderation System`\n**Current Prefix:** `{prefix}` | **Slash:** `/`\n━━━━━━━━━━━━━━━━━━━━━━━━━",
         color=0x00F3FF  # Neon cyan
     )
     
@@ -125,7 +135,7 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🎵 MUSIC SYSTEM (🎥 YouTube • 🟢 Spotify • ☁️ SoundCloud)",
-        value="`/play <song>` - Play music from any platform\n`/pause` `/resume` - Pause/resume playback\n`/skip` - Skip to next song\n`/stop` - Stop and disconnect\n`/queue` - Show music queue\n`/nowplaying` - Current track info\n`/loop` - Toggle loop mode\n`/volume <0-100>` - Adjust volume\n*Also supports `!` prefix for all commands*",
+        value=f"`/play <song>` - Play music from any platform\n`/pause` `/resume` - Pause/resume playback\n`/skip` - Skip to next song\n`/stop` - Stop and disconnect\n`/queue` - Show music queue\n`/nowplaying` - Current track info\n`/loop` - Toggle loop mode\n`/volume <0-100>` - Adjust volume\n*Also supports `{prefix}` prefix for all commands*",
         inline=False
     )
     
@@ -149,7 +159,7 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🌐 SYSTEM CONFIGURATION",
-        value="`/setlang <en/hu>` - Language switch\n`/setwebhook <url>` - Logging webhook\n`/ping` - Check latency",
+        value="`/setlang <en/hu>` - Language switch\n`/setbotprefix <prefix>` - Change bot prefix\n`/setwebhook <url>` - Logging webhook\n`/ping` - Check latency",
         inline=False
     )
     

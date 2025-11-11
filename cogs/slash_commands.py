@@ -1253,5 +1253,36 @@ class SlashCommands(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"❌ Error creating invite: {e}", ephemeral=True)
 
+    @app_commands.command(name="setbotprefix", description="Change the bot command prefix / Bot parancs prefix megváltoztatása")
+    @app_commands.describe(prefix="New prefix for bot commands / Új prefix a bot parancsokhoz")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_setbotprefix(self, interaction: discord.Interaction, prefix: str):
+        guild_id = interaction.guild.id
+        
+        # Validate prefix
+        if len(prefix) > 5:
+            await interaction.response.send_message("❌ Prefix must be 5 characters or less! / A prefix maximum 5 karakter lehet!", ephemeral=True)
+            return
+        
+        if prefix == "/":
+            await interaction.response.send_message("❌ Cannot use `/` as prefix (reserved for slash commands) / Nem használható a `/` prefix (fenntartva slash parancsokhoz)", ephemeral=True)
+            return
+        
+        # Set new prefix
+        config.set_guild_prefix(guild_id, prefix)
+        
+        embed = discord.Embed(
+            title="✅ Bot Prefix Updated / Prefix Frissítve",
+            description=f"**New prefix:** `{prefix}`\n**Example:** `{prefix}help`\n\n**Új prefix:** `{prefix}`\n**Példa:** `{prefix}help`",
+            color=0x00FF00
+        )
+        embed.add_field(
+            name="Note / Megjegyzés",
+            value="Slash commands (/) still work! / A slash parancsok (/) továbbra is működnek!",
+            inline=False
+        )
+        
+        await interaction.response.send_message(embed=embed)
+
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))
