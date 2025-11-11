@@ -1738,5 +1738,318 @@ class SlashCommands(commands.Cog):
         
         await interaction.response.send_message(f"✅ Suggestions channel set to {channel.mention}!")
 
+    # ==================== ECONOMY COMMANDS ====================
+    
+    @app_commands.command(name="balance", description="Check your balance")
+    @app_commands.describe(user="User to check (optional)")
+    async def slash_balance(self, interaction: discord.Interaction, user: discord.Member = None):
+        economy_cog = self.bot.get_cog('Economy')
+        if not economy_cog:
+            await interaction.response.send_message("❌ Economy system not loaded!", ephemeral=True)
+            return
+        
+        target = user or interaction.user
+        data = economy_cog.get_user_balance(interaction.guild.id, target.id)
+        
+        embed = discord.Embed(
+            title=f"💰 {target.name}'s Balance",
+            color=0xFFD700
+        )
+        embed.add_field(name="Wallet", value=f"${data['balance']:,}", inline=True)
+        embed.add_field(name="Bank", value=f"${data['bank']:,}", inline=True)
+        embed.add_field(name="Total", value=f"${data['balance'] + data['bank']:,}", inline=True)
+        embed.set_thumbnail(url=target.display_avatar.url)
+        
+        await interaction.response.send_message(embed=embed)
+    
+    @app_commands.command(name="daily", description="Claim your daily reward")
+    async def slash_daily(self, interaction: discord.Interaction):
+        economy_cog = self.bot.get_cog('Economy')
+        if not economy_cog:
+            await interaction.response.send_message("❌ Economy system not loaded!", ephemeral=True)
+            return
+        
+        from datetime import datetime, timedelta, timezone
+        
+        data = economy_cog.get_user_balance(interaction.guild.id, interaction.user.id)
+        
+        if data['last_daily']:
+            last_daily = datetime.fromisoformat(data['last_daily'])
+            next_daily = last_daily + timedelta(hours=24)
+            
+            if datetime.now(timezone.utc) < next_daily:
+                time_left = next_daily - datetime.now(timezone.utc)
+                hours = int(time_left.total_seconds() // 3600)
+                minutes = int((time_left.total_seconds() % 3600) // 60)
+                await interaction.response.send_message(f"⏰ Daily reward available in {hours}h {minutes}m", ephemeral=True)
+                return
+        
+        reward = 500
+        data['balance'] += reward
+        data['last_daily'] = datetime.now(timezone.utc).isoformat()
+        economy_cog.save_user_balance(interaction.guild.id, interaction.user.id, data)
+        
+        embed = discord.Embed(
+            title="🎁 Daily Reward Claimed!",
+            description=f"You received **${reward:,}**!",
+            color=0x00FF00
+        )
+        await interaction.response.send_message(embed=embed)
+    
+    @app_commands.command(name="work", description="Work for money")
+    async def slash_work(self, interaction: discord.Interaction):
+        economy_cog = self.bot.get_cog('Economy')
+        if not economy_cog:
+            await interaction.response.send_message("❌ Economy system not loaded!", ephemeral=True)
+            return
+        
+        import random
+        from datetime import datetime, timedelta, timezone
+        
+        data = economy_cog.get_user_balance(interaction.guild.id, interaction.user.id)
+        
+        if data['last_work']:
+            last_work = datetime.fromisoformat(data['last_work'])
+            next_work = last_work + timedelta(hours=1)
+            
+            if datetime.now(timezone.utc) < next_work:
+                time_left = next_work - datetime.now(timezone.utc)
+                minutes = int(time_left.total_seconds() // 60)
+                await interaction.response.send_message(f"⏰ You can work again in {minutes} minutes", ephemeral=True)
+                return
+        
+        earnings = random.randint(50, 200)
+        data['balance'] += earnings
+        data['last_work'] = datetime.now(timezone.utc).isoformat()
+        economy_cog.save_user_balance(interaction.guild.id, interaction.user.id, data)
+        
+        jobs = ["programmer", "designer", "streamer", "moderator", "artist"]
+        job = random.choice(jobs)
+        
+        embed = discord.Embed(
+            title="💼 Work Complete!",
+            description=f"You worked as a **{job}** and earned **${earnings:,}**!",
+            color=0x00F3FF
+        )
+        await interaction.response.send_message(embed=embed)
+
+    # ==================== STARBOARD COMMANDS ====================
+    
+    @app_commands.command(name="starboard", description="Setup starboard system")
+    @app_commands.describe(
+        action="Action to perform",
+        channel="Starboard channel",
+        threshold="Stars needed (default: 5)"
+    )
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_starboard(self, interaction: discord.Interaction, action: str, channel: discord.TextChannel = None, threshold: int = 5):
+        starboard_cog = self.bot.get_cog('Starboard')
+        if not starboard_cog:
+            await interaction.response.send_message("❌ Starboard system not loaded!", ephemeral=True)
+            return
+        
+        settings = starboard_cog.get_starboard_config(interaction.guild.id)
+        
+        if action == "enable" and channel:
+            settings['enabled'] = True
+            settings['channel_id'] = channel.id
+            settings['threshold'] = threshold
+            starboard_cog.save_starboard_config(interaction.guild.id, settings)
+            await interaction.response.send_message(f"✅ Starboard enabled in {channel.mention} with threshold of {threshold} ⭐")
+        elif action == "disable":
+            settings['enabled'] = False
+            starboard_cog.save_starboard_config(interaction.guild.id, settings)
+            await interaction.response.send_message("✅ Starboard disabled!")
+        else:
+            await interaction.response.send_message("❌ Invalid action! Use 'enable' or 'disable'", ephemeral=True)
+
+    # ==================== COUNTING COMMANDS ====================
+    
+    @app_commands.command(name="counting", description="Setup counting game")
+    @app_commands.describe(channel="Counting channel")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_counting(self, interaction: discord.Interaction, channel: discord.TextChannel):
+        counting_cog = self.bot.get_cog('Counting')
+        if not counting_cog:
+            await interaction.response.send_message("❌ Counting system not loaded!", ephemeral=True)
+            return
+        
+        settings = counting_cog.get_counting_config(interaction.guild.id)
+        settings['enabled'] = True
+        settings['channel_id'] = channel.id
+        counting_cog.save_counting_config(interaction.guild.id, settings)
+        
+        await interaction.response.send_message(f"✅ Counting game enabled in {channel.mention}! Start counting from 1!")
+
+    # ==================== BIRTHDAY COMMANDS ====================
+    
+    @app_commands.command(name="birthday", description="Set your birthday")
+    @app_commands.describe(date="Your birthday (MM-DD format, e.g., 12-25)")
+    async def slash_birthday(self, interaction: discord.Interaction, date: str):
+        birthday_cog = self.bot.get_cog('Birthdays')
+        if not birthday_cog:
+            await interaction.response.send_message("❌ Birthday system not loaded!", ephemeral=True)
+            return
+        
+        from datetime import datetime
+        
+        try:
+            datetime.strptime(date, '%m-%d')
+        except:
+            await interaction.response.send_message("❌ Invalid date format! Use MM-DD (e.g., 12-25)", ephemeral=True)
+            return
+        
+        settings = birthday_cog.get_birthday_config(interaction.guild.id)
+        settings['birthdays'][str(interaction.user.id)] = date
+        birthday_cog.save_birthday_config(interaction.guild.id, settings)
+        
+        await interaction.response.send_message(f"🎂 Your birthday has been set to **{date}**!", ephemeral=True)
+
+    # ==================== CONFESSION COMMANDS ====================
+    
+    @app_commands.command(name="confess", description="Submit an anonymous confession")
+    @app_commands.describe(confession="Your confession")
+    async def slash_confess(self, interaction: discord.Interaction, confession: str):
+        confession_cog = self.bot.get_cog('Confessions')
+        if not confession_cog:
+            await interaction.response.send_message("❌ Confession system not loaded!", ephemeral=True)
+            return
+        
+        confession_id, message = await confession_cog.submit_confession(
+            interaction.guild,
+            interaction.user,
+            confession
+        )
+        
+        await interaction.response.send_message(message, ephemeral=True)
+
+    # ==================== MODMAIL COMMANDS ====================
+    
+    @app_commands.command(name="setupmodmail", description="Setup ModMail system")
+    @app_commands.describe(category="Category for ModMail tickets")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_setupmodmail(self, interaction: discord.Interaction, category: discord.CategoryChannel):
+        modmail_cog = self.bot.get_cog('ModMail')
+        if not modmail_cog:
+            await interaction.response.send_message("❌ ModMail system not loaded!", ephemeral=True)
+            return
+        
+        settings = modmail_cog.get_modmail_config(interaction.guild.id)
+        settings['enabled'] = True
+        settings['category_id'] = category.id
+        modmail_cog.save_modmail_config(interaction.guild.id, settings)
+        
+        await interaction.response.send_message(f"✅ ModMail enabled! Tickets will be created in {category.name}")
+
+    # ==================== ANTI-RAID COMMANDS ====================
+    
+    @app_commands.command(name="antiraid", description="Configure anti-raid protection")
+    @app_commands.describe(
+        action="Action to perform",
+        threshold="Users joining in time window",
+        time_window="Time window in seconds"
+    )
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_antiraid(self, interaction: discord.Interaction, action: str, threshold: int = 10, time_window: int = 10):
+        antiraid_cog = self.bot.get_cog('AntiRaid')
+        if not antiraid_cog:
+            await interaction.response.send_message("❌ Anti-Raid system not loaded!", ephemeral=True)
+            return
+        
+        settings = antiraid_cog.get_antiraid_config(interaction.guild.id)
+        
+        if action == "enable":
+            settings['enabled'] = True
+            settings['join_threshold'] = threshold
+            settings['time_window'] = time_window
+            antiraid_cog.save_antiraid_config(interaction.guild.id, settings)
+            await interaction.response.send_message(f"✅ Anti-raid enabled! ({threshold} joins in {time_window}s triggers protection)")
+        elif action == "disable":
+            settings['enabled'] = False
+            antiraid_cog.save_antiraid_config(interaction.guild.id, settings)
+            await interaction.response.send_message("✅ Anti-raid disabled!")
+        else:
+            await interaction.response.send_message("❌ Invalid action! Use 'enable' or 'disable'", ephemeral=True)
+
+    # ==================== MISC UTILITY COMMANDS ====================
+    
+    @app_commands.command(name="rolepersist", description="Toggle role persistence")
+    @app_commands.describe(enabled="Enable or disable")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_rolepersist(self, interaction: discord.Interaction, enabled: bool):
+        rolepersist_cog = self.bot.get_cog('RolePersist')
+        if not rolepersist_cog:
+            await interaction.response.send_message("❌ Role Persistence not loaded!", ephemeral=True)
+            return
+        
+        settings = rolepersist_cog.get_persist_config(interaction.guild.id)
+        settings['enabled'] = enabled
+        rolepersist_cog.save_persist_config(interaction.guild.id, settings)
+        
+        status = "enabled" if enabled else "disabled"
+        await interaction.response.send_message(f"✅ Role persistence {status}!")
+    
+    @app_commands.command(name="tempban", description="Temporarily ban a user")
+    @app_commands.describe(
+        user="User to ban",
+        duration="Duration (e.g., 1h, 2d, 30m)",
+        reason="Ban reason"
+    )
+    @app_commands.checks.has_permissions(ban_members=True)
+    async def slash_tempban(self, interaction: discord.Interaction, user: discord.Member, duration: str, reason: str = "No reason provided"):
+        tempban_cog = self.bot.get_cog('TempBans')
+        if not tempban_cog:
+            await interaction.response.send_message("❌ TempBan system not loaded!", ephemeral=True)
+            return
+        
+        from datetime import datetime, timedelta, timezone
+        
+        # Parse duration
+        time_units = {'h': 3600, 'd': 86400, 'm': 60}
+        try:
+            amount = int(duration[:-1])
+            unit = duration[-1]
+            seconds = amount * time_units[unit]
+        except:
+            await interaction.response.send_message("❌ Invalid duration! Use format: 1h, 2d, 30m", ephemeral=True)
+            return
+        
+        unban_at = datetime.now(timezone.utc) + timedelta(seconds=seconds)
+        
+        try:
+            await user.ban(reason=reason)
+            tempban_cog.add_tempban(interaction.guild.id, user.id, unban_at)
+            await interaction.response.send_message(f"✅ {user.mention} banned for {duration}. Unban at: {unban_at.strftime('%Y-%m-%d %H:%M UTC')}")
+        except:
+            await interaction.response.send_message("❌ Failed to ban user!", ephemeral=True)
+    
+    @app_commands.command(name="cmdstats", description="View command usage statistics")
+    async def slash_cmdstats(self, interaction: discord.Interaction):
+        stats_cog = self.bot.get_cog('CommandStats')
+        if not stats_cog:
+            await interaction.response.send_message("❌ Command Stats not loaded!", ephemeral=True)
+            return
+        
+        stats = stats_cog.get_command_stats(interaction.guild.id)
+        
+        if not stats:
+            await interaction.response.send_message("No command statistics yet!", ephemeral=True)
+            return
+        
+        # Get top 10 commands
+        top_commands = sorted(stats.get('commands', {}).items(), key=lambda x: x[1], reverse=True)[:10]
+        
+        embed = discord.Embed(
+            title="📊 Command Statistics",
+            description=f"Total Commands Used: **{stats.get('total_commands', 0):,}**",
+            color=0x00F3FF
+        )
+        
+        if top_commands:
+            commands_text = "\n".join([f"{i+1}. `{cmd}` - {count} uses" for i, (cmd, count) in enumerate(top_commands)])
+            embed.add_field(name="Top Commands", value=commands_text, inline=False)
+        
+        await interaction.response.send_message(embed=embed)
+
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))
