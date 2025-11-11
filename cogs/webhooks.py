@@ -49,7 +49,51 @@ class Webhooks(commands.Cog):
     @tasks.loop(minutes=15)
     async def check_feeds(self):
         """Check for updates from various sources"""
-        pass
+        try:
+            cfg = config.load_config()
+            all_webhooks = cfg.get('webhooks', {})
+            
+            for guild_id, webhook_config in all_webhooks.items():
+                try:
+                    guild = self.bot.get_guild(int(guild_id))
+                    if not guild:
+                        continue
+                    
+                    if webhook_config.get('github', {}).get('enabled'):
+                        await self.check_github_updates(guild, webhook_config['github'])
+                    
+                    if webhook_config.get('youtube', {}).get('enabled'):
+                        await self.check_youtube_updates(guild, webhook_config['youtube'])
+                    
+                    if webhook_config.get('twitch', {}).get('enabled'):
+                        await self.check_twitch_updates(guild, webhook_config['twitch'])
+                        
+                except Exception as e:
+                    print(f"Error processing webhooks for guild {guild_id}: {e}")
+                    continue
+        except Exception as e:
+            print(f"Error in check_feeds loop: {e}")
+    
+    async def check_github_updates(self, guild, github_config):
+        """Check GitHub repositories for updates"""
+        try:
+            pass
+        except Exception as e:
+            print(f"Error checking GitHub updates: {e}")
+    
+    async def check_youtube_updates(self, guild, youtube_config):
+        """Check YouTube channels for new uploads"""
+        try:
+            pass
+        except Exception as e:
+            print(f"Error checking YouTube updates: {e}")
+    
+    async def check_twitch_updates(self, guild, twitch_config):
+        """Check Twitch streamers for live status"""
+        try:
+            pass
+        except Exception as e:
+            print(f"Error checking Twitch updates: {e}")
     
     @check_feeds.before_loop
     async def before_check_feeds(self):

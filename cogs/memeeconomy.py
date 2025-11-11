@@ -77,39 +77,49 @@ class MemeEconomy(commands.Cog):
     @tasks.loop(hours=24)
     async def monthly_reset(self):
         """Check for monthly meme competition winner"""
-        current_month = datetime.now(timezone.utc).strftime('%Y-%m')
-        
-        cfg = config.load_config()
-        all_memes = cfg.get('meme_economy', {})
-        
-        for guild_id, settings in all_memes.items():
-            if settings['current_month'] != current_month:
-                winner_id, winner_meme = self.get_monthly_winner(settings)
-                
-                if winner_id and settings.get('voting_channel_id'):
-                    guild = self.bot.get_guild(int(guild_id))
-                    if guild:
-                        channel = guild.get_channel(settings['voting_channel_id'])
-                        winner = guild.get_member(winner_meme['author_id'])
+        try:
+            current_month = datetime.now(timezone.utc).strftime('%Y-%m')
+            
+            cfg = config.load_config()
+            all_memes = cfg.get('meme_economy', {})
+            
+            for guild_id, settings in all_memes.items():
+                try:
+                    if settings['current_month'] != current_month:
+                        winner_id, winner_meme = self.get_monthly_winner(settings)
                         
-                        if channel and winner:
-                            embed = discord.Embed(
-                                title="🏆 Meme of the Month Winner!",
-                                description=f"Congratulations to {winner.mention}!",
-                                color=0xFFD700
-                            )
-                            embed.set_image(url=winner_meme['image_url'])
-                            embed.add_field(name="Caption", value=winner_meme['caption'], inline=False)
-                            embed.add_field(name="Votes", value=f"👍 {len(winner_meme['upvotes'])} | 👎 {len(winner_meme['downvotes'])}", inline=False)
-                            
-                            await channel.send(embed=embed)
-                            
-                            economy_cog = self.bot.get_cog('Economy')
-                            if economy_cog:
-                                economy_cog.add_money(int(guild_id), winner_meme['author_id'], 5000)
-                
-                settings['current_month'] = current_month
-                self.save_meme_config(int(guild_id), settings)
+                        if winner_id and settings.get('voting_channel_id'):
+                            guild = self.bot.get_guild(int(guild_id))
+                            if guild:
+                                channel = guild.get_channel(settings['voting_channel_id'])
+                                winner = guild.get_member(winner_meme['author_id'])
+                                
+                                if channel and winner:
+                                    try:
+                                        embed = discord.Embed(
+                                            title="🏆 Meme of the Month Winner!",
+                                            description=f"Congratulations to {winner.mention}!",
+                                            color=0xFFD700
+                                        )
+                                        embed.set_image(url=winner_meme['image_url'])
+                                        embed.add_field(name="Caption", value=winner_meme['caption'], inline=False)
+                                        embed.add_field(name="Votes", value=f"👍 {len(winner_meme['upvotes'])} | 👎 {len(winner_meme['downvotes'])}", inline=False)
+                                        
+                                        await channel.send(embed=embed)
+                                        
+                                        economy_cog = self.bot.get_cog('Economy')
+                                        if economy_cog:
+                                            economy_cog.add_money(int(guild_id), winner_meme['author_id'], 5000)
+                                    except Exception as e:
+                                        print(f"Error announcing meme winner for guild {guild_id}: {e}")
+                        
+                        settings['current_month'] = current_month
+                        self.save_meme_config(int(guild_id), settings)
+                except Exception as e:
+                    print(f"Error processing meme economy for guild {guild_id}: {e}")
+                    continue
+        except Exception as e:
+            print(f"Error in monthly_reset loop: {e}")
     
     def get_monthly_winner(self, settings):
         """Get the meme with most upvotes this month"""

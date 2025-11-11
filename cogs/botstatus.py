@@ -25,30 +25,33 @@ class BotStatus(commands.Cog):
     @tasks.loop(minutes=5)
     async def rotate_status(self):
         """Rotate bot status messages"""
-        status_type, message = random.choice(self.status_messages)
-        
-        total_members = sum(guild.member_count or 0 for guild in self.bot.guilds)
-        total_channels = sum(len(guild.channels) for guild in self.bot.guilds)
-        
-        message = message.format(
-            guilds=len(self.bot.guilds),
-            users=total_members,
-            channels=total_channels
-        )
-        
-        activity_map = {
-            "playing": discord.ActivityType.playing,
-            "watching": discord.ActivityType.watching,
-            "listening": discord.ActivityType.listening,
-            "competing": discord.ActivityType.competing
-        }
-        
-        activity = discord.Activity(
-            type=activity_map.get(status_type, discord.ActivityType.watching),
-            name=message
-        )
-        
-        await self.bot.change_presence(activity=activity)
+        try:
+            status_type, message = random.choice(self.status_messages)
+            
+            total_members = sum(guild.member_count or 0 for guild in self.bot.guilds)
+            total_channels = sum(len(guild.channels) for guild in self.bot.guilds)
+            
+            message = message.format(
+                guilds=len(self.bot.guilds),
+                users=total_members,
+                channels=total_channels
+            )
+            
+            activity_map = {
+                "playing": discord.ActivityType.playing,
+                "watching": discord.ActivityType.watching,
+                "listening": discord.ActivityType.listening,
+                "competing": discord.ActivityType.competing
+            }
+            
+            activity = discord.Activity(
+                type=activity_map.get(status_type, discord.ActivityType.watching),
+                name=message
+            )
+            
+            await self.bot.change_presence(activity=activity)
+        except Exception as e:
+            print(f"Error rotating bot status: {e}")
     
     @rotate_status.before_loop
     async def before_rotate_status(self):

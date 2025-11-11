@@ -49,27 +49,35 @@ class Events(commands.Cog):
     @tasks.loop(minutes=30)
     async def check_events(self):
         """Check for upcoming events and send reminders"""
-        now = datetime.now(timezone.utc)
-        
-        cfg = config.load_config()
-        all_events = cfg.get('events', {})
-        
-        for guild_id, events in all_events.items():
-            guild = self.bot.get_guild(int(guild_id))
-            if not guild:
-                continue
+        try:
+            now = datetime.now(timezone.utc)
             
-            for event_id, event_data in events.items():
+            cfg = config.load_config()
+            all_events = cfg.get('events', {})
+            
+            for guild_id, events in all_events.items():
                 try:
-                    event_time = datetime.fromisoformat(event_data['date_time'])
-                    time_until = event_time - now
+                    guild = self.bot.get_guild(int(guild_id))
+                    if not guild:
+                        continue
                     
-                    if timedelta(hours=1) <= time_until <= timedelta(hours=1, minutes=30):
-                        await self.send_reminder(guild, event_data, "1 hour")
-                    elif timedelta(hours=24) <= time_until <= timedelta(hours=24, minutes=30):
-                        await self.send_reminder(guild, event_data, "24 hours")
-                except:
+                    for event_id, event_data in events.items():
+                        try:
+                            event_time = datetime.fromisoformat(event_data['date_time'])
+                            time_until = event_time - now
+                            
+                            if timedelta(hours=1) <= time_until <= timedelta(hours=1, minutes=30):
+                                await self.send_reminder(guild, event_data, "1 hour")
+                            elif timedelta(hours=24) <= time_until <= timedelta(hours=24, minutes=30):
+                                await self.send_reminder(guild, event_data, "24 hours")
+                        except Exception as e:
+                            print(f"Error processing event {event_id}: {e}")
+                            continue
+                except Exception as e:
+                    print(f"Error processing guild {guild_id} events: {e}")
                     continue
+        except Exception as e:
+            print(f"Error in check_events loop: {e}")
     
     async def send_reminder(self, guild, event_data, time_str):
         """Send event reminder"""
