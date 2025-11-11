@@ -2050,6 +2050,130 @@ class SlashCommands(commands.Cog):
             embed.add_field(name="Top Commands", value=commands_text, inline=False)
         
         await interaction.response.send_message(embed=embed)
+    
+    # ==================== MINI-GAMES COMMANDS ====================
+    
+    @app_commands.command(name="trivia", description="Play a trivia game")
+    @app_commands.describe(category="Trivia category (general, gaming, tech)")
+    async def slash_trivia(self, interaction: discord.Interaction, category: str = "general"):
+        minigames_cog = self.bot.get_cog('MiniGames')
+        if not minigames_cog:
+            await interaction.response.send_message("❌ Mini-games not loaded!", ephemeral=True)
+            return
+        
+        await minigames_cog.play_trivia(interaction, category)
+    
+    @app_commands.command(name="blackjack", description="Play blackjack")
+    @app_commands.describe(bet="Amount to bet")
+    async def slash_blackjack(self, interaction: discord.Interaction, bet: int = 100):
+        minigames_cog = self.bot.get_cog('MiniGames')
+        if not minigames_cog:
+            await interaction.response.send_message("❌ Mini-games not loaded!", ephemeral=True)
+            return
+        
+        await minigames_cog.play_blackjack(interaction, bet)
+    
+    @app_commands.command(name="slots", description="Play the slot machine")
+    @app_commands.describe(bet="Amount to bet")
+    async def slash_slots(self, interaction: discord.Interaction, bet: int = 50):
+        minigames_cog = self.bot.get_cog('MiniGames')
+        if not minigames_cog:
+            await interaction.response.send_message("❌ Mini-games not loaded!", ephemeral=True)
+            return
+        
+        await minigames_cog.play_slots(interaction, bet)
+    
+    @app_commands.command(name="coinflip", description="Flip a coin")
+    @app_commands.describe(bet="Amount to bet", choice="Heads or tails")
+    async def slash_coinflip(self, interaction: discord.Interaction, bet: int, choice: str):
+        minigames_cog = self.bot.get_cog('MiniGames')
+        if not minigames_cog:
+            await interaction.response.send_message("❌ Mini-games not loaded!", ephemeral=True)
+            return
+        
+        await minigames_cog.play_coinflip(interaction, bet, choice)
+    
+    @app_commands.command(name="scramble", description="Play word scramble")
+    async def slash_scramble(self, interaction: discord.Interaction):
+        minigames_cog = self.bot.get_cog('MiniGames')
+        if not minigames_cog:
+            await interaction.response.send_message("❌ Mini-games not loaded!", ephemeral=True)
+            return
+        
+        await minigames_cog.play_scramble(interaction)
+    
+    @app_commands.command(name="connectfour", description="Play Connect Four")
+    @app_commands.describe(opponent="User to play against")
+    async def slash_connectfour(self, interaction: discord.Interaction, opponent: discord.Member):
+        connectfour_cog = self.bot.get_cog('ConnectFour')
+        if not connectfour_cog:
+            await interaction.response.send_message("❌ Connect Four not loaded!", ephemeral=True)
+            return
+        
+        await connectfour_cog.start_game(interaction, opponent)
+    
+    # ==================== REPUTATION COMMANDS ====================
+    
+    @app_commands.command(name="rep", description="Give reputation to a user")
+    @app_commands.describe(user="User to give reputation to", positive="Positive or negative")
+    async def slash_rep(self, interaction: discord.Interaction, user: discord.Member, positive: bool = True):
+        rep_cog = self.bot.get_cog('Reputation')
+        if not rep_cog:
+            await interaction.response.send_message("❌ Reputation system not loaded!", ephemeral=True)
+            return
+        
+        await rep_cog.give_rep(interaction, user, positive)
+    
+    # ==================== ADVANCED ECONOMY COMMANDS ====================
+    
+    @app_commands.command(name="rob", description="Attempt to rob another user")
+    @app_commands.describe(user="User to rob")
+    async def slash_rob(self, interaction: discord.Interaction, user: discord.Member):
+        adveconomy_cog = self.bot.get_cog('AdvancedEconomy')
+        if not adveconomy_cog:
+            await interaction.response.send_message("❌ Advanced Economy not loaded!", ephemeral=True)
+            return
+        
+        await adveconomy_cog.rob_user(interaction, user)
+    
+    @app_commands.command(name="shop", description="View the item shop")
+    async def slash_shop(self, interaction: discord.Interaction):
+        adveconomy_cog = self.bot.get_cog('AdvancedEconomy')
+        if not adveconomy_cog:
+            await interaction.response.send_message("❌ Advanced Economy not loaded!", ephemeral=True)
+            return
+        
+        await adveconomy_cog.show_shop(interaction)
+    
+    @app_commands.command(name="buy", description="Buy an item from the shop")
+    @app_commands.describe(item_id="Item ID to purchase")
+    async def slash_buy(self, interaction: discord.Interaction, item_id: str):
+        adveconomy_cog = self.bot.get_cog('AdvancedEconomy')
+        if not adveconomy_cog:
+            await interaction.response.send_message("❌ Advanced Economy not loaded!", ephemeral=True)
+            return
+        
+        await adveconomy_cog.buy_item(interaction, item_id)
+    
+    # ==================== SETUP & HELP COMMANDS ====================
+    
+    @app_commands.command(name="setup", description="Interactive setup wizard")
+    async def slash_setup(self, interaction: discord.Interaction):
+        setup_cog = self.bot.get_cog('SetupWizard')
+        if not setup_cog:
+            await interaction.response.send_message("❌ Setup wizard not loaded!", ephemeral=True)
+            return
+        
+        await setup_cog.start_setup(interaction)
+    
+    @app_commands.command(name="help", description="View bot help menu")
+    async def slash_help(self, interaction: discord.Interaction):
+        help_cog = self.bot.get_cog('InteractiveHelp')
+        if not help_cog:
+            await interaction.response.send_message("❌ Help system not loaded!", ephemeral=True)
+            return
+        
+        await help_cog.show_help(interaction)
 
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))
