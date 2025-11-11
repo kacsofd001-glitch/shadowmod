@@ -54,7 +54,13 @@ class CustomCommands(commands.Cog):
             return
         
         # Extract command name (remove prefix)
-        command_name = message.content[len(prefix):].split()[0].lower()
+        content_after_prefix = message.content[len(prefix):].split()
+        
+        # If user just sent the prefix without any command, ignore
+        if not content_after_prefix:
+            return
+        
+        command_name = content_after_prefix[0].lower()
         
         # Check if it's a custom command
         if command_name in self.custom_commands:
