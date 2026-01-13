@@ -7,44 +7,39 @@ class SetupWizard(commands.Cog):
     
     async def start_setup(self, interaction):
         """Start interactive setup wizard"""
+        from translations import get_text
+        guild_id = interaction.guild.id
         embed = discord.Embed(
-            title="🧙 SHADOW-MOD Setup Wizard",
-            description="Welcome to the interactive setup! I'll help you configure all features step by step.",
+            title="🧙 SHADOW-MOD " + get_text(guild_id, 'help_engagement'),
+            description=get_text(guild_id, 'help_description'),
             color=0x00F3FF
         )
         
         embed.add_field(
-            name="Features Available",
-            value=(
-                "✅ Logging & Moderation\n"
-                "✅ Welcome & Goodbye Messages\n"
-                "✅ Economy System\n"
-                "✅ Leveling & XP\n"
-                "✅ StarBoard\n"
-                "✅ Counting Game\n"
-                "✅ ModMail\n"
-                "✅ Anti-Raid Protection\n"
-                "✅ Birthday Tracker\n"
-                "✅ And 30+ more features!"
-            ),
+            name=get_text(guild_id, 'help_info'),
+            value=get_text(guild_id, 'help_info_desc'),
             inline=False
         )
         
-        view = SetupWizardView(self.bot)
+        view = SetupWizardView(self.bot, guild_id)
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
 class SetupWizardView(discord.ui.View):
-    def __init__(self, bot):
+    def __init__(self, bot, guild_id):
         super().__init__(timeout=300)
         self.bot = bot
+        self.guild_id = guild_id
     
     @discord.ui.button(label="🔧 Basic Setup", style=discord.ButtonStyle.primary)
     async def basic_setup(self, interaction: discord.Interaction, button: discord.ui.Button):
+        from translations import get_text
         embed = discord.Embed(
-            title="🔧 Basic Setup",
-            description="Let's set up the essential features!",
+            title="🔧 " + get_text(self.guild_id, 'help_config'),
+            description=get_text(self.guild_id, 'help_config_desc'),
             color=0x00F3FF
         )
+        
+        await interaction.response.edit_message(embed=embed)
         
         embed.add_field(
             name="Step 1: Create Channels",
@@ -72,11 +67,14 @@ class SetupWizardView(discord.ui.View):
     
     @discord.ui.button(label="💰 Economy Setup", style=discord.ButtonStyle.success)
     async def economy_setup(self, interaction: discord.Interaction, button: discord.ui.Button):
+        from translations import get_text
         embed = discord.Embed(
-            title="💰 Economy System Setup",
-            description="The economy system is ready to use out of the box!",
+            title="💰 " + get_text(self.guild_id, 'cat_economy'),
+            description=get_text(self.guild_id, 'help_economy_desc') if 'help_economy_desc' in TRANSLATIONS['en'] else "Economy setup",
             color=0xFFD700
         )
+        
+        await interaction.response.edit_message(embed=embed)
         
         embed.add_field(
             name="Available Commands",

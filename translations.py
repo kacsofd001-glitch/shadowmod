@@ -7,9 +7,19 @@ TRANSLATIONS = {
     'en': {
         # General
         'bot_ready': 'Bot is ready! Logged in as {}',
-        'help_title': '🤖 Bot Commands Help',
-        'help_description': 'Here are all available commands:',
-        'help_footer': 'Commands work with ! or / prefix! Use buttons for interactive features',
+        'help_title': '🤖 Help Menu',
+        'help_description': 'Choose a category to view commands:',
+        'help_footer': '⚡ Made by MoonlightVFX | Futuristic Bot ⚡',
+        
+        # Categories
+        'cat_moderation': '🛡️ Moderation',
+        'cat_economy': '💰 Economy',
+        'cat_games': '🎮 Mini-Games',
+        'cat_fun': '🎭 Fun',
+        'cat_utility': '⚙️ Utility',
+        'cat_stats': '📊 Stats',
+        'cat_setup': '🧙 Setup',
+        'cat_back': '🏠 Back',
         
         # Tickets
         'ticket_title': '🎫 Support Tickets',
@@ -119,11 +129,11 @@ TRANSLATIONS = {
         'help_tickets': '🎫 Ticket System',
         'help_tickets_desc': '`/ticket` - Create a ticket panel\n`/closeticket` - Close a ticket',
         'help_moderation': '⚔️ Moderation',
-        'help_moderation_desc': '`/ban` - Ban user\n`/kick` - Kick user\n`/mute` `/unmute` - Mute/unmute user\n`/tempmute <user> <time>` - Discord timeout (max 28d)\n`/purge <1-100>` - Bulk delete messages\n`/warn` - Warn user\n`/lock` `/unlock` - Lock/unlock channel',
+        'help_moderation_desc': 'Powerful moderation tools for staff members.',
         'help_music': '🎵 Music System (YouTube • Spotify • SoundCloud)',
         'help_music_desc': '`/play <song>` - Play music from any platform\n`/pause` `/resume` - Pause/resume playback\n`/skip` - Skip to next song\n`/stop` - Stop & disconnect\n`/queue` - Show music queue\n`/nowplaying` - Current track info\n`/loop` - Toggle loop mode\n`/volume <0-100>` - Adjust volume\n*Also supports `!` prefix for all commands*',
         'help_games': '🎮 Entertainment',
-        'help_games_desc': '`/rps` - Rock Paper Scissors\n`/tictactoe` - Tic Tac Toe\n`/meme` - Random meme\n`/8ball` - Magic 8-ball\n`/coinflip` - Flip coin\n`/dice` - Roll dice',
+        'help_games_desc': 'Fun mini-games for the community.',
         'help_engagement': '🎁 Engagement',
         'help_engagement_desc': '`/poll` - Interactive polls\n`/giveaway` - Prize systems\n`/ticket` - Support tickets\n`/createrole` - Role management',
         'help_nameauto': '🏷️ Name Automation',
@@ -146,9 +156,19 @@ TRANSLATIONS = {
     'hu': {
         # General
         'bot_ready': 'Bot készen áll! Bejelentkezve mint {}',
-        'help_title': '🤖 Bot Parancsok Súgó',
-        'help_description': 'Itt vannak az összes elérhető parancs:',
-        'help_footer': 'A parancsok ! vagy / előtaggal működnek! Használj gombokat az interaktív funkciókhoz',
+        'help_title': '🤖 Súgó Menü',
+        'help_description': 'Válassz kategóriát a parancsok megtekintéséhez:',
+        'help_footer': '⚡ MoonlightVFX által készítve | Futurisztikus Bot ⚡',
+        
+        # Categories
+        'cat_moderation': '🛡️ Moderáció',
+        'cat_economy': '💰 Gazdaság',
+        'cat_games': '🎮 Mini-Játékok',
+        'cat_fun': '🎭 Szórakozás',
+        'cat_utility': '⚙️ Eszközök',
+        'cat_stats': '📊 Statisztika',
+        'cat_setup': '🧙 Telepítés',
+        'cat_back': '🏠 Vissza',
         
         # Tickets
         'ticket_title': '🎫 Támogatási Jegyek',
@@ -258,11 +278,11 @@ TRANSLATIONS = {
         'help_tickets': '🎫 Jegy Rendszer',
         'help_tickets_desc': '`/ticket` - Jegy panel létrehozása\n`/closeticket` - Jegy lezárása',
         'help_moderation': '⚔️ Moderáció',
-        'help_moderation_desc': '`/ban` - Felhasználó kitiltása\n`/kick` - Felhasználó kirúgása\n`/mute` `/unmute` - Némítás/visszahangosítás\n`/tempmute <user> <idő>` - Discord timeout (max 28 nap)\n`/purge <1-100>` - Tömeges üzenet törlés\n`/warn` - Figyelmeztetés\n`/lock` `/unlock` - Csatorna zárolás/feloldás',
+        'help_moderation_desc': 'Erőteljes moderációs eszközök a személyzet számára.',
         'help_music': '🎵 Zene Rendszer (YouTube • Spotify • SoundCloud)',
         'help_music_desc': '`/play <dal>` - Zene lejátszás bármely platformról\n`/pause` `/resume` - Szüneteltetés/folytatás\n`/skip` - Következő dal\n`/stop` - Leállítás és lecsatlakozás\n`/queue` - Zene várólista\n`/nowplaying` - Jelenlegi dal infó\n`/loop` - Ismétlés be/ki\n`/volume <0-100>` - Hangerő beállítás\n*A `!` prefix is használható minden parancsnál*',
         'help_games': '🎮 Szórakoztatás',
-        'help_games_desc': '`/rps` - Kő Papír Olló\n`/tictactoe` - Amőba\n`/meme` - Véletlen meme\n`/8ball` - Varázs labda\n`/coinflip` - Pénzfeldobás\n`/dice` - Kockadobás',
+        'help_games_desc': 'Szórakoztató mini-játékok a közösség számára.',
         'help_engagement': '🎁 Közösségi',
         'help_engagement_desc': '`/poll` - Interaktív szavazások\n`/giveaway` - Nyereményjátékok\n`/ticket` - Support jegyek\n`/createrole` - Szerep kezelés',
         'help_nameauto': '🏷️ Név Automatizálás',
@@ -280,7 +300,7 @@ TRANSLATIONS = {
         'invalid_language': '❌ Érvénytelen nyelv! Használd: `en` (English) vagy `hu` (Hungarian)',
         'error_setting_language': '❌ Hiba a nyelv beállításakor!',
         'invalid_user': '❌ Érvénytelen felhasználó! Adj meg egy érvényes mention-t vagy felhasználó ID-t.',
-    }
+    },
 }
 
 def get_text(guild_id, key, *args, **kwargs):

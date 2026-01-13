@@ -10,7 +10,7 @@ class SlashCommands(commands.Cog):
         self.bot = bot
     
     @app_commands.command(name="help", description="Show all bot commands / Összes parancs megjelenítése")
-    async def slash_help(self, interaction: discord.Interaction):
+    async def slash_help_legacy(self, interaction: discord.Interaction):
         guild_id = interaction.guild.id
         
         embed = discord.Embed(
@@ -85,7 +85,7 @@ class SlashCommands(commands.Cog):
             inline=False
         )
         
-        embed.set_footer(text="⚡ Made by MoonlightVFX | 48 Slash Commands Ready ⚡")
+        embed.set_footer(text=translations.get_text(guild_id, 'help_footer'))
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
     
@@ -2157,8 +2157,9 @@ class SlashCommands(commands.Cog):
     
     # ==================== SETUP & HELP COMMANDS ====================
     
-    @app_commands.command(name="setup", description="Interactive setup wizard")
+    @app_commands.command(name="setup", description="Interactive setup wizard / Telepítési varázsló")
     async def slash_setup(self, interaction: discord.Interaction):
+        from translations import get_text
         setup_cog = self.bot.get_cog('SetupWizard')
         if not setup_cog:
             await interaction.response.send_message("❌ Setup wizard not loaded!", ephemeral=True)
@@ -2166,8 +2167,9 @@ class SlashCommands(commands.Cog):
         
         await setup_cog.start_setup(interaction)
     
-    @app_commands.command(name="help", description="View bot help menu")
+    @app_commands.command(name="help", description="View bot help menu / Súgó menü megtekintése")
     async def slash_help(self, interaction: discord.Interaction):
+        from translations import get_text
         help_cog = self.bot.get_cog('InteractiveHelp')
         if not help_cog:
             await interaction.response.send_message("❌ Help system not loaded!", ephemeral=True)
