@@ -9,6 +9,7 @@ class TicketView(View):
     
     @discord.ui.button(label='📩 Create Ticket', style=discord.ButtonStyle.green, custom_id='create_ticket')
     async def create_ticket(self, interaction: discord.Interaction, button: Button):
+        from translations import get_text
         guild = interaction.guild
         user = interaction.user
         
@@ -33,17 +34,17 @@ class TicketView(View):
         )
         
         embed = discord.Embed(
-            title=f"🎫 Ticket #{ticket_num}",
-            description=f"Welcome {user.mention}!\n\nPlease describe your issue and our staff will assist you shortly.",
+            title=get_text(guild.id, 'ticket_title') + f" #{ticket_num}",
+            description=get_text(guild.id, 'ticket_description') + f"\n\n{user.mention}, please describe your issue.",
             color=0x00F3FF
         )
-        embed.set_footer(text="Click the button below to close this ticket")
+        embed.set_footer(text=get_text(guild.id, 'ticket_closed'))
         
         close_view = CloseTicketView()
         await channel.send(embed=embed, view=close_view)
         
         await interaction.response.send_message(
-            f"✅ Ticket created! {channel.mention}",
+            get_text(guild.id, 'ticket_created_desc', channel.mention),
             ephemeral=True
         )
 
@@ -69,12 +70,13 @@ class Tickets(commands.Cog):
     @commands.command(name='ticket')
     @commands.has_permissions(administrator=True)
     async def create_ticket_panel(self, ctx):
+        from translations import get_text
         embed = discord.Embed(
-            title="🎫 Support Tickets",
-            description="Need help? Click the button below to create a support ticket!\n\nOur staff team will assist you as soon as possible.",
+            title=get_text(ctx.guild.id, 'ticket_title'),
+            description=get_text(ctx.guild.id, 'ticket_description') + "\n\n" + get_text(ctx.guild.id, 'ticket_steps'),
             color=0x8B00FF
         )
-        embed.set_footer(text="One ticket per person")
+        embed.set_footer(text=get_text(ctx.guild.id, 'help_footer'))
         
         view = TicketView()
         await ctx.send(embed=embed, view=view)

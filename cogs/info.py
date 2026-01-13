@@ -15,6 +15,7 @@ class Info(commands.Cog):
     @commands.command(name='serverinfo', aliases=['si'])
     async def serverinfo(self, ctx):
         """Show server information"""
+        from translations import get_text
         guild = ctx.guild
         
         # Count channels by type
@@ -31,7 +32,7 @@ class Info(commands.Cog):
         
         # Create embed
         embed = discord.Embed(
-            title=f"⚡ {guild.name} Server Info",
+            title=f"⚡ {guild.name} " + get_text(guild.id, 'servers_title'),
             description=f"**ID:** `{guild.id}`",
             color=0x00F3FF,
             timestamp=datetime.now(timezone.utc)
@@ -42,12 +43,12 @@ class Info(commands.Cog):
         
         # Server Stats
         embed.add_field(
-            name="👑 Owner",
+            name="👑 " + get_text(guild.id, 'moderator'),
             value=f"{guild.owner.mention}\n`{guild.owner}`",
             inline=True
         )
         embed.add_field(
-            name="📅 Created",
+            name="📅 " + get_text(guild.id, 'invite_expires'),
             value=f"<t:{int(guild.created_at.timestamp())}:R>",
             inline=True
         )
@@ -66,7 +67,7 @@ class Info(commands.Cog):
         
         # Channel Stats
         embed.add_field(
-            name="💬 Channels ({})".format(text_channels + voice_channels),
+            name="💬 " + get_text(guild.id, 'channel') + " ({})".format(text_channels + voice_channels),
             value=f"**Text:** {text_channels}\n**Voice:** {voice_channels}\n**Categories:** {categories}",
             inline=True
         )
@@ -114,6 +115,7 @@ class Info(commands.Cog):
     @commands.command(name='botinfo', aliases=['bi'])
     async def botinfo(self, ctx):
         """Show bot information and statistics"""
+        from translations import get_text
         # Calculate uptime
         uptime = datetime.now(timezone.utc) - self.bot.start_time
         hours, remainder = divmod(int(uptime.total_seconds()), 3600)

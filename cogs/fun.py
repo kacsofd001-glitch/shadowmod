@@ -98,49 +98,32 @@ class Fun(commands.Cog):
     
     @commands.command(name='8ball')
     async def eight_ball(self, ctx, *, question: str = ""):
+        from translations import get_text
         if not question:
             await ctx.send("❌ Please ask a question!")
             return
         
-        responses = [
-            "Yes, definitely! ✅",
-            "It is certain! ✅",
-            "Without a doubt! ✅",
-            "Yes! ✅",
-            "Most likely! ✅",
-            "Outlook good! ✅",
-            "Signs point to yes! ✅",
-            "Reply hazy, try again! 🤔",
-            "Ask again later! 🤔",
-            "Better not tell you now! 🤔",
-            "Cannot predict now! 🤔",
-            "Concentrate and ask again! 🤔",
-            "Don't count on it! ❌",
-            "My reply is no! ❌",
-            "My sources say no! ❌",
-            "Outlook not so good! ❌",
-            "Very doubtful! ❌"
-        ]
-        
+        responses = get_text(ctx.guild.id, '8ball_responses')
         answer = random.choice(responses)
         
         embed = discord.Embed(
-            title="🎱 Magic 8 Ball",
+            title=get_text(ctx.guild.id, 'magic_8ball'),
             color=discord.Color.purple()
         )
-        embed.add_field(name="Question", value=question, inline=False)
-        embed.add_field(name="Answer", value=answer, inline=False)
+        embed.add_field(name=get_text(ctx.guild.id, 'question'), value=question, inline=False)
+        embed.add_field(name=get_text(ctx.guild.id, 'answer'), value=answer, inline=False)
         
         await ctx.send(embed=embed)
     
     @commands.command(name='coinflip')
     async def coin_flip(self, ctx):
-        result = random.choice(['Heads', 'Tails'])
+        from translations import get_text
+        result = random.choice([get_text(ctx.guild.id, 'heads'), get_text(ctx.guild.id, 'tails')])
         emoji = '🪙'
         
         embed = discord.Embed(
-            title=f"{emoji} Coin Flip",
-            description=f"**Result:** {result}!",
+            title=get_text(ctx.guild.id, 'coin_flip'),
+            description=get_text(ctx.guild.id, 'coin_result', result),
             color=discord.Color.gold()
         )
         

@@ -50,16 +50,19 @@ class Moderation(commands.Cog):
     @commands.command(name='ban')
     @commands.has_permissions(ban_members=True)
     async def ban_user(self, ctx, member: discord.Member, *, reason="No reason provided"):
+        from translations import get_text
         if member.top_role >= ctx.author.top_role:
             await ctx.send("❌ You cannot ban this user!")
             return
         
         embed = discord.Embed(
-            title="🔨 User Banned",
-            description=f"**User:** {member.mention}\n**Reason:** {reason}\n**Moderator:** {ctx.author.mention}",
+            title=get_text(ctx.guild.id, 'user_banned'),
+            description=get_text(ctx.guild.id, 'user_banned_desc', member.mention),
             color=0xFF006E,
             timestamp=datetime.now(timezone.utc)
         )
+        embed.add_field(name=get_text(ctx.guild.id, 'reason'), value=reason)
+        embed.add_field(name=get_text(ctx.guild.id, 'moderator'), value=ctx.author.mention)
         
         await member.ban(reason=reason)
         await ctx.send(embed=embed)
@@ -68,16 +71,19 @@ class Moderation(commands.Cog):
     @commands.command(name='kick')
     @commands.has_permissions(kick_members=True)
     async def kick_user(self, ctx, member: discord.Member, *, reason="No reason provided"):
+        from translations import get_text
         if member.top_role >= ctx.author.top_role:
             await ctx.send("❌ You cannot kick this user!")
             return
         
         embed = discord.Embed(
-            title="👢 User Kicked",
-            description=f"**User:** {member.mention}\n**Reason:** {reason}\n**Moderator:** {ctx.author.mention}",
+            title=get_text(ctx.guild.id, 'user_kicked'),
+            description=get_text(ctx.guild.id, 'user_kicked_desc', member.mention),
             color=0xFF006E,
             timestamp=datetime.now(timezone.utc)
         )
+        embed.add_field(name=get_text(ctx.guild.id, 'reason'), value=reason)
+        embed.add_field(name=get_text(ctx.guild.id, 'moderator'), value=ctx.author.mention)
         
         await member.kick(reason=reason)
         await ctx.send(embed=embed)
@@ -86,6 +92,7 @@ class Moderation(commands.Cog):
     @commands.command(name='mute')
     @commands.has_permissions(moderate_members=True)
     async def mute_user(self, ctx, member: discord.Member):
+        from translations import get_text
         cfg = config.load_config()
         muted_roles = cfg.get('muted_roles', {})
         muted_role_id = muted_roles.get(str(ctx.guild.id))
@@ -113,11 +120,12 @@ class Moderation(commands.Cog):
         await member.add_roles(muted_role)
         
         embed = discord.Embed(
-            title="🔇 User Muted",
-            description=f"**User:** {member.mention}\n**Moderator:** {ctx.author.mention}",
+            title=get_text(ctx.guild.id, 'user_muted'),
+            description=get_text(ctx.guild.id, 'user_muted_desc', member.mention),
             color=0x0066FF,
             timestamp=datetime.now(timezone.utc)
         )
+        embed.add_field(name=get_text(ctx.guild.id, 'moderator'), value=ctx.author.mention)
         
         await ctx.send(embed=embed)
         await self.send_log(embed)
@@ -125,33 +133,35 @@ class Moderation(commands.Cog):
     @commands.command(name='unmute')
     @commands.has_permissions(moderate_members=True)
     async def unmute_user(self, ctx, member: discord.Member):
+        from translations import get_text
         cfg = config.load_config()
         muted_roles = cfg.get('muted_roles', {})
         muted_role_id = muted_roles.get(str(ctx.guild.id))
         
         if not muted_role_id:
-            await ctx.send("❌ No muted role found!")
+            await ctx.send(get_text(ctx.guild.id, 'no_muted_role'))
             return
         
         muted_role = ctx.guild.get_role(int(muted_role_id))
         if not muted_role:
-            await ctx.send("❌ Muted role not found!")
+            await ctx.send(get_text(ctx.guild.id, 'no_muted_role'))
             return
         
         if muted_role in member.roles:
             await member.remove_roles(muted_role)
             
             embed = discord.Embed(
-                title="🔊 User Unmuted",
-                description=f"**User:** {member.mention}\n**Moderator:** {ctx.author.mention}",
+                title=get_text(ctx.guild.id, 'user_unmuted'),
+                description=get_text(ctx.guild.id, 'user_unmuted_desc', member.mention),
                 color=0x00F3FF,
                 timestamp=datetime.now(timezone.utc)
             )
+            embed.add_field(name=get_text(ctx.guild.id, 'moderator'), value=ctx.author.mention)
             
             await ctx.send(embed=embed)
             await self.send_log(embed)
         else:
-            await ctx.send("❌ User is not muted!")
+            await ctx.send(get_text(ctx.guild.id, 'user_not_muted'))
     
     @commands.command(name='tempmute')
     @commands.has_permissions(moderate_members=True)
