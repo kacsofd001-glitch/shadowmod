@@ -29,24 +29,16 @@ class Music(commands.Cog):
         """Connect to Lavalink nodes when cog loads"""
         nodes = [
             wavelink.Node(
-                uri='https://lava-v4.ajieblogs.eu.org:443',
-                password='https://dsc.gg/ajidevserver'
+                uri='http://lavalink.youshallnotpass.xyz:2333',
+                password='youshallnotpass'
             ),
             wavelink.Node(
-                uri='http://lava-us.catfein.co.id:5000',
-                password='catfein'
+                uri='http://lava.link:80',
+                password='youshallnotpass'
             ),
             wavelink.Node(
                 uri='http://lavalink.divahost.net:60002',
                 password='divahostv4'
-            ),
-            wavelink.Node(
-                uri='https://lavalink-v2.pericsq.ro:443',
-                password='wwweasycodero'
-            ),
-            wavelink.Node(
-                uri='http://publicnode.nextgencoders.xyz:2336',
-                password='nextgencoders'
             )
         ]
         
