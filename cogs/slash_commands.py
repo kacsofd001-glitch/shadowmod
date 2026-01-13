@@ -9,7 +9,7 @@ class SlashCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @app_commands.command(name="help", description="Show all bot commands / Összes parancs megjelenítése")
+    @app_commands.command(name="help_all", description="Show all bot commands / Összes parancs megjelenítése")
     async def slash_help_legacy(self, interaction: discord.Interaction):
         guild_id = interaction.guild.id
         
