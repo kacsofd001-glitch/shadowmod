@@ -50,37 +50,53 @@ class Fun(commands.Cog):
     
     @commands.command(name='meme')
     async def random_meme(self, ctx):
-        lang = get_guild_language(ctx.guild.id)
+        guild_id = ctx.guild.id
+        await ctx.trigger_typing()
         
-        templates = self.meme_templates_hu if lang == 'hu' else self.meme_templates_en
-        template_name, top_text, bottom_text = random.choice(templates)
-        
-        top_text_encoded = quote(top_text, safe='')
-        bottom_text_encoded = quote(bottom_text, safe='')
-        
-        meme_url = f"https://api.memegen.link/images/{template_name}/{top_text_encoded}/{bottom_text_encoded}.png"
+        # Use a more reliable public meme API for random memes
+        meme_apis = [
+            "https://meme-api.com/gimme",
+            "https://meme-api.com/gimme/wholesomememes",
+            "https://meme-api.com/gimme/memes"
+        ]
         
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.head(meme_url, timeout=aiohttp.ClientTimeout(total=5)) as response:
-                    if response.status != 200:
-                        raise Exception("Meme API unavailable")
+                async with session.get(random.choice(meme_apis), timeout=aiohttp.ClientTimeout(total=5)) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        meme_url = data.get('url')
+                        meme_title = data.get('title', get_text(guild_id, 'meme_title'))
+                        
+                        embed = discord.Embed(
+                            title=meme_title,
+                            color=discord.Color.random()
+                        )
+                        embed.set_image(url=meme_url)
+                        embed.set_footer(text=f"r/{data.get('subreddit')} | {get_text(guild_id, 'generated_meme')}")
+                        
+                        await ctx.send(embed=embed)
+                        return
+                    else:
+                        raise Exception("Meme API error")
+        except Exception as e:
+            # Fallback to local templates if API fails
+            lang = get_guild_language(guild_id)
+            templates = self.meme_templates_hu if lang == 'hu' else self.meme_templates_en
+            template_name, top_text, bottom_text = random.choice(templates)
+            
+            top_text_encoded = quote(top_text, safe='')
+            bottom_text_encoded = quote(bottom_text, safe='')
+            
+            meme_url = f"https://api.memegen.link/images/{template_name}/{top_text_encoded}/{bottom_text_encoded}.png"
             
             embed = discord.Embed(
-                title=get_text(ctx.guild.id, 'meme_title'),
+                title=get_text(guild_id, 'meme_title'),
                 color=discord.Color.random()
             )
             embed.set_image(url=meme_url)
-            embed.set_footer(text=get_text(ctx.guild.id, 'generated_meme'))
+            embed.set_footer(text=get_text(guild_id, 'generated_meme'))
             
-            await ctx.send(embed=embed)
-        except Exception:
-            embed = discord.Embed(
-                title=get_text(ctx.guild.id, 'meme_title'),
-                description=f"**{top_text}**\n\n*{bottom_text}*",
-                color=discord.Color.random()
-            )
-            embed.set_footer(text=get_text(ctx.guild.id, 'generated_meme'))
             await ctx.send(embed=embed)
     
     
