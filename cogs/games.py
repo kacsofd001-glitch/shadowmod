@@ -144,6 +144,9 @@ class TicTacToeView(View):
 class Games(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        # Expose View classes for access from slash_commands
+        self.RPSView = RPSView
+        self.TicTacToeView = TicTacToeView
     
     @commands.command(name='rps')
     async def rock_paper_scissors(self, ctx):
