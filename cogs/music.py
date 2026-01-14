@@ -29,12 +29,14 @@ class Music(commands.Cog):
     async def cog_load(self):
         """Connect to Lavalink nodes when cog loads"""
         nodes = [
-            wavelink.Node(uri='lavalinkv4.serenetia.com:443',
-                          password='https://dsc.gg/ajidevserver'),
             wavelink.Node(uri='http://lava.link:80',
                           password='youshallnotpass'),
             wavelink.Node(uri='http://lavalink.divahost.net:60002',
-                          password='divahostv4')
+                          password='divahostv4'),
+            wavelink.Node(uri='https://lavalink.lexisloveswaffles.com:443',
+                          password='youshallnotpass'),
+            wavelink.Node(uri='https://lavalink.paniek.de:443',
+                          password='youshallnotpass')
         ]
 
         try:
