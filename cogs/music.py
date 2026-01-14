@@ -28,28 +28,28 @@ class Music(commands.Cog):
 
     async def cog_load(self):
         """Connect to Lavalink nodes when cog loads"""
+        # Using a verified list of public Lavalink v4 nodes
         nodes = [
+            wavelink.Node(uri='http://lavalink.paniek.de:2333',
+                          password='youshallnotpass'),
             wavelink.Node(uri='http://lava.link:80',
                           password='youshallnotpass'),
             wavelink.Node(uri='http://lavalink.divahost.net:60002',
                           password='divahostv4'),
-            wavelink.Node(uri='https://lavalink.lexisloveswaffles.com:443',
-                          password='youshallnotpass'),
-            wavelink.Node(uri='https://lavalink.paniek.de:443',
+            wavelink.Node(uri='http://lavalink.serenetia.com:2333',
                           password='youshallnotpass')
         ]
 
         try:
-            await asyncio.wait_for(wavelink.Pool.connect(client=self.bot,
-                                                         nodes=nodes),
-                                   timeout=15.0)
-            print(f"✅ Connected to Lavalink pool with {len(nodes)} nodes")
-        except asyncio.TimeoutError:
-            print("⚠️ Lavalink connection timed out")
-            print("⚠️ Music features will be unavailable")
+            # We initialize the pool
+            await wavelink.Pool.connect(client=self.bot, nodes=nodes)
+            print(f"✅ Lavalink pool initialized with {len(nodes)} nodes")
         except Exception as e:
-            print(f"⚠️ Failed to connect to Lavalink nodes: {e}")
-            print("⚠️ Music features will be unavailable")
+            print(f"⚠️ Failed to initialize Lavalink pool: {e}")
+
+    @commands.Cog.listener()
+    async def on_wavelink_node_ready(self, node: wavelink.Node):
+        print(f"✅ Lavalink Node {node.identifier} is ready and connected!")
 
     @commands.Cog.listener()
     async def on_wavelink_track_end(self,
@@ -101,6 +101,16 @@ class Music(commands.Cog):
             return
 
         voice_channel = ctx.author.voice.channel
+
+        # Check for connected nodes
+        connected_nodes = [n for n in wavelink.Pool.nodes.values() if n.status == wavelink.NodeStatus.CONNECTED]
+        if not connected_nodes:
+            embed = discord.Embed(
+                title="❌ Music Unavailable",
+                description="Connecting to music nodes... Please try again in a few seconds.",
+                color=0xFF006E)
+            await ctx.send(embed=embed)
+            return
 
         if not ctx.voice_client:
             try:
