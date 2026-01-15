@@ -11,6 +11,7 @@ class InteractiveHelp(commands.Cog):
         if not interaction.response.is_done():
             await interaction.response.defer()
             
+        import translations
         from translations import get_text
         guild_id = interaction.guild.id
         lang = translations.get_guild_language(guild_id)
@@ -50,6 +51,7 @@ class HelpView(discord.ui.View):
     
     @discord.ui.button(label="🛡️ Moderation", style=discord.ButtonStyle.primary, emoji="🛡️")
     async def moderation_help(self, interaction: discord.Interaction, button: discord.ui.Button):
+        import translations
         from translations import get_text
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
@@ -62,6 +64,7 @@ class HelpView(discord.ui.View):
     
     @discord.ui.button(label="💰 Economy", style=discord.ButtonStyle.success, emoji="💰")
     async def economy_help(self, interaction: discord.Interaction, button: discord.ui.Button):
+        import translations
         from translations import get_text
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
@@ -74,6 +77,7 @@ class HelpView(discord.ui.View):
     
     @discord.ui.button(label="🎮 Games", style=discord.ButtonStyle.primary, emoji="🎮")
     async def games_help(self, interaction: discord.Interaction, button: discord.ui.Button):
+        import translations
         from translations import get_text
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
@@ -86,6 +90,7 @@ class HelpView(discord.ui.View):
     
     @discord.ui.button(label="⚙️ Utility", style=discord.ButtonStyle.secondary, emoji="⚙️")
     async def utility_help(self, interaction: discord.Interaction, button: discord.ui.Button):
+        import translations
         from translations import get_text
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
@@ -98,6 +103,7 @@ class HelpView(discord.ui.View):
     
     @discord.ui.button(label="🏠 Back", style=discord.ButtonStyle.secondary, row=1)
     async def back_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        import translations
         from translations import get_text
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
