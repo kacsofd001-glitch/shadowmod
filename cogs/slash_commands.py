@@ -11,6 +11,7 @@ class SlashCommands(commands.Cog):
     
     @app_commands.command(name="help", description="Show help menu / Súgó menü")
     async def slash_help(self, interaction: discord.Interaction):
+        # We handle the deferral and initial response here to keep the interaction alive
         await interaction.response.defer()
         help_cog = self.bot.get_cog('InteractiveHelp')
         if help_cog:

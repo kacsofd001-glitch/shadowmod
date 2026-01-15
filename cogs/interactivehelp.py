@@ -7,9 +7,7 @@ class InteractiveHelp(commands.Cog):
     
     async def show_help(self, interaction):
         """Show interactive help menu"""
-        # Removed defer() from here as it should be handled in the calling slash command
-        # to ensure the interaction remains valid.
-            
+        # Ensure we use followup.send correctly as the interaction was already deferred
         import translations
         from translations import get_text
         guild_id = interaction.guild.id
@@ -40,7 +38,13 @@ class InteractiveHelp(commands.Cog):
         embed.set_footer(text=get_text(guild_id, 'help_footer', lang=lang))
         
         view = HelpView(self.bot, guild_id)
-        await interaction.followup.send(embed=embed, view=view)
+        
+        try:
+            # Using followup.send is correct for deferred interactions
+            await interaction.followup.send(embed=embed, view=view)
+        except Exception as e:
+            # Fallback in case the followup token expires or is invalid
+            print(f"Help command error: {e}")
 
 class HelpView(discord.ui.View):
     def __init__(self, bot, guild_id):
