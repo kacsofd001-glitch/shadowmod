@@ -318,9 +318,12 @@ def get_text(guild_id, key, *args, **kwargs):
     """
     import config
     
+    # Force str conversion for key safety
+    guild_id_str = str(guild_id)
+    
     cfg = config.load_config()
     guild_langs = cfg.get('guild_languages', {})
-    lang = kwargs.get('lang') or guild_langs.get(str(guild_id), 'en')
+    lang = kwargs.get('lang') or guild_langs.get(guild_id_str, 'en')
     
     # Fallback to English if language not found
     if lang not in TRANSLATIONS:

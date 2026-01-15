@@ -138,6 +138,40 @@ async def help_command(ctx):
     # Get current prefix for this server
     prefix = config.get_guild_prefix(ctx.guild.id) if ctx.guild else '!'
     
+    # Get language and check if we should use interactive help
+    from translations import get_text, get_guild_language
+    guild_id = ctx.guild.id
+    lang = get_guild_language(guild_id)
+    
+    interactive_help = bot.get_cog('InteractiveHelp')
+    if interactive_help:
+        embed = discord.Embed(
+            title=get_text(guild_id, 'help_title', lang=lang),
+            description=get_text(guild_id, 'help_description', lang=lang),
+            color=0x00F3FF
+        )
+        embed.set_thumbnail(url=bot.user.display_avatar.url)
+        embed.add_field(
+            name=get_text(guild_id, 'help_engagement', lang=lang),
+            value=(
+                "Click a button below to explore commands by category!\n\n"
+                "🛡️ **Moderation** - Manage your server\n"
+                "💰 **Economy** - Currency & shop system\n"
+                "🎮 **Games** - Fun mini-games\n"
+                "🎭 **Fun** - Entertainment commands\n"
+                "⚙️ **Utility** - Helpful tools\n"
+                "📊 **Stats** - Analytics & tracking"
+            ),
+            inline=False
+        )
+        embed.set_footer(text=get_text(guild_id, 'help_footer', lang=lang))
+        
+        from cogs.interactivehelp import HelpView
+        view = HelpView(bot, guild_id)
+        await ctx.send(embed=embed, view=view)
+        return
+
+    # Fallback legacy help (if cog not loaded)
     embed = discord.Embed(
         title="⚡ SHADOW-MOD ✨ | COMMAND DATABASE",
         description=f"━━━━━━━━━━━━━━━━━━━━━━━━━\n`Next-Gen Discord Moderation System`\n**Current Prefix:** `{prefix}` | **Slash:** `/`\n━━━━━━━━━━━━━━━━━━━━━━━━━",

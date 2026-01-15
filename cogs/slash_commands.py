@@ -464,7 +464,12 @@ class SlashCommands(commands.Cog):
     @app_commands.checks.has_permissions(administrator=True)
     async def slash_setlog(self, interaction: discord.Interaction, channel: discord.TextChannel):
         guild_id = interaction.guild.id
-        config.update_config('log_channel_id', channel.id)
+        
+        cfg = config.load_config()
+        if 'guild_log_channels' not in cfg:
+            cfg['guild_log_channels'] = {}
+        cfg['guild_log_channels'][str(guild_id)] = channel.id
+        config.save_config(cfg)
         
         embed = discord.Embed(
             title=translations.get_text(guild_id, 'log_channel_set'),

@@ -28,11 +28,12 @@ class Language(commands.Cog):
             
             embed.add_field(
                 name=translations.get_text(ctx.guild.id, 'current_language', lang=lang),
-                value=f"🇬🇧 English" if lang == 'en' else f"🇭🇺 Magyar",
+                value="🇬🇧 English" if lang == 'en' else "🇭🇺 Magyar",
                 inline=False
             )
             
             await ctx.send(embed=embed)
+            # Sync commands to update descriptions if needed (though discord handles slash choices dynamically)
         else:
             await ctx.send(translations.get_text(ctx.guild.id, 'error_setting_language'))
     
@@ -59,7 +60,7 @@ class Language(commands.Cog):
             
             embed.add_field(
                 name=translations.get_text(interaction.guild.id, 'current_language', lang=lang),
-                value=f"🇬🇧 English" if lang == 'en' else f"🇭🇺 Magyar",
+                value="🇬🇧 English" if lang == 'en' else "🇭🇺 Magyar",
                 inline=False
             )
             

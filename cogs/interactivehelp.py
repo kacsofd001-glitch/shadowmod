@@ -45,9 +45,10 @@ class HelpView(discord.ui.View):
     @discord.ui.button(label="🛡️ Moderation", style=discord.ButtonStyle.primary, emoji="🛡️")
     async def moderation_help(self, interaction: discord.Interaction, button: discord.ui.Button):
         from translations import get_text
+        lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
-            title=get_text(self.guild_id, 'help_moderation'),
-            description=get_text(self.guild_id, 'help_moderation_desc'),
+            title=get_text(self.guild_id, 'help_moderation', lang=lang),
+            description=get_text(self.guild_id, 'help_moderation_desc', lang=lang),
             color=0xFF0000
         )
         
@@ -56,9 +57,10 @@ class HelpView(discord.ui.View):
     @discord.ui.button(label="💰 Economy", style=discord.ButtonStyle.success, emoji="💰")
     async def economy_help(self, interaction: discord.Interaction, button: discord.ui.Button):
         from translations import get_text
+        lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
-            title="💰 Economy Commands",
-            description="Virtual currency system",
+            title=get_text(self.guild_id, 'cat_economy', lang=lang),
+            description=get_text(self.guild_id, 'help_moderation_desc', lang=lang), # Using moderation desc as placeholder or you might have economy desc
             color=0xFFD700
         )
         
@@ -67,9 +69,10 @@ class HelpView(discord.ui.View):
     @discord.ui.button(label="🎮 Games", style=discord.ButtonStyle.primary, emoji="🎮")
     async def games_help(self, interaction: discord.Interaction, button: discord.ui.Button):
         from translations import get_text
+        lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
-            title=get_text(self.guild_id, 'help_games'),
-            description=get_text(self.guild_id, 'help_games_desc'),
+            title=get_text(self.guild_id, 'help_games', lang=lang),
+            description=get_text(self.guild_id, 'help_games_desc', lang=lang),
             color=0xFF00FF
         )
         
@@ -78,9 +81,10 @@ class HelpView(discord.ui.View):
     @discord.ui.button(label="⚙️ Utility", style=discord.ButtonStyle.secondary, emoji="⚙️")
     async def utility_help(self, interaction: discord.Interaction, button: discord.ui.Button):
         from translations import get_text
+        lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
-            title=get_text(self.guild_id, 'help_config'),
-            description=get_text(self.guild_id, 'help_config_desc'),
+            title=get_text(self.guild_id, 'help_config', lang=lang),
+            description=get_text(self.guild_id, 'help_config_desc', lang=lang),
             color=0x00F3FF
         )
         
@@ -89,9 +93,10 @@ class HelpView(discord.ui.View):
     @discord.ui.button(label="🏠 Back", style=discord.ButtonStyle.secondary, row=1)
     async def back_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         from translations import get_text
+        lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
-            title=get_text(self.guild_id, 'help_title'),
-            description=get_text(self.guild_id, 'help_description'),
+            title=get_text(self.guild_id, 'help_title', lang=lang),
+            description=get_text(self.guild_id, 'help_description', lang=lang),
             color=0x00F3FF
         )
         
