@@ -40,11 +40,14 @@ class InteractiveHelp(commands.Cog):
         view = HelpView(self.bot, guild_id)
         
         try:
-            # Using followup.send is correct for deferred interactions
-            await interaction.followup.send(embed=embed, view=view)
+            # Using edit_original_response is safer after deferring if followup fails
+            await interaction.edit_original_response(embed=embed, view=view)
         except Exception as e:
-            # Fallback in case the followup token expires or is invalid
-            print(f"Help command error: {e}")
+            # Last ditch attempt with followup if edit fails
+            try:
+                await interaction.followup.send(embed=embed, view=view)
+            except:
+                print(f"Help command critical failure: {e}")
 
 class HelpView(discord.ui.View):
     def __init__(self, bot, guild_id):
