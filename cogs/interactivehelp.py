@@ -7,18 +7,24 @@ class InteractiveHelp(commands.Cog):
     
     async def show_help(self, interaction):
         """Show interactive help menu"""
+        # Defer the response immediately to avoid timeout/unknown interaction errors
+        if not interaction.response.is_done():
+            await interaction.response.defer()
+            
         from translations import get_text
         guild_id = interaction.guild.id
+        lang = translations.get_guild_language(guild_id)
+        
         embed = discord.Embed(
-            title=get_text(guild_id, 'help_title'),
-            description=get_text(guild_id, 'help_description'),
+            title=get_text(guild_id, 'help_title', lang=lang),
+            description=get_text(guild_id, 'help_description', lang=lang),
             color=0x00F3FF
         )
         
         embed.set_thumbnail(url=self.bot.user.display_avatar.url)
         
         embed.add_field(
-            name=get_text(guild_id, 'help_engagement'),
+            name=get_text(guild_id, 'help_engagement', lang=lang),
             value=(
                 "Click a button below to explore commands by category!\n\n"
                 "🛡️ **Moderation** - Manage your server\n"
@@ -31,10 +37,10 @@ class InteractiveHelp(commands.Cog):
             inline=False
         )
         
-        embed.set_footer(text=get_text(guild_id, 'help_footer'))
+        embed.set_footer(text=get_text(guild_id, 'help_footer', lang=lang))
         
         view = HelpView(self.bot, guild_id)
-        await interaction.response.send_message(embed=embed, view=view)
+        await interaction.followup.send(embed=embed, view=view)
 
 class HelpView(discord.ui.View):
     def __init__(self, bot, guild_id):

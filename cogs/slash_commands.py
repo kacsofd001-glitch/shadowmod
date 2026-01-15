@@ -9,85 +9,13 @@ class SlashCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @app_commands.command(name="help_all", description="Show all bot commands / Összes parancs megjelenítése")
-    async def slash_help_legacy(self, interaction: discord.Interaction):
-        guild_id = interaction.guild.id
-        
-        embed = discord.Embed(
-            title=translations.get_text(guild_id, 'help_title'),
-            description=translations.get_text(guild_id, 'help_description'),
-            color=0x00F3FF
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_info'),
-            value=translations.get_text(guild_id, 'help_info_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_security'),
-            value=translations.get_text(guild_id, 'help_security_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_antialt'),
-            value=translations.get_text(guild_id, 'help_antialt_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_tickets'),
-            value=translations.get_text(guild_id, 'help_tickets_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_moderation'),
-            value=translations.get_text(guild_id, 'help_moderation_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_music'),
-            value=translations.get_text(guild_id, 'help_music_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_games'),
-            value=translations.get_text(guild_id, 'help_games_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_engagement'),
-            value=translations.get_text(guild_id, 'help_engagement_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_nameauto'),
-            value=translations.get_text(guild_id, 'help_nameauto_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_config'),
-            value=translations.get_text(guild_id, 'help_config_desc'),
-            inline=False
-        )
-        
-        embed.add_field(
-            name=translations.get_text(guild_id, 'help_admin'),
-            value=translations.get_text(guild_id, 'help_admin_desc'),
-            inline=False
-        )
-        
-        embed.set_footer(text=translations.get_text(guild_id, 'help_footer'))
-        
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+    @app_commands.command(name="help", description="Show help menu / Súgó menü")
+    async def slash_help(self, interaction: discord.Interaction):
+        help_cog = self.bot.get_cog('InteractiveHelp')
+        if help_cog:
+            await help_cog.show_help(interaction)
+        else:
+            await interaction.response.send_message("Help system is currently unavailable.", ephemeral=True)
     
     @app_commands.command(name="ticket", description="Create a ticket panel / Jegy panel létrehozása")
     @app_commands.checks.has_permissions(administrator=True)
