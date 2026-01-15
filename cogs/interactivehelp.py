@@ -7,7 +7,6 @@ class InteractiveHelp(commands.Cog):
     
     async def show_help(self, interaction):
         """Show interactive help menu"""
-        # Ensure we use followup.send correctly as the interaction was already deferred
         import translations
         from translations import get_text
         guild_id = interaction.guild.id
@@ -39,15 +38,8 @@ class InteractiveHelp(commands.Cog):
         
         view = HelpView(self.bot, guild_id)
         
-        try:
-            # Using edit_original_response is safer after deferring if followup fails
-            await interaction.edit_original_response(embed=embed, view=view)
-        except Exception as e:
-            # Last ditch attempt with followup if edit fails
-            try:
-                await interaction.followup.send(embed=embed, view=view)
-            except:
-                print(f"Help command critical failure: {e}")
+        # Send everything in a single immediate response to avoid webhook timeouts
+        await interaction.response.send_message(embed=embed, view=view)
 
 class HelpView(discord.ui.View):
     def __init__(self, bot, guild_id):

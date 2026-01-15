@@ -11,13 +11,12 @@ class SlashCommands(commands.Cog):
     
     @app_commands.command(name="help", description="Show help menu / Súgó menü")
     async def slash_help(self, interaction: discord.Interaction):
-        # We handle the deferral and initial response here to keep the interaction alive
-        await interaction.response.defer()
+        # We handle everything in one go to avoid complex interaction states
         help_cog = self.bot.get_cog('InteractiveHelp')
         if help_cog:
             await help_cog.show_help(interaction)
         else:
-            await interaction.followup.send("Help system is currently unavailable.", ephemeral=True)
+            await interaction.response.send_message("Help system is currently unavailable.", ephemeral=True)
     
     @app_commands.command(name="ticket", description="Create a ticket panel / Jegy panel létrehozása")
     @app_commands.checks.has_permissions(administrator=True)
