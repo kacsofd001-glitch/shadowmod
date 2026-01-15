@@ -7,9 +7,8 @@ class InteractiveHelp(commands.Cog):
     
     async def show_help(self, interaction):
         """Show interactive help menu"""
-        # Defer the response immediately to avoid timeout/unknown interaction errors
-        if not interaction.response.is_done():
-            await interaction.response.defer()
+        # Removed defer() from here as it should be handled in the calling slash command
+        # to ensure the interaction remains valid.
             
         import translations
         from translations import get_text
