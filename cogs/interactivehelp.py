@@ -69,7 +69,7 @@ class HelpView(discord.ui.View):
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
             title=get_text(self.guild_id, 'cat_economy', lang=lang),
-            description=get_text(self.guild_id, 'help_moderation_desc', lang=lang), # Using moderation desc as placeholder or you might have economy desc
+            description=get_text(self.guild_id, 'help_moderation_desc', lang=lang),
             color=0xFFD700
         )
         
