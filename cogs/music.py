@@ -28,13 +28,14 @@ class Music(commands.Cog):
 
     async def cog_load(self):
         """Connect to Lavalink nodes when cog loads"""
+        # Connect to multiple redundant public Lavalink nodes for improved stability
         nodes = [
             wavelink.Node(uri='https://lavalink.ajieblogs.eu.org:443',
-                          password='https://dsc.gg/ajidevserver'),
-            wavelink.Node(uri='http://lavalink.divahost.net:60002',
-                          password='divahostv4'),
-            wavelink.Node(uri='https://lavalink-v2.pericsq.ro:443',
-                          password='wwweasycodero')
+                          password='https://dsc.gg/ajidevserver', secure=True),
+            wavelink.Node(uri='https://lava.link:443',
+                          password='youshallnotpass', secure=True),
+            wavelink.Node(uri='https://lava-v3.ajieblogs.eu.org:443',
+                          password='youshallnotpass', secure=True)
         ]
 
         try:
