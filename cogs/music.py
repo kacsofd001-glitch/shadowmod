@@ -31,11 +31,11 @@ class Music(commands.Cog):
         # Connect to multiple redundant public Lavalink nodes for improved stability
         nodes = [
             wavelink.Node(uri='https://lavalink.ajieblogs.eu.org:443',
-                          password='https://dsc.gg/ajidevserver', secure=True),
+                          password='https://dsc.gg/ajidevserver'),
             wavelink.Node(uri='https://lava.link:443',
-                          password='youshallnotpass', secure=True),
+                          password='youshallnotpass'),
             wavelink.Node(uri='https://lava-v3.ajieblogs.eu.org:443',
-                          password='youshallnotpass', secure=True)
+                          password='youshallnotpass')
         ]
 
         try:
