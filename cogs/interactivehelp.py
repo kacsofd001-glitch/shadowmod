@@ -54,10 +54,17 @@ class HelpView(discord.ui.View):
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
             title=get_text(self.guild_id, 'help_moderation', lang=lang),
-            description=get_text(self.guild_id, 'help_moderation_desc', lang=lang),
+            description=(
+                "`/ban` - Ban user\n"
+                "`/kick` - Kick user\n"
+                "`/mute` / `/unmute` - Mute/unmute user\n"
+                "`/warn` - Warn user\n"
+                "`/purge` - Delete messages\n"
+                "`/tempmute` - Timeout user\n"
+                "`/lock` / `/unlock` - Channel lock"
+            ),
             color=0xFF0000
         )
-        
         await interaction.response.edit_message(embed=embed)
     
     @discord.ui.button(label="💰 Economy", style=discord.ButtonStyle.success, emoji="💰")
@@ -67,10 +74,17 @@ class HelpView(discord.ui.View):
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
             title=get_text(self.guild_id, 'cat_economy', lang=lang),
-            description=get_text(self.guild_id, 'help_moderation_desc', lang=lang),
+            description=(
+                "`/balance` - Check coins\n"
+                "`/work` - Earn coins\n"
+                "`/daily` - Daily reward\n"
+                "`/shop` - View items\n"
+                "`/buy` - Purchase item\n"
+                "`/rob` - Attempt robbery\n"
+                "`/pay` - Send money"
+            ),
             color=0xFFD700
         )
-        
         await interaction.response.edit_message(embed=embed)
     
     @discord.ui.button(label="🎮 Games", style=discord.ButtonStyle.primary, emoji="🎮")
@@ -80,10 +94,16 @@ class HelpView(discord.ui.View):
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
             title=get_text(self.guild_id, 'help_games', lang=lang),
-            description=get_text(self.guild_id, 'help_games_desc', lang=lang),
+            description=(
+                "`/rps` - Rock-Paper-Scissors\n"
+                "`/tictactoe` - Tic-Tac-Toe\n"
+                "`/dice` - Roll dice\n"
+                "`/coinflip` - Flip coin\n"
+                "`/trivia` - Fun trivia\n"
+                "`/blackjack` - Casino game"
+            ),
             color=0xFF00FF
         )
-        
         await interaction.response.edit_message(embed=embed)
     
     @discord.ui.button(label="⚙️ Utility", style=discord.ButtonStyle.secondary, emoji="⚙️")
@@ -93,10 +113,16 @@ class HelpView(discord.ui.View):
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
             title=get_text(self.guild_id, 'help_config', lang=lang),
-            description=get_text(self.guild_id, 'help_config_desc', lang=lang),
+            description=(
+                "`/ping` - Latency check\n"
+                "`/serverinfo` - Server stats\n"
+                "`/botinfo` - Bot details\n"
+                "`/userinfo` - User profile\n"
+                "`/setlang` - Change language\n"
+                "`/setprefix` - Role nickname prefix"
+            ),
             color=0x00F3FF
         )
-        
         await interaction.response.edit_message(embed=embed)
     
     @discord.ui.button(label="🏠 Back", style=discord.ButtonStyle.secondary, row=1)

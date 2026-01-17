@@ -16,23 +16,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Futuristic Bot"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Futuristic Bot (updated)"
-
-[[workflows.workflow]]
-name = "Futuristic Bot"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python bot_launcher.py"
-waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[workflows.workflow]]
 name = "Futuristic Bot (updated)"

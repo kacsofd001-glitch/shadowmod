@@ -453,223 +453,180 @@ class SlashCommands(commands.Cog):
     
     @app_commands.command(name="ping", description="Check bot latency / Bot késleltetés ellenőrzése")
     async def slash_ping(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         latency = round(self.bot.latency * 1000)
-        
         embed = discord.Embed(
             title="🏓 Pong!",
             description=f"Bot latency: **{latency}ms**",
             color=0x00F3FF
         )
-        
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
     
     @app_commands.command(name="purge", description="Delete multiple messages / Több üzenet törlése")
     @app_commands.describe(amount="Number of messages to delete (1-100) / Törölni kívánt üzenetek száma")
     @app_commands.checks.has_permissions(manage_messages=True)
     async def slash_purge(self, interaction: discord.Interaction, amount: int):
         import asyncio
-        
+        from datetime import datetime, timezone
         guild_id = interaction.guild.id
-        
         if amount < 1 or amount > 100:
-            await interaction.response.send_message(
-                translations.get_text(guild_id, 'purge_invalid'),
-                ephemeral=True
-            )
+            await interaction.response.send_message(translations.get_text(guild_id, 'purge_invalid'), ephemeral=True)
             return
-        
         await interaction.response.defer(ephemeral=True)
-        
         try:
             deleted = await interaction.channel.purge(limit=amount)
-            
             embed = discord.Embed(
                 title=translations.get_text(guild_id, 'messages_purged'),
                 description=translations.get_text(guild_id, 'messages_purged_desc', len(deleted)),
                 color=0xFF006E,
                 timestamp=datetime.now(timezone.utc)
             )
-            embed.add_field(
-                name=translations.get_text(guild_id, 'moderator'),
-                value=interaction.user.mention
-            )
-            
+            embed.add_field(name=translations.get_text(guild_id, 'moderator'), value=interaction.user.mention)
             await interaction.followup.send(embed=embed, ephemeral=True)
-            
             mod_cog = self.bot.get_cog('Moderation')
             if mod_cog:
                 await mod_cog.send_log(embed)
-                
         except discord.Forbidden:
-            await interaction.followup.send(
-                "❌ I don't have permission to delete messages!",
-                ephemeral=True
-            )
+            await interaction.followup.send("❌ I don't have permission to delete messages!", ephemeral=True)
         except Exception as e:
-            await interaction.followup.send(
-                f"❌ An error occurred: {str(e)}",
-                ephemeral=True
-            )
+            await interaction.followup.send(f"❌ An error occurred: {str(e)}", ephemeral=True)
 
     @app_commands.command(name="serverinfo", description="Show server information / Szerver információk megjelenítése")
     async def slash_serverinfo(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         info_cog = self.bot.get_cog('Info')
         if info_cog:
             ctx = await self.bot.get_context(interaction)
             ctx.author = interaction.user
             ctx.guild = interaction.guild
-            ctx.send = interaction.response.send_message
+            ctx.send = interaction.followup.send
             await info_cog.serverinfo(ctx)
         else:
-            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+            await interaction.followup.send("❌ Feature unavailable", ephemeral=True)
     
     @app_commands.command(name="botinfo", description="Show bot information / Bot információk megjelenítése")
     async def slash_botinfo(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         info_cog = self.bot.get_cog('Info')
         if info_cog:
             ctx = await self.bot.get_context(interaction)
             ctx.author = interaction.user
             ctx.guild = interaction.guild
-            ctx.send = interaction.response.send_message
+            ctx.send = interaction.followup.send
             await info_cog.botinfo(ctx)
         else:
-            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+            await interaction.followup.send("❌ Feature unavailable", ephemeral=True)
     
     @app_commands.command(name="userinfo", description="Show user information / Felhasználó információk megjelenítése")
     async def slash_userinfo(self, interaction: discord.Interaction, member: discord.Member = None):
+        await interaction.response.defer()
         info_cog = self.bot.get_cog('Info')
         if info_cog:
             ctx = await self.bot.get_context(interaction)
             ctx.author = interaction.user
             ctx.guild = interaction.guild
-            ctx.send = interaction.response.send_message
+            ctx.send = interaction.followup.send
             await info_cog.userinfo(ctx, member)
         else:
-            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+            await interaction.followup.send("❌ Feature unavailable", ephemeral=True)
     
     @app_commands.command(name="support", description="Get support server invite / Support szerver meghívó")
     async def slash_support(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         info_cog = self.bot.get_cog('Info')
         if info_cog:
             ctx = await self.bot.get_context(interaction)
             ctx.author = interaction.user
-            ctx.send = interaction.response.send_message
+            ctx.send = interaction.followup.send
             await info_cog.support(ctx)
         else:
-            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+            await interaction.followup.send("❌ Feature unavailable", ephemeral=True)
     
     @app_commands.command(name="webpage", description="Get web dashboard link / Web irányítópult link")
     async def slash_webpage(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         info_cog = self.bot.get_cog('Info')
         if info_cog:
             ctx = await self.bot.get_context(interaction)
             ctx.author = interaction.user
-            ctx.send = interaction.response.send_message
+            ctx.send = interaction.followup.send
             await info_cog.webpage(ctx)
         else:
-            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+            await interaction.followup.send("❌ Feature unavailable", ephemeral=True)
     
     @app_commands.command(name="setprefix", description="Set role prefix for nicknames / Szerep prefix beállítása")
     @app_commands.describe(role="The role to set prefix for / Szerep", prefix="Prefix text (max 10 chars) / Prefix szöveg")
     @app_commands.checks.has_permissions(administrator=True)
     async def slash_setprefix(self, interaction: discord.Interaction, role: discord.Role, prefix: str):
+        await interaction.response.defer()
         nameauto_cog = self.bot.get_cog('NameAutomation')
         if nameauto_cog:
             if len(prefix) > 10:
-                await interaction.response.send_message("❌ Prefix must be 10 characters or less!", ephemeral=True)
+                await interaction.followup.send("❌ Prefix must be 10 characters or less!", ephemeral=True)
                 return
-            
             import config as cfg_module
             cfg = cfg_module.load_config()
             if 'role_prefixes' not in cfg:
                 cfg['role_prefixes'] = {}
-            
             cfg['role_prefixes'][str(role.id)] = prefix
             cfg_module.save_config(cfg)
-            
             embed = discord.Embed(
                 title="✅ Prefix Set",
                 description=f"Members with {role.mention} will have `{prefix}` prefix in their nickname!",
                 color=0x00F3FF
             )
             embed.add_field(name="Example", value=f"{prefix} Username", inline=False)
-            
-            await interaction.response.send_message(embed=embed)
-            
-            await interaction.followup.send("🔄 Updating member nicknames...", ephemeral=True)
+            await interaction.followup.send(embed=embed)
             count = 0
             for member in interaction.guild.members:
                 if role in member.roles:
                     await nameauto_cog.update_member_nickname(member)
                     count += 1
-            
             embed.add_field(name="Updated", value=f"{count} members updated!", inline=False)
             await interaction.edit_original_response(embed=embed)
         else:
-            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+            await interaction.followup.send("❌ Feature unavailable", ephemeral=True)
     
     @app_commands.command(name="removeprefix", description="Remove role prefix / Szerep prefix eltávolítása")
     @app_commands.describe(role="The role to remove prefix from / Szerep")
     @app_commands.checks.has_permissions(administrator=True)
     async def slash_removeprefix(self, interaction: discord.Interaction, role: discord.Role):
+        await interaction.response.defer()
         nameauto_cog = self.bot.get_cog('NameAutomation')
         if nameauto_cog:
             import config as cfg_module
             cfg = cfg_module.load_config()
             role_prefixes = cfg.get('role_prefixes', {})
-            
             if str(role.id) not in role_prefixes:
-                await interaction.response.send_message(f"❌ {role.mention} doesn't have a prefix set!", ephemeral=True)
+                await interaction.followup.send(f"❌ {role.mention} doesn't have a prefix set!", ephemeral=True)
                 return
-            
             del cfg['role_prefixes'][str(role.id)]
             cfg_module.save_config(cfg)
-            
-            embed = discord.Embed(
-                title="✅ Prefix Removed",
-                description=f"Prefix removed from {role.mention}",
-                color=0x00F3FF
-            )
-            
-            await interaction.response.send_message(embed=embed)
-            
-            await interaction.followup.send("🔄 Updating member nicknames...", ephemeral=True)
+            embed = discord.Embed(title="✅ Prefix Removed", description=f"Prefix removed from {role.mention}", color=0x00F3FF)
+            await interaction.followup.send(embed=embed)
             count = 0
             for member in interaction.guild.members:
                 if role in member.roles:
                     await nameauto_cog.update_member_nickname(member)
                     count += 1
-            
             embed.add_field(name="Updated", value=f"{count} members updated!", inline=False)
             await interaction.edit_original_response(embed=embed)
         else:
-            await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
+            await interaction.followup.send("❌ Feature unavailable", ephemeral=True)
     
     @app_commands.command(name="viewprefixes", description="View all role prefixes / Összes szerep prefix megtekintése")
     async def slash_viewprefixes(self, interaction: discord.Interaction):
         import config as cfg_module
         cfg = cfg_module.load_config()
         role_prefixes = cfg.get('role_prefixes', {})
-        
         if not role_prefixes:
             await interaction.response.send_message("❌ No role prefixes configured!", ephemeral=True)
             return
-        
-        embed = discord.Embed(
-            title="📋 Role Prefixes",
-            description="Current role prefix configuration:",
-            color=0x8B00FF
-        )
-        
+        embed = discord.Embed(title="📋 Role Prefixes", description="Current role prefix configuration:", color=0x8B00FF)
         for role_id, prefix in role_prefixes.items():
             role = interaction.guild.get_role(int(role_id))
             if role:
-                embed.add_field(
-                    name=role.name,
-                    value=f"Prefix: `{prefix}`",
-                    inline=False
-                )
-        
+                embed.add_field(name=role.name, value=f"Prefix: `{prefix}`", inline=False)
         await interaction.response.send_message(embed=embed, ephemeral=True)
     
     @app_commands.command(name="setaltage", description="Set minimum account age / Minimális fiók kor beállítása")
@@ -679,46 +636,30 @@ class SlashCommands(commands.Cog):
         if days < 0:
             await interaction.response.send_message("❌ Days must be a positive number!", ephemeral=True)
             return
-        
         import config as cfg_module
         cfg_module.update_config('min_account_age_days', days)
-        
-        embed = discord.Embed(
-            title="✅ Anti-Alt Configuration Updated",
-            description=f"Minimum account age set to **{days} days**",
-            color=0x00F3FF
-        )
+        embed = discord.Embed(title="✅ Anti-Alt Configuration Updated", description=f"Minimum account age set to **{days} days**", color=0x00F3FF)
         await interaction.response.send_message(embed=embed)
     
     @app_commands.command(name="tempmute", description="Temporarily mute a user / Felhasználó ideiglenes némítása")
-    @app_commands.describe(
-        user="User to mute / Némítandó felhasználó",
-        duration="Duration (e.g., 1h, 30m, 1d) / Időtartam"
-    )
+    @app_commands.describe(user="User to mute / Némítandó felhasználó", duration="Duration (e.g., 1h, 30m, 1d) / Időtartam")
     @app_commands.checks.has_permissions(moderate_members=True)
     async def slash_tempmute(self, interaction: discord.Interaction, user: discord.Member, duration: str):
+        from datetime import timedelta
         moderation_cog = self.bot.get_cog('Moderation')
         if moderation_cog:
             try:
                 time_dict = moderation_cog.parse_time(duration)
                 delta = timedelta(**time_dict)
-                
                 if delta.total_seconds() > 2419200:
                     await interaction.response.send_message("❌ Maximum timeout duration is 28 days!", ephemeral=True)
                     return
-                
                 await user.timeout(delta, reason=f"Timed out by {interaction.user}")
-                
-                embed = discord.Embed(
-                    title="🔇 User Timed Out",
-                    description=f"{user.mention} has been timed out",
-                    color=0xFF006E
-                )
+                embed = discord.Embed(title="🔇 User Timed Out", description=f"{user.mention} has been timed out", color=0xFF006E)
                 embed.add_field(name="Duration", value=duration, inline=True)
                 embed.add_field(name="Moderator", value=interaction.user.mention, inline=True)
-                
                 await interaction.response.send_message(embed=embed)
-            except ValueError as e:
+            except ValueError:
                 await interaction.response.send_message(f"❌ Invalid time format! Use: 1h, 30m, 1d, etc.", ephemeral=True)
         else:
             await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
@@ -729,17 +670,10 @@ class SlashCommands(commands.Cog):
         fun_cog = self.bot.get_cog('Fun')
         if fun_cog:
             await interaction.response.defer()
-            
             import random
             result = random.randint(1, sides)
-            
-            embed = discord.Embed(
-                title="🎲 Dice Roll",
-                description=f"You rolled a **{result}** on a {sides}-sided dice!",
-                color=0x8B00FF
-            )
+            embed = discord.Embed(title="🎲 Dice Roll", description=f"You rolled a **{result}** on a {sides}-sided dice!", color=0x8B00FF)
             embed.set_footer(text=f"Rolled by {interaction.user.display_name}")
-            
             await interaction.followup.send(embed=embed)
         else:
             await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
@@ -755,30 +689,16 @@ class SlashCommands(commands.Cog):
         games_cog = self.bot.get_cog('Games')
         if games_cog:
             import random
-            
             choices = ['rock', 'paper', 'scissors']
             bot_choice = random.choice(choices)
-            
             emoji_map = {'rock': '🪨', 'paper': '📄', 'scissors': '✂️'}
-            
             if choice == bot_choice:
-                result = "It's a tie!"
-                color = 0x8B00FF
-            elif (choice == 'rock' and bot_choice == 'scissors') or \
-                 (choice == 'paper' and bot_choice == 'rock') or \
-                 (choice == 'scissors' and bot_choice == 'paper'):
-                result = "You win!"
-                color = 0x00F3FF
+                result, color = "It's a tie!", 0x8B00FF
+            elif (choice == 'rock' and bot_choice == 'scissors') or (choice == 'paper' and bot_choice == 'rock') or (choice == 'scissors' and bot_choice == 'paper'):
+                result, color = "You win!", 0x00F3FF
             else:
-                result = "I win!"
-                color = 0xFF006E
-            
-            embed = discord.Embed(
-                title="🎮 Rock-Paper-Scissors",
-                description=f"**You:** {emoji_map[choice]}\n**Bot:** {emoji_map[bot_choice]}\n\n**{result}**",
-                color=color
-            )
-            
+                result, color = "I win!", 0xFF006E
+            embed = discord.Embed(title="🎮 Rock-Paper-Scissors", description=f"**You:** {emoji_map[choice]}\n**Bot:** {emoji_map[bot_choice]}\n\n**{result}**", color=color)
             await interaction.response.send_message(embed=embed)
         else:
             await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
@@ -791,85 +711,47 @@ class SlashCommands(commands.Cog):
             if opponent == interaction.user:
                 await interaction.response.send_message("❌ You can't play against yourself!", ephemeral=True)
                 return
-            
             if opponent.bot:
                 await interaction.response.send_message("❌ You can't play against a bot!", ephemeral=True)
                 return
-            
             view = games_cog.TicTacToeView(interaction.user, opponent)
-            
-            embed = discord.Embed(
-                title="⭕ Tic-Tac-Toe",
-                description=f"{interaction.user.mention} vs {opponent.mention}\n\n{interaction.user.mention}'s turn (⭕)",
-                color=0x8B00FF
-            )
-            
+            embed = discord.Embed(title="⭕ Tic-Tac-Toe", description=f"{interaction.user.mention} vs {opponent.mention}\n\n{interaction.user.mention}'s turn (⭕)", color=0x8B00FF)
             await interaction.response.send_message(embed=embed, view=view)
         else:
             await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
     
     @app_commands.command(name="poll", description="Create a poll / Szavazás létrehozása")
-    @app_commands.describe(
-        question="Poll question / Kérdés",
-        option1="First option / Első lehetőség",
-        option2="Second option / Második lehetőség",
-        option3="Third option (optional) / Harmadik lehetőség",
-        option4="Fourth option (optional) / Negyedik lehetőség"
-    )
-    async def slash_poll(self, interaction: discord.Interaction, question: str, option1: str, option2: str, 
-                        option3: str = None, option4: str = None):
+    @app_commands.describe(question="Poll question / Kérdés", option1="First option / Első lehetőség", option2="Second option / Második lehetőség", option3="Third option (optional) / Harmadik lehetőség", option4="Fourth option (optional) / Negyedik lehetőség")
+    async def slash_poll(self, interaction: discord.Interaction, question: str, option1: str, option2: str, option3: str = None, option4: str = None):
         polls_cog = self.bot.get_cog('Polls')
         if polls_cog:
             options = [option1, option2]
-            if option3:
-                options.append(option3)
-            if option4:
-                options.append(option4)
-            
+            if option3: options.append(option3)
+            if option4: options.append(option4)
             view = polls_cog.PollView(options)
-            
-            embed = discord.Embed(
-                title="📊 " + question,
-                description="Click the buttons below to vote!",
-                color=0x8B00FF
-            )
-            
+            embed = discord.Embed(title="📊 " + question, description="Click the buttons below to vote!", color=0x8B00FF)
             for i, option in enumerate(options, 1):
                 embed.add_field(name=f"Option {i}", value=option, inline=False)
-            
             embed.set_footer(text=f"Poll by {interaction.user.display_name}")
-            
             await interaction.response.send_message(embed=embed, view=view)
         else:
             await interaction.response.send_message("❌ Feature unavailable", ephemeral=True)
     
     @app_commands.command(name="giveaway", description="Create a giveaway / Nyereményjáték létrehozása")
-    @app_commands.describe(
-        prize="Prize to give away / Nyeremény",
-        duration="Duration (e.g., 1h, 1d) / Időtartam",
-        winners="Number of winners / Nyertesek száma"
-    )
+    @app_commands.describe(prize="Prize to give away / Nyeremény", duration="Duration (e.g., 1h, 1d) / Időtartam", winners="Number of winners / Nyertesek száma")
     @app_commands.checks.has_permissions(manage_guild=True)
     async def slash_giveaway(self, interaction: discord.Interaction, prize: str, duration: str, winners: int = 1):
+        from datetime import timedelta, datetime, timezone
         giveaway_cog = self.bot.get_cog('Giveaways')
         if giveaway_cog:
             try:
                 time_dict = giveaway_cog.parse_time(duration)
                 end_time = datetime.now(timezone.utc) + timedelta(**time_dict)
-                
-                embed = discord.Embed(
-                    title="🎁 GIVEAWAY",
-                    description=f"**Prize:** {prize}\n**Winners:** {winners}\n**Ends:** <t:{int(end_time.timestamp())}:R>",
-                    color=0xFF006E
-                )
+                embed = discord.Embed(title="🎁 GIVEAWAY", description=f"**Prize:** {prize}\n**Winners:** {winners}\n**Ends:** <t:{int(end_time.timestamp())}:R>", color=0xFF006E)
                 embed.set_footer(text=f"Hosted by {interaction.user.display_name}")
-                
-                from datetime import datetime, timezone
                 giveaway_id = f"giveaway_{interaction.channel.id}_{int(datetime.now(timezone.utc).timestamp())}"
                 view = giveaway_cog.GiveawayView(end_time, winners, prize, giveaway_id)
-                
                 await interaction.response.send_message(embed=embed, view=view)
-                
                 message = await interaction.original_response()
                 self.bot.loop.create_task(giveaway_cog.end_giveaway(message, end_time, winners, prize))
             except ValueError:
