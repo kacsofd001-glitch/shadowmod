@@ -28,20 +28,21 @@ class Music(commands.Cog):
 
     async def cog_load(self):
         """Connect to Lavalink nodes when cog loads"""
-        # Connect to multiple redundant public Lavalink nodes for improved stability
+        # Connect to reliable public Lavalink nodes
+        # Based on community verified nodes for 2026
         nodes = [
             wavelink.Node(uri='https://lavalink.ajieblogs.eu.org:443',
                           password='https://dsc.gg/ajidevserver'),
-            wavelink.Node(uri='https://lava.link:443',
-                          password='youshallnotpass'),
             wavelink.Node(uri='https://lava-v3.ajieblogs.eu.org:443',
                           password='youshallnotpass')
         ]
 
         try:
+            # Increased timeout and use Pool.connect directly
+            # Wavelink will handle the redundancy
             await asyncio.wait_for(wavelink.Pool.connect(client=self.bot,
                                                          nodes=nodes),
-                                   timeout=15.0)
+                                   timeout=120.0)
             print(f"✅ Connected to Lavalink pool with {len(nodes)} nodes")
         except asyncio.TimeoutError:
             print("⚠️ Lavalink connection timed out")
