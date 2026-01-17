@@ -33,9 +33,12 @@ class Music(commands.Cog):
 
     async def connect_nodes(self):
         """Internal method to handle node connection"""
+        # Using a set of known stable public Lavalink nodes for 2026
         nodes = [
-            wavelink.Node(uri='https://lavalink.ajieblogs.eu.org:443',
-                          password='https://dsc.gg/ajidevserver'),
+            wavelink.Node(uri='https://lava2.horizxon.studio:80',
+                          password='horizxon.studio'),
+            wavelink.Node(uri='https://lavalink.lexis.host:443',
+                          password='lexis.host'),
             wavelink.Node(uri='https://lava-v3.ajieblogs.eu.org:443',
                           password='youshallnotpass')
         ]

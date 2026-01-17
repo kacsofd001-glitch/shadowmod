@@ -183,13 +183,13 @@ TRANSLATIONS = {
         
         # Moderation
         'user_banned': '🔨 Felhasználó Kitiltva',
-        'user_banned_desc': '{} kitiltva a szerverről.',
+        'user_banned_desc': '{} ki lett bannolva a szerverről.',
         'user_kicked': '👢 Felhasználó Kirúgva',
-        'user_kicked_desc': '{} kirúgva a szerverről.',
+        'user_kicked_desc': '{} ki lett rúgva a szerverről.',
         'user_muted': '🔇 Felhasználó Némítva',
-        'user_muted_desc': '{} némítva.',
+        'user_muted_desc': '{} némítva lett.',
         'user_unmuted': '🔊 Felhasználó Visszahangosítva',
-        'user_unmuted_desc': '{} visszahangosítva.',
+        'user_unmuted_desc': '{} vissza lett hangosítva.',
         'channel_locked': '🔒 Csatorna Lezárva',
         'channel_locked_desc': 'Ez a csatorna le lett zárva.',
         'channel_unlocked': '🔓 Csatorna Feloldva',
