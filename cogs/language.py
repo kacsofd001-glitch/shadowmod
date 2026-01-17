@@ -47,7 +47,6 @@ class Language(commands.Cog):
     ])
     @app_commands.checks.has_permissions(administrator=True)
     async def slash_setlang(self, interaction: discord.Interaction, language: app_commands.Choice[str]):
-        await interaction.response.defer(ephemeral=True)
         lang = language.value
         
         if translations.set_guild_language(interaction.guild.id, lang):
@@ -65,9 +64,9 @@ class Language(commands.Cog):
                 inline=False
             )
             
-            await interaction.followup.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
-            await interaction.followup.send(translations.get_text(interaction.guild.id, 'error_setting_language'), ephemeral=True)
+            await interaction.response.send_message(translations.get_text(interaction.guild.id, 'error_setting_language'), ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Language(bot))
