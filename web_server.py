@@ -88,4 +88,10 @@ def api_stats():
         }), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    print("🌐 Starting Flask web server on 0.0.0.0:5000...")
+    try:
+        app.run(host='0.0.0.0', port=5000, debug=False)
+    except Exception as e:
+        print(f"❌ Web server crashed: {e}")
+        import traceback
+        traceback.print_exc()

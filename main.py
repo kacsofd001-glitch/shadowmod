@@ -1,3 +1,5 @@
+print("🔄 Loading bot modules...")
+
 import discord
 from discord.ext import commands
 import asyncio
@@ -7,7 +9,9 @@ from datetime import datetime, timezone
 import json
 import config
 
+print("📁 Loading environment variables...")
 load_dotenv()
+print("✅ Environment variables loaded")
 
 intents = discord.Intents.all()
 
@@ -30,70 +34,82 @@ class DiscordBot(commands.Bot):
         self.start_time = datetime.now(timezone.utc)
         
     async def setup_hook(self):
-        await self.load_extension('cogs.tickets')
-        await self.load_extension('cogs.antialt')
-        await self.load_extension('cogs.logging')
-        await self.load_extension('cogs.moderation')
-        await self.load_extension('cogs.games')
-        await self.load_extension('cogs.fun')
-        await self.load_extension('cogs.polls')
-        await self.load_extension('cogs.roles')
-        await self.load_extension('cogs.giveaways')
-        await self.load_extension('cogs.nameauto')
-        await self.load_extension('cogs.webhook_logging')
-        await self.load_extension('cogs.language')
-        await self.load_extension('cogs.aichat')
-        await self.load_extension('cogs.verify')
-        await self.load_extension('cogs.info')
-        await self.load_extension('cogs.music')
-        await self.load_extension('cogs.admin')
-        await self.load_extension('cogs.customcommands')
-        await self.load_extension('cogs.automod')
-        await self.load_extension('cogs.welcome')
-        await self.load_extension('cogs.reactionroles')
-        await self.load_extension('cogs.leveling')
-        await self.load_extension('cogs.reminders')
-        await self.load_extension('cogs.afk')
-        await self.load_extension('cogs.serverstats')
-        await self.load_extension('cogs.suggestions')
-        await self.load_extension('cogs.economy')
-        await self.load_extension('cogs.starboard')
-        await self.load_extension('cogs.counting')
-        await self.load_extension('cogs.birthdays')
-        await self.load_extension('cogs.confessions')
-        await self.load_extension('cogs.modmail')
-        await self.load_extension('cogs.antiraid')
-        await self.load_extension('cogs.advancedlogging')
-        await self.load_extension('cogs.rolepersist')
-        await self.load_extension('cogs.tempbans')
-        await self.load_extension('cogs.embedbuilder')
-        await self.load_extension('cogs.tempvoice')
-        await self.load_extension('cogs.streamalerts')
-        await self.load_extension('cogs.serverbackup')
-        await self.load_extension('cogs.playlists')
-        await self.load_extension('cogs.growthtracking')
-        await self.load_extension('cogs.achievements')
-        await self.load_extension('cogs.socialmedia')
-        await self.load_extension('cogs.commandstats')
-        await self.load_extension('cogs.minigames')
-        await self.load_extension('cogs.connectfour')
-        await self.load_extension('cogs.reputation')
-        await self.load_extension('cogs.events')
-        await self.load_extension('cogs.setupwizard')
-        await self.load_extension('cogs.interactivehelp')
-        await self.load_extension('cogs.advancedeconomy')
-        await self.load_extension('cogs.aimoderation')
-        await self.load_extension('cogs.voiceanalytics')
-        await self.load_extension('cogs.appealssystem')
-        await self.load_extension('cogs.memeeconomy')
-        await self.load_extension('cogs.botstatus')
-        await self.load_extension('cogs.webhooks')
-        await self.load_extension('cogs.slash_commands')
-        print("All cogs loaded successfully!")
+        cogs_to_load = [
+            'cogs.tickets',
+            'cogs.antialt',
+            'cogs.logging',
+            'cogs.moderation',
+            'cogs.games',
+            'cogs.fun',
+            'cogs.polls',
+            'cogs.roles',
+            'cogs.giveaways',
+            'cogs.nameauto',
+            'cogs.webhook_logging',
+            'cogs.language',
+            'cogs.aichat',
+            'cogs.verify',
+            'cogs.info',
+            'cogs.music',
+            'cogs.admin',
+            'cogs.customcommands',
+            'cogs.automod',
+            'cogs.welcome',
+            'cogs.reactionroles',
+            'cogs.leveling',
+            'cogs.reminders',
+            'cogs.afk',
+            'cogs.serverstats',
+            'cogs.suggestions',
+            'cogs.economy',
+            'cogs.starboard',
+            'cogs.counting',
+            'cogs.birthdays',
+            'cogs.confessions',
+            'cogs.modmail',
+            'cogs.antiraid',
+            'cogs.advancedlogging',
+            'cogs.rolepersist',
+            'cogs.tempbans',
+            'cogs.embedbuilder',
+            'cogs.tempvoice',
+            'cogs.streamalerts',
+            'cogs.serverbackup',
+            'cogs.playlists',
+            'cogs.growthtracking',
+            'cogs.achievements',
+            'cogs.socialmedia',
+            'cogs.commandstats',
+            'cogs.minigames',
+            'cogs.connectfour',
+            'cogs.reputation',
+            'cogs.events',
+            'cogs.setupwizard',
+            'cogs.interactivehelp',
+            'cogs.advancedeconomy',
+            'cogs.aimoderation',
+            'cogs.voiceanalytics',
+            'cogs.appealssystem',
+            'cogs.memeeconomy',
+            'cogs.botstatus',
+            'cogs.webhooks',
+            'cogs.slash_commands'
+        ]
+        
+        loaded_count = 0
+        for cog in cogs_to_load:
+            try:
+                await self.load_extension(cog)
+                loaded_count += 1
+                print(f"✅ Loaded: {cog}")
+            except Exception as e:
+                print(f"❌ Failed to load {cog}: {e}")
+        
+        print(f"\n✅ All cogs loaded successfully! ({loaded_count}/{len(cogs_to_load)})")
         
     async def on_ready(self):
-        print(f'Bot is ready! Logged in as {self.user}')
-        print(f'Bot ID: {self.user.id}')
+        print(f'✅ Bot is ready! Logged in as {self.user}')
+        print(f'✅ Bot ID: {self.user.id}')
         print('------')
         
         try:
@@ -329,4 +345,10 @@ if __name__ == '__main__':
         print("ERROR: DISCORD_TOKEN not found in environment variables!")
         print("Please set up your Discord bot token.")
     else:
-        bot.run(TOKEN)
+        print("🚀 Starting bot with token...")
+        try:
+            bot.run(TOKEN)
+        except Exception as e:
+            print(f"❌ Bot crashed with error: {e}")
+            import traceback
+            traceback.print_exc()
