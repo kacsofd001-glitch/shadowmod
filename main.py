@@ -95,6 +95,7 @@ class DiscordBot(commands.Bot):
             'cogs.memeeconomy',
             'cogs.botstatus',
             'cogs.webhooks',
+            'cogs.hungariandefense',
             'cogs.slash_commands'
         ]
         

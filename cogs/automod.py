@@ -5,6 +5,8 @@ import translations
 import re
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
+from hungarian_automod import has_bad_words, detect_language, merge_bad_words, get_bad_words_for_language
+from database import get_guild_settings
 
 class AutoMod(commands.Cog):
     def __init__(self, bot):
@@ -99,21 +101,36 @@ class AutoMod(commands.Cog):
         return False
     
     async def check_bad_words(self, message, settings):
-        """Check for bad words"""
-        content_lower = message.content.lower()
+        """Check for bad words with language support"""
+        # Get guild language setting
+        db_settings = get_guild_settings(str(message.guild.id))
+        guild_language = db_settings.get('language', 'en')
         
-        for word in settings['bad_words']:
-            if word.lower() in content_lower:
-                try:
-                    await message.delete()
-                    await message.channel.send(
-                        f"⚠️ {message.author.mention}, please watch your language!",
-                        delete_after=5
-                    )
-                    await self.punish_user(message, f"Used inappropriate word: {word}", settings['punishment'])
-                except:
-                    pass
-                return True
+        # Merge language-specific bad words with custom ones
+        custom_bad_words = db_settings.get('bad_words', [])
+        bad_words_list = merge_bad_words(guild_language, custom_bad_words or [])
+        
+        # Auto-detect message language
+        detected_lang = detect_language(message.content)
+        
+        # Check for bad words
+        found_bad, bad_word = has_bad_words(message.content, guild_language, custom_bad_words)
+        
+        if found_bad:
+            try:
+                await message.delete()
+                
+                # Localized message
+                if guild_language == 'hu':
+                    msg = f"⚠️ {message.author.mention}, megfelelő viselkedés szükséges!"
+                else:
+                    msg = f"⚠️ {message.author.mention}, please watch your language!"
+                
+                await message.channel.send(msg, delete_after=5)
+                await self.punish_user(message, f"Used inappropriate word: {bad_word}", settings['punishment'])
+            except:
+                pass
+            return True
         
         return False
     
