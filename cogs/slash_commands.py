@@ -451,6 +451,30 @@ class SlashCommands(commands.Cog):
             await webhook_cog.send_to_webhook(test_embed)
             await interaction.response.send_message(translations.get_text(guild_id, 'test_webhook_sent'))
     
+    @app_commands.command(name="say", description="Make the bot say something / Bot rábeszélése üzenetküldésre")
+    @app_commands.describe(message="The message to send / Az elküldendő üzenet")
+    @app_commands.checks.has_permissions(manage_messages=True)
+    async def slash_say(self, interaction: discord.Interaction, message: str):
+        await interaction.response.send_message("✅ Message sent / Üzenet elküldve", ephemeral=True)
+        await interaction.channel.send(message)
+
+    @app_commands.command(name="embedsay", description="Make the bot say something in an embed / Bot rábeszélése embed küldésére")
+    @app_commands.describe(title="Embed title / Embed címe", description="Embed description / Embed leírása", color="Embed color (hex, e.g. #00F3FF) / Embed színe")
+    @app_commands.checks.has_permissions(manage_messages=True)
+    async def slash_embedsay(self, interaction: discord.Interaction, description: str, title: str = None, color: str = "#00F3FF"):
+        try:
+            # Parse color
+            color_int = int(color.lstrip('#'), 16)
+            embed = discord.Embed(
+                title=title,
+                description=description,
+                color=color_int
+            )
+            await interaction.response.send_message("✅ Embed sent / Embed elküldve", ephemeral=True)
+            await interaction.channel.send(embed=embed)
+        except ValueError:
+            await interaction.response.send_message("❌ Invalid color format! Use hex (e.g. #00F3FF) / Érvénytelen színformátum! Használj hex kódot (pl. #00F3FF)", ephemeral=True)
+
     @app_commands.command(name="ping", description="Check bot latency / Bot késleltetés ellenőrzése")
     async def slash_ping(self, interaction: discord.Interaction):
         await interaction.response.defer()
