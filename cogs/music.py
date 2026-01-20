@@ -8,6 +8,49 @@ import re
 import asyncio
 
 
+class MusicControlView(discord.ui.View):
+    def __init__(self, bot, player: wavelink.Player):
+        super().__init__(timeout=None)
+        self.bot = bot
+        self.player = player
+
+    @discord.ui.button(label="⏯️", style=discord.ButtonStyle.primary)
+    async def toggle_play(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not self.player: return
+        if self.player.paused:
+            await self.player.pause(False)
+            await interaction.response.send_message("▶️ Resumed", ephemeral=True)
+        else:
+            await self.player.pause(True)
+            await interaction.response.send_message("⏸️ Paused", ephemeral=True)
+
+    @discord.ui.button(label="⏭️", style=discord.ButtonStyle.secondary)
+    async def skip(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not self.player: return
+        await self.player.skip(force=True)
+        await interaction.response.send_message("⏭️ Skipped", ephemeral=True)
+
+    @discord.ui.button(label="⏹️", style=discord.ButtonStyle.danger)
+    async def stop(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not self.player: return
+        await self.player.disconnect()
+        await interaction.response.send_message("⏹️ Stopped", ephemeral=True)
+        self.stop()
+
+    @discord.ui.button(label="🔉", style=discord.ButtonStyle.secondary)
+    async def vol_down(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not self.player: return
+        vol = max(0, self.player.volume - 10)
+        await self.player.set_volume(vol)
+        await interaction.response.send_message(f"🔉 Volume: {vol}%", ephemeral=True)
+
+    @discord.ui.button(label="🔊", style=discord.ButtonStyle.secondary)
+    async def vol_up(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not self.player: return
+        vol = min(100, self.player.volume + 10)
+        await self.player.set_volume(vol)
+        await interaction.response.send_message(f"🔊 Volume: {vol}%", ephemeral=True)
+
 class Music(commands.Cog):
 
     def __init__(self, bot):
@@ -217,7 +260,9 @@ class Music(commands.Cog):
 
                 if hasattr(track, 'artwork') and track.artwork:
                     embed.set_thumbnail(url=track.artwork)
-                await ctx.send(embed=embed)
+                
+                view = MusicControlView(self.bot, vc)
+                await ctx.send(embed=embed, view=view)
 
             except Exception as e:
                 embed = discord.Embed(title="❌ Playback Error",
