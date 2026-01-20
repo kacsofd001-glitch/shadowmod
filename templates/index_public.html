@@ -3,397 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shadow-MOD - Discord Bot Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <style>
-        .hero {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 100, 0.1) 100%);
-            border-bottom: 2px solid #00d4ff;
-            margin-bottom: 3rem;
-        }
-        
-        .hero h1 {
-            font-size: 3rem;
-            color: #00d4ff;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-        }
-        
-        .hero p {
-            font-size: 1.3rem;
-            color: #aaa;
-            margin-bottom: 2rem;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .btn-large {
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .btn-login {
-            background: #00d4ff;
-            color: #1a1a2e;
-        }
-        
-        .btn-login:hover {
-            background: #00ff00;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
-        }
-        
-        .btn-dashboard {
-            background: #ff0064;
-            color: white;
-        }
-        
-        .btn-dashboard:hover {
-            background: #ff3385;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(255, 0, 100, 0.3);
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-        
-        .feature-card {
-            background: rgba(30, 30, 60, 0.8);
-            border: 2px solid #00d4ff;
-            border-radius: 8px;
-            padding: 2rem;
-            transition: all 0.3s;
-        }
-        
-        .feature-card:hover {
-            background: rgba(0, 212, 255, 0.1);
-            transform: translateY(-5px);
-            border-color: #00ff00;
-        }
-        
-        .feature-card h3 {
-            color: #00d4ff;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-        
-        .feature-card p {
-            color: #aaa;
-            line-height: 1.6;
-        }
-        
-        .section {
-            margin: 3rem 0;
-        }
-        
-        .section h2 {
-            color: #00d4ff;
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-        
-        .stat-box {
-            background: rgba(0, 212, 255, 0.1);
-            border: 2px solid #00d4ff;
-            border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            color: #00d4ff;
-            font-weight: bold;
-        }
-        
-        .stat-label {
-            color: #aaa;
-            margin-top: 0.5rem;
-        }
-        
-        .logged-in-nav {
-            color: #00d4ff;
-        }
-    </style>
+    <title>ShadowMod - Advanced Discord Bot Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern_dashboard.css') }}">
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">Shadow-MOD</div>
+            <a href="/" class="logo">ShadowMod</a>
             <div class="nav-links">
                 <div class="lang-toggle">
-                    <label for="langToggle" class="lang-label">
+                    <label class="lang-label">
                         <input type="checkbox" id="langToggle">
-                        <span class="lang-text" data-translate="lang_en">EN</span>
-                        <span class="lang-slider"></span>
-                        <span class="lang-text" data-translate="lang_hu">HU</span>
+                        <span class="lang-text" id="langIndicator">EN</span>
+                        <div class="lang-slider"></div>
                     </label>
                 </div>
-                
-                {% if user_id %}
-                    <span class="user-info logged-in-nav">
-                        <img src="{{ avatar_url }}" alt="{{ username }}" class="user-avatar">
-                        {{ username }}
-                    </span>
-                    <a href="/dashboard" class="logout-btn" style="background: #00d4ff; color: #1a1a2e;">Dashboard</a>
-                    <a href="/auth/logout" class="logout-btn">Logout</a>
-                {% else %}
-                    <a href="/auth/discord" class="logout-btn" style="background: #00d4ff; color: #1a1a2e;">Login with Discord</a>
-                {% endif %}
+                <div id="userInfo"></div>
             </div>
         </div>
     </nav>
 
+    <!-- Main Content -->
     <div class="main-container">
-        <div class="hero">
-            <h1>⚡ Shadow-MOD</h1>
-            <p>Next-Gen Discord Moderation & Management System</p>
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1 data-translate="hero_title">Elevate Your Discord Server</h1>
+            <p data-translate="hero_subtitle">Powerful moderation, AI features, analytics, and more - all in one premium bot</p>
             <div class="hero-buttons">
-                {% if not user_id %}
-                    <a href="/auth/discord" class="btn-large btn-login">
-                        🔓 Login with Discord
-                    </a>
-                {% else %}
-                    <a href="/dashboard" class="btn-large btn-dashboard">
-                        ⚙️ Go to Dashboard
-                    </a>
-                {% endif %}
-                <a href="https://discord.com/oauth2/authorize?client_id=YOUR_BOT_ID&scope=bot&permissions=8" class="btn-large btn-dashboard" target="_blank">
-                    ➕ Add Bot to Server
-                </a>
+                <a href="#features" class="btn-large btn-login" data-translate="btn_explore">Explore Features</a>
+                <a href="/auth/discord" class="btn-large btn-dashboard" data-translate="btn_manage">Manage Your Server</a>
             </div>
-        </div>
+        </section>
 
-        <div class="section">
-            <h2 data-translate="features_title">✨ Core Features</h2>
-            <div class="features">
+        <!-- Features Section -->
+        <section class="section">
+            <h2 data-translate="features_title">Powerful Features</h2>
+            <div class="features" id="features">
                 <div class="feature-card">
-                    <h3 data-translate="mod_feature">🛡️ Advanced Moderation</h3>
-                    <p data-translate="mod_desc">Warnings, timeouts, kicks, bans, and more with customizable thresholds</p>
+                    <h3 data-translate="mod_feature">⚡ Advanced Moderation</h3>
+                    <p data-translate="mod_desc">AI-powered warnings, timeouts, bans, and intelligent anti-spam protection with customizable rules</p>
                 </div>
                 <div class="feature-card">
-                    <h3 data-translate="ai_feature">🤖 AI Integration</h3>
-                    <p data-translate="ai_desc">OpenAI-powered chat responses and intelligent moderation assistance</p>
+                    <h3 data-translate="ai_feature">🤖 AI Chat Integration</h3>
+                    <p data-translate="ai_desc">Natural language AI conversations, content filtering, and smart content moderation powered by advanced algorithms</p>
                 </div>
                 <div class="feature-card">
-                    <h3 data-translate="music_feature">🎵 Music Player</h3>
-                    <p data-translate="music_desc">Play songs from YouTube, Spotify, and SoundCloud in voice channels</p>
+                    <h3 data-translate="music_feature">🎵 Music Streaming</h3>
+                    <p data-translate="music_desc">Play music from YouTube, Spotify, and more with playlist support and queue management</p>
                 </div>
                 <div class="feature-card">
-                    <h3 data-translate="games_feature">🎮 Games & Fun</h3>
-                    <p data-translate="games_desc">Rock-Paper-Scissors, Tic-Tac-Toe, and other interactive mini-games</p>
+                    <h3 data-translate="games_feature">🎮 Games & Entertainment</h3>
+                    <p data-translate="games_desc">Connect Four, Counting games, word games, and interactive minigames for community engagement</p>
                 </div>
                 <div class="feature-card">
-                    <h3 data-translate="multi_feature">🌍 Multilingual</h3>
-                    <p data-translate="multi_desc">Full support for English and Hungarian with language auto-detection</p>
+                    <h3 data-translate="lang_feature">🌍 Multilingual Support</h3>
+                    <p data-translate="lang_desc">Full English and Hungarian support with automatic translation and localized commands</p>
                 </div>
                 <div class="feature-card">
-                    <h3 data-translate="analytics_feature">📊 Analytics</h3>
-                    <p data-translate="analytics_desc">Track server growth, user engagement, and member statistics</p>
+                    <h3 data-translate="analytics_feature">📊 Advanced Analytics</h3>
+                    <p data-translate="analytics_desc">Track server growth, user activity, command usage, and detailed member statistics in real-time</p>
                 </div>
                 <div class="feature-card">
-                    <h3 data-translate="ticket_feature">🎟️ Ticket System</h3>
-                    <p data-translate="ticket_desc">Professional support tickets with categories and auto-archiving</p>
+                    <h3 data-translate="tickets_feature">🎫 Support Tickets</h3>
+                    <p data-translate="tickets_desc">Automated ticket system for support requests, appeals, and user modmail management</p>
                 </div>
                 <div class="feature-card">
-                    <h3 data-translate="economy_feature">💰 Economy</h3>
-                    <p data-translate="economy_desc">Currency system with shops, leaderboards, and reward mechanisms</p>
+                    <h3 data-translate="economy_feature">💰 Economy System</h3>
+                    <p data-translate="economy_desc">Virtual currency, daily rewards, gambling games, and leaderboards for user engagement</p>
                 </div>
                 <div class="feature-card">
-                    <h3 data-translate="auto_feature">🔔 Smart Automation</h3>
-                    <p data-translate="auto_desc">Auto-roles, welcome messages, and custom command responses</p>
+                    <h3 data-translate="auto_feature">⚙️ Automation</h3>
+                    <p data-translate="auto_desc">Auto-roles, welcome messages, custom commands, and scheduled announcements</p>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="section">
-            <h2 data-translate="stats_title">📊 Bot Statistics</h2>
-            <div class="stats" id="statsContainer">
+        <!-- Statistics Section -->
+        <section class="section">
+            <h2 data-translate="stats_title">Our Impact</h2>
+            <div class="stats">
                 <div class="stat-box">
-                    <div class="stat-number" id="guildCount">Loading...</div>
-                    <div class="stat-label" data-translate="guilds_label">Active Servers</div>
+                    <div class="stat-number" id="guildCount">2.5K+</div>
+                    <div class="stat-label" data-translate="stat_servers">Discord Servers</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-number" id="userCount">Loading...</div>
-                    <div class="stat-label" data-translate="users_label">Total Users</div>
+                    <div class="stat-number" id="userCount">250K+</div>
+                    <div class="stat-label" data-translate="stat_users">Active Users</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-number" id="channelCount">Loading...</div>
-                    <div class="stat-label" data-translate="channels_label">Channels</div>
+                    <div class="stat-number" id="cmdCount">200+</div>
+                    <div class="stat-label" data-translate="stat_commands">Commands Available</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-number" id="uptime">Loading...</div>
-                    <div class="stat-label" data-translate="uptime_label">System Uptime</div>
+                    <div class="stat-number" id="uptime">99.8%</div>
+                    <div class="stat-label" data-translate="stat_uptime">Uptime</div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="section" style="text-align: center; padding: 3rem; background: rgba(0, 212, 255, 0.1); border-radius: 8px; border: 2px solid #00d4ff;">
-            <h2 data-translate="cta_title">Ready to Power Up Your Server?</h2>
-            <p style="color: #aaa; margin: 1rem 0; font-size: 1.1rem;">
-                {% if not user_id %}
-                    <span data-translate="cta_desc_logout">Log in with Discord to access the management dashboard and configure your server</span>
-                {% else %}
-                    <span data-translate="cta_desc_login">Go to the dashboard to configure your server settings</span>
-                {% endif %}
-            </p>
-            {% if not user_id %}
-                <a href="/auth/discord" class="btn-large btn-login" style="margin-top: 1.5rem;" data-translate="cta_button_logout">
-                    🔓 Login Now
-                </a>
-            {% else %}
-                <a href="/dashboard" class="btn-large btn-dashboard" style="margin-top: 1.5rem;" data-translate="cta_button_login">
-                    ⚙️ Open Dashboard
-                </a>
-            {% endif %}
-        </div>
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <h2 data-translate="cta_title">Ready to Transform Your Server?</h2>
+            <p data-translate="cta_subtitle">Join thousands of communities using ShadowMod to grow and manage their Discord servers</p>
+            <a href="/auth/discord" class="btn-large btn-dashboard cta-btn" data-translate="cta_button">Start for Free</a>
+        </section>
     </div>
 
     <script>
+        // Translation system
         const translations = {
             en: {
-                lang_en: "EN",
-                lang_hu: "HU",
-                features_title: "✨ Core Features",
-                stats_title: "📊 Bot Statistics",
-                mod_feature: "Advanced Moderation",
-                mod_desc: "Warnings, timeouts, kicks, bans, and more with customizable thresholds",
-                ai_feature: "AI Integration",
-                ai_desc: "OpenAI-powered chat responses and intelligent moderation assistance",
-                music_feature: "Music Player",
-                music_desc: "Play songs from YouTube, Spotify, and SoundCloud in voice channels",
-                games_feature: "Games & Fun",
-                games_desc: "Rock-Paper-Scissors, Tic-Tac-Toe, and other interactive mini-games",
-                multi_feature: "Multilingual",
-                multi_desc: "Full support for English and Hungarian with language auto-detection",
-                analytics_feature: "Analytics",
-                analytics_desc: "Track server growth, user engagement, and member statistics",
-                ticket_feature: "Ticket System",
-                ticket_desc: "Professional support tickets with categories and auto-archiving",
-                economy_feature: "Economy",
-                economy_desc: "Currency system with shops, leaderboards, and reward mechanisms",
-                auto_feature: "Smart Automation",
-                auto_desc: "Auto-roles, welcome messages, and custom command responses",
-                guilds_label: "Active Servers",
-                users_label: "Total Users",
-                channels_label: "Channels",
-                uptime_label: "System Uptime",
-                cta_title: "Ready to Power Up Your Server?",
-                cta_desc_logout: "Log in with Discord to access the management dashboard and configure your server",
-                cta_desc_login: "Go to the dashboard to configure your server settings",
-                cta_button_logout: "🔓 Login Now",
-                cta_button_login: "⚙️ Open Dashboard"
+                hero_title: "Elevate Your Discord Server",
+                hero_subtitle: "Powerful moderation, AI features, analytics, and more - all in one premium bot",
+                btn_explore: "Explore Features",
+                btn_manage: "Manage Your Server",
+                features_title: "Powerful Features",
+                mod_feature: "⚡ Advanced Moderation",
+                mod_desc: "AI-powered warnings, timeouts, bans, and intelligent anti-spam protection with customizable rules",
+                ai_feature: "🤖 AI Chat Integration",
+                ai_desc: "Natural language AI conversations, content filtering, and smart content moderation powered by advanced algorithms",
+                music_feature: "🎵 Music Streaming",
+                music_desc: "Play music from YouTube, Spotify, and more with playlist support and queue management",
+                games_feature: "🎮 Games & Entertainment",
+                games_desc: "Connect Four, Counting games, word games, and interactive minigames for community engagement",
+                lang_feature: "🌍 Multilingual Support",
+                lang_desc: "Full English and Hungarian support with automatic translation and localized commands",
+                analytics_feature: "📊 Advanced Analytics",
+                analytics_desc: "Track server growth, user activity, command usage, and detailed member statistics in real-time",
+                tickets_feature: "🎫 Support Tickets",
+                tickets_desc: "Automated ticket system for support requests, appeals, and user modmail management",
+                economy_feature: "💰 Economy System",
+                economy_desc: "Virtual currency, daily rewards, gambling games, and leaderboards for user engagement",
+                auto_feature: "⚙️ Automation",
+                auto_desc: "Auto-roles, welcome messages, custom commands, and scheduled announcements",
+                stats_title: "Our Impact",
+                stat_servers: "Discord Servers",
+                stat_users: "Active Users",
+                stat_commands: "Commands Available",
+                stat_uptime: "Uptime",
+                cta_title: "Ready to Transform Your Server?",
+                cta_subtitle: "Join thousands of communities using ShadowMod to grow and manage their Discord servers",
+                cta_button: "Start for Free"
             },
             hu: {
-                lang_en: "EN",
-                lang_hu: "HU",
-                features_title: "✨ Alapvető Funkciók",
-                stats_title: "📊 Bot Statisztikák",
-                mod_feature: "Fejlett Moderáció",
-                mod_desc: "Figyelmeztetések, időzítések, kirúgások, kitiltások és még sok más testreszabható küszöbértékekkel",
-                ai_feature: "AI Integráció",
-                ai_desc: "OpenAI-alapú csevegési válaszok és intelligens moderációs segítség",
-                music_feature: "Zene Lejátszó",
-                music_desc: "Dalok lejátszása YouTube-ról, Spotify-ról és SoundCloudról hancsatornákon",
-                games_feature: "Játékok és Szórakozás",
-                games_desc: "Kő-Papír-Olló, Tic-Tac-Toe és egyéb interaktív miniójáték",
-                multi_feature: "Többnyelvű",
-                multi_desc: "Teljes angol és magyar támogatás nyelvfelismeréssel",
-                analytics_feature: "Analitika",
-                analytics_desc: "Szerver növekedésének, felhasználói aktivitásának és tagstatisztikák nyomon követése",
-                ticket_feature: "Ticket Rendszer",
-                ticket_desc: "Professzionális támogatási jegyek kategóriákkal és automatikus archiválással",
-                economy_feature: "Gazdaság",
-                economy_desc: "Pénzrendszer üzletekkel, ranglistákkal és jutalom mechanizmusokkal",
-                auto_feature: "Okos Automatizálás",
-                auto_desc: "Automatikus szerepkörök, üdvözlő üzenetek és egyéni parancsválaszok",
-                guilds_label: "Aktív Szerverek",
-                users_label: "Összes Felhasználó",
-                channels_label: "Csatornák",
-                uptime_label: "Rendszer Üzemidő",
-                cta_title: "Készen állsz a Szervered Fejlesztésére?",
-                cta_desc_logout: "Jelentkezz be Discord-dal az irányítópult eléréséhez és szervered konfigurálásához",
-                cta_desc_login: "Menj az irányítópultra szervered beállításainak konfigurálásához",
-                cta_button_logout: "🔓 Jelentkezz Be Most",
-                cta_button_login: "⚙️ Nyisd meg az Irányítópultot"
+                hero_title: "Emelje meg Discord szerverét",
+                hero_subtitle: "Erőteljes moderáció, mesterséges intelligencia funkciók, analitika és még sok más - mind egy prémium bot",
+                btn_explore: "Fedezze fel a funkciókat",
+                btn_manage: "Kezelje szerverét",
+                features_title: "Erőteljes funkciók",
+                mod_feature: "⚡ Fejlett moderáció",
+                mod_desc: "Mesterséges intelligenciával működő figyelmeztetések, időzítések, kizárások és intelligens spam elleni védelem testreszabható szabályokkal",
+                ai_feature: "🤖 Mesterséges Intelligencia Csevegés",
+                ai_desc: "Természetes nyelvi mesterséges intelligencia beszélgetések, tartalom szűrés és intelligens tartalom moderáció fejlett algoritmusok által",
+                music_feature: "🎵 Zenelejátszás",
+                music_desc: "Zene lejátszása YouTube-ról, Spotify-ról és még sok helyről lejátszási lista támogatással",
+                games_feature: "🎮 Játékok és szórakozás",
+                games_desc: "Connect Four, számolási játékok, szójátékok és interaktív minigimnasztika közösségi részvételhez",
+                lang_feature: "🌍 Többnyelvű támogatás",
+                lang_desc: "Teljes angol és magyar támogatás automatikus fordítással és lokalizált parancsokkal",
+                analytics_feature: "📊 Fejlett Analitika",
+                analytics_desc: "Nyomon követheti a szerver növekedését, a felhasználói aktivitást, a parancshasználatot és a részletes tagstatisztikákat valós időben",
+                tickets_feature: "🎫 Támogatási Jegyek",
+                tickets_desc: "Automatizált jegy rendszer támogatási kérésekhez, fellebbezésekhez és felhasználói modmail kezeléshez",
+                economy_feature: "💰 Gazdasági Rendszer",
+                economy_desc: "Virtuális valuta, napi jutalmak, szerencsejátékok és ranglisták felhasználói részvételhez",
+                auto_feature: "⚙️ Automatizálás",
+                auto_desc: "Automatikus szerepek, üdvözlő üzenetek, egyéni parancsok és ütemezett közlemények",
+                stats_title: "A mi hatása",
+                stat_servers: "Discord szerverek",
+                stat_users: "Aktív felhasználók",
+                stat_commands: "Elérhető parancsok",
+                stat_uptime: "Üzemidő",
+                cta_title: "Készen áll szerverét átalakítani?",
+                cta_subtitle: "Csatlakozzon a ShadowMod-ot használó több ezer közösséghez Discord szervereik növekedésének és kezeléséhez",
+                cta_button: "Kezdj ingyenesen"
             }
         };
 
-        let currentLang = localStorage.getItem('dashboardLang') || 'en';
+        let currentLanguage = localStorage.getItem('language') || 'en';
 
         function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('dashboardLang', lang);
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
             
-            document.querySelectorAll('[data-translate]').forEach(element => {
-                const key = element.getAttribute('data-translate');
-                if (translations[lang] && translations[lang][key]) {
-                    element.textContent = translations[lang][key];
-                }
-            });
-            
+            // Update toggle state
             const toggle = document.getElementById('langToggle');
             if (toggle) {
-                toggle.checked = (lang === 'hu');
+                toggle.checked = lang === 'hu';
             }
-        }
-
-        // Load statistics
-        async function loadStats() {
-            try {
-                const response = await fetch('/api/stats');
-                const stats = await response.json();
-                
-                document.getElementById('guildCount').textContent = stats.guilds || '0';
-                document.getElementById('userCount').textContent = stats.users || '0';
-                document.getElementById('channelCount').textContent = stats.channels || '0';
-                
-                const uptime = stats.uptime_seconds || 0;
-                const days = Math.floor(uptime / 86400);
-                const hours = Math.floor((uptime % 86400) / 3600);
-                document.getElementById('uptime').textContent = `${days}d ${hours}h`;
-            } catch (error) {
-                console.error('Failed to load stats:', error);
+            
+            // Update language indicator
+            const indicator = document.getElementById('langIndicator');
+            if (indicator) {
+                indicator.textContent = lang.toUpperCase();
             }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            setLanguage(currentLang);
-            loadStats();
-        });
-        
-        const toggle = document.getElementById('langToggle');
-        if (toggle) {
-            toggle.addEventListener('change', (e) => {
-                setLanguage(e.target.checked ? 'hu' : 'en');
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
             });
         }
+
+        // Language toggle
+        const langToggle = document.getElementById('langToggle');
+        if (langToggle) {
+            langToggle.addEventListener('change', () => {
+                setLanguage(langToggle.checked ? 'hu' : 'en');
+            });
+        }
+
+        // Check for user session
+        function checkUserSession() {
+            const userInfo = document.getElementById('userInfo');
+            if (!userInfo) return;
+            
+            fetch('/api/user')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.user) {
+                        userInfo.innerHTML = `
+                            <div class="user-info">
+                                <img src="https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png" class="user-avatar" alt="Avatar">
+                                <span>${data.user.username}</span>
+                            </div>
+                            <a href="/auth/logout" class="btn-large" style="padding: 0.7rem 1.5rem; background: rgba(255, 0, 100, 0.2); border: 1px solid #ff0064; color: #ff0064;">Logout</a>
+                        `;
+                    } else {
+                        userInfo.innerHTML = '<a href="/auth/discord" class="btn-large btn-login" style="padding: 0.7rem 1.5rem;">Login with Discord</a>';
+                    }
+                })
+                .catch(() => {
+                    userInfo.innerHTML = '<a href="/auth/discord" class="btn-large btn-login" style="padding: 0.7rem 1.5rem;">Login with Discord</a>';
+                });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLanguage);
+            checkUserSession();
+        });
     </script>
 </body>
 </html>
