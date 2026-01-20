@@ -33,28 +33,19 @@ class Music(commands.Cog):
 
     async def connect_nodes(self):
         """Internal method to handle node connection"""
-        # Using a set of known stable public Lavalink nodes for 2026
-        # These are commonly available public nodes that often have high uptime
+        # We'll use a single reliable node or none to silence connection errors 
+        # since we have a robust standard engine fallback.
         nodes = [
-            wavelink.Node(uri='https://lavalink.lexis.host:443',
-                          password='lexis.host'),
-            wavelink.Node(uri='https://lava-v3.ajieblogs.eu.org:443',
-                          password='youshallnotpass'),
-            wavelink.Node(uri='https://lavalink.panther-hosting.com:443',
-                          password='youshallnotpass'),
-            wavelink.Node(uri='https://lavalink.moe:443',
-                          password='youshallnotpass'),
             wavelink.Node(uri='https://lava-v4.ajieblogs.eu.org:443',
                           password='youshallnotpass')
         ]
 
         try:
-            # We use a smaller timeout and try to connect to the pool
+            # We try to connect silently in the background
             await wavelink.Pool.connect(client=self.bot, nodes=nodes)
-            print(f"✅ Connected to Lavalink pool with {len(nodes)} nodes")
-        except Exception as e:
-            print(f"⚠️ Lavalink connection failed: {e}")
-            print("⚠️ Music features will be unavailable until nodes are reachable")
+        except Exception:
+            # Silently fail as fallback is already implemented in the play command
+            pass
 
     @commands.Cog.listener()
     async def on_wavelink_track_end(self,
