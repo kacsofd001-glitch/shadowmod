@@ -64,13 +64,8 @@ class Music(commands.Cog):
         if not player:
             return
 
-        if payload.reason is not wavelink.TrackEndReason.FINISHED:
-            return
-
-        if player.current:
-            return
-
-        if player.queue:
+        # Handle queue progression if finished naturally
+        if not player.current and player.queue:
             next_track = await player.queue.get_wait()
             await player.play(next_track)
 
@@ -87,6 +82,8 @@ class Music(commands.Cog):
 
         try:
             track = self.spotify.track(track_id)
+            if not track:
+                return None
             artists = ', '.join(
                 [artist['name'] for artist in track['artists']])
             query = f"{artists} - {track['name']}"
@@ -110,12 +107,12 @@ class Music(commands.Cog):
         # Check if Lavalink is connected
         lavalink_available = False
         try:
-            if wavelink.Pool.nodes:
+            if hasattr(wavelink, 'Pool') and wavelink.Pool.nodes:
                 for node in wavelink.Pool.nodes.values():
                     if node.status == wavelink.NodeStatus.CONNECTED:
                         lavalink_available = True
                         break
-        except:
+        except Exception:
             lavalink_available = False
 
         if lavalink_available:
@@ -140,7 +137,7 @@ class Music(commands.Cog):
                     query = spotify_query
 
             try:
-                tracks: wavelink.Search = await wavelink.Playable.search(query)
+                tracks = await wavelink.Playable.search(query)
                 if not tracks:
                     embed = discord.Embed(
                         title="❌ No Results",
@@ -149,7 +146,13 @@ class Music(commands.Cog):
                     await ctx.send(embed=embed)
                     return
 
-                track = tracks[0] if isinstance(tracks, list) else tracks
+                # Handle if tracks is a playlist or list
+                if isinstance(tracks, wavelink.Playlist):
+                    track = tracks.tracks[0]
+                elif isinstance(tracks, (list, tuple)):
+                    track = tracks[0]
+                else:
+                    track = tracks
 
                 if vc.playing:
                     await vc.queue.put_wait(track)
@@ -178,37 +181,40 @@ class Music(commands.Cog):
                 await ctx.send(embed=embed)
         else:
             # Fallback to discord.FFmpegPCMAudio if Lavalink is down
-            await ctx.send("⚠️ Lavalink is currently unavailable. Using standard audio engine (experimental)...")
+            await ctx.send("⚠️ Lavalink is currently unavailable. Using standard audio engine...")
             
             if not ctx.voice_client:
                 vc = await voice_channel.connect()
             else:
                 vc = ctx.voice_client
 
-            # Simple fallback using yt-dlp (requires yt-dlp installed)
-            import subprocess
-            import json
-
             try:
+                # Use yt-dlp to get the direct stream URL
+                cmd = ['yt-dlp', '--get-url', '--format', 'bestaudio', '--default-search', 'ytsearch', query]
                 proc = await asyncio.create_subprocess_exec(
-                    'yt-dlp', '--get-url', '--format', 'bestaudio', '--default-search', 'ytsearch', query,
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                    *cmd,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
                 )
                 stdout, stderr = await proc.communicate()
                 
                 if proc.returncode != 0:
-                    await ctx.send("❌ Failed to fetch audio.")
+                    error_msg = stderr.decode().strip()
+                    await ctx.send(f"❌ Failed to fetch audio: {error_msg[:100]}")
                     return
 
-                url = stdout.decode().strip()
+                url = stdout.decode().strip().split('\n')[0]
                 
                 FFMPEG_OPTIONS = {
                     'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
                     'options': '-vn'
                 }
                 
-                vc.stop()
-                vc.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
+                if vc.is_playing():
+                    vc.stop()
+                
+                audio_source = discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS)
+                vc.play(audio_source)
                 
                 embed = discord.Embed(
                     title="🎵 Now Playing (Standard Engine)",
@@ -260,28 +266,34 @@ class Music(commands.Cog):
     @commands.command(name='skip')
     async def skip(self, ctx):
         """Skip to the next song"""
-        vc: wavelink.Player = ctx.voice_client
+        # Handle Lavalink skip
+        if hasattr(ctx.voice_client, 'skip'):
+            vc: wavelink.Player = ctx.voice_client
+            if not vc or not vc.playing:
+                embed = discord.Embed(
+                    title="❌ Nothing Playing",
+                    description="There's nothing playing right now.",
+                    color=0xFF006E)
+                await ctx.send(embed=embed)
+                return
 
-        if not vc or not vc.playing:
-            embed = discord.Embed(
-                title="❌ Nothing Playing",
-                description="There's nothing playing right now.",
-                color=0xFF006E)
+            await vc.skip(force=True)
+            embed = discord.Embed(title="⏭️ Skipped",
+                                  description="Skipped to the next track.",
+                                  color=0x8B00FF)
             await ctx.send(embed=embed)
-            return
-
-        await vc.skip(force=True)
-        embed = discord.Embed(title="⏭️ Skipped",
-                              description="Skipped to the next track.",
-                              color=0x8B00FF)
-        await ctx.send(embed=embed)
+        else:
+            # Handle standard engine skip
+            if ctx.voice_client and ctx.voice_client.is_playing():
+                ctx.voice_client.stop()
+                await ctx.send("⏭️ Skipped (Standard Engine)")
+            else:
+                await ctx.send("❌ Nothing playing to skip.")
 
     @commands.command(name='stop')
     async def stop(self, ctx):
         """Stop playback and disconnect"""
-        vc: wavelink.Player = ctx.voice_client
-
-        if not vc:
+        if not ctx.voice_client:
             embed = discord.Embed(
                 title="❌ Not Connected",
                 description="I'm not connected to a voice channel.",
@@ -289,7 +301,9 @@ class Music(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        await vc.disconnect()
+        if hasattr(ctx.voice_client, 'disconnect'):
+            await ctx.voice_client.disconnect()
+        
         embed = discord.Embed(title="⏹️ Stopped",
                               description="Playback stopped and disconnected.",
                               color=0xFF006E)
