@@ -31,11 +31,11 @@ class MusicControlView(discord.ui.View):
         await interaction.response.send_message("⏭️ Skipped", ephemeral=True)
 
     @discord.ui.button(label="⏹️", style=discord.ButtonStyle.danger)
-    async def stop(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def stop_player(self, interaction: discord.Interaction, button: discord.ui.Button):
         if not self.player: return
         await self.player.disconnect()
         await interaction.response.send_message("⏹️ Stopped", ephemeral=True)
-        self.stop()
+        super().stop()
 
     @discord.ui.button(label="🔉", style=discord.ButtonStyle.secondary)
     async def vol_down(self, interaction: discord.Interaction, button: discord.ui.Button):
