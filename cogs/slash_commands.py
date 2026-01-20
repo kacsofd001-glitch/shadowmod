@@ -486,6 +486,58 @@ class SlashCommands(commands.Cog):
         )
         await interaction.followup.send(embed=embed)
     
+    @app_commands.command(name="setannouncement", description="Set the announcement channel / Bejelentési csatorna beállítása")
+    @app_commands.describe(channel="The channel for announcements / A bejelentések csatornája")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_setannouncement(self, interaction: discord.Interaction, channel: discord.TextChannel):
+        guild_id = interaction.guild.id
+        cfg = config.load_config()
+        if 'announcement_channels' not in cfg:
+            cfg['announcement_channels'] = {}
+        cfg['announcement_channels'][str(guild_id)] = channel.id
+        config.save_config(cfg)
+        
+        embed = discord.Embed(
+            title="📢 Announcement Channel Set / Bejelentési csatorna beállítva",
+            description=f"Announcements will now be sent to {channel.mention} / A bejelentések mostantól ide érkeznek: {channel.mention}",
+            color=0x00F3FF
+        )
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="announce", description="Send a global bot announcement (Owner only) / Bot bejelentés küldése (Csak tulajdonos)")
+    @app_commands.describe(message="The announcement message / A bejelentés üzenete", title="Announcement title / Bejelentés címe")
+    async def slash_announce(self, interaction: discord.Interaction, message: str, title: str = "Bot Announcement / Bot Bejelentés"):
+        # Check if user is bot owner
+        is_owner = await self.bot.is_owner(interaction.user)
+        if not is_owner:
+            await interaction.response.send_message("❌ This command is restricted to the bot owner! / Ez a parancs csak a bot tulajdonosának érhető el!", ephemeral=True)
+            return
+
+        await interaction.response.defer(ephemeral=True)
+        cfg = config.load_config()
+        channels = cfg.get('announcement_channels', {})
+        
+        count = 0
+        embed = discord.Embed(
+            title=title,
+            description=message,
+            color=0xFF006E,
+            timestamp=datetime.now(timezone.utc)
+        )
+        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar.url)
+        embed.set_footer(text="Shadow-MOD Global Announcement System")
+
+        for guild_str, channel_id in channels.items():
+            try:
+                channel = self.bot.get_channel(channel_id)
+                if channel:
+                    await channel.send(embed=embed)
+                    count += 1
+            except Exception:
+                continue
+
+        await interaction.followup.send(f"✅ Announcement sent to {count} servers! / Bejelentés elküldve {count} szerverre!", ephemeral=True)
+
     @app_commands.command(name="purge", description="Delete multiple messages / Több üzenet törlése")
     @app_commands.describe(amount="Number of messages to delete (1-100) / Törölni kívánt üzenetek száma")
     @app_commands.checks.has_permissions(manage_messages=True)
