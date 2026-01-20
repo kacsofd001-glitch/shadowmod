@@ -8,12 +8,20 @@ from datetime import datetime, timezone, timedelta
 class SlashCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        print(f"✅ SlashCommands cog initialized")
     
     @app_commands.command(name="ping", description="Check bot response time")
     async def slash_ping(self, interaction: discord.Interaction):
         """Simple ping command to test bot responsiveness"""
-        latency = round(self.bot.latency * 1000)
-        await interaction.response.send_message(f"🏓 Pong! {latency}ms")
+        try:
+            latency = round(self.bot.latency * 1000)
+            print(f"🔵 /ping command received from {interaction.user}")
+            await interaction.response.send_message(f"🏓 Pong! {latency}ms")
+            print(f"✅ /ping response sent")
+        except Exception as e:
+            print(f"❌ Error in ping: {e}")
+            import traceback
+            traceback.print_exc()
     
     @app_commands.command(name="help", description="Show help menu / Súgó menü")
     async def slash_help(self, interaction: discord.Interaction):
@@ -2135,4 +2143,11 @@ class SlashCommands(commands.Cog):
         await help_cog.show_help(interaction)
 
 async def setup(bot):
-    await bot.add_cog(SlashCommands(bot))
+    print("📝 Setting up SlashCommands cog...")
+    try:
+        await bot.add_cog(SlashCommands(bot))
+        print("✅ SlashCommands cog added successfully!")
+    except Exception as e:
+        print(f"❌ Failed to setup SlashCommands: {e}")
+        import traceback
+        traceback.print_exc()

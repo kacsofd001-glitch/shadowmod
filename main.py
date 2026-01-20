@@ -111,12 +111,13 @@ class DiscordBot(commands.Bot):
         print(f'✅ Bot is ready! Logged in as {self.user}')
         print(f'✅ Bot ID: {self.user.id}')
         print('------')
+        print(f'📊 Connected to {len(self.guilds)} guilds')
         
         try:
             synced = await self.tree.sync()
-            print(f'Synced {len(synced)} slash commands')
+            print(f'✅ Synced {len(synced)} slash commands')
         except Exception as e:
-            print(f'Failed to sync commands: {e}')
+            print(f'❌ Failed to sync commands: {e}')
         
         await self.change_presence(
             activity=discord.Activity(
@@ -148,6 +149,23 @@ class DiscordBot(commands.Bot):
             pass
 
 bot = DiscordBot()
+
+@bot.tree.error
+async def on_app_command_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
+    """Global error handler for slash commands"""
+    print(f"❌ Slash command error: {error}")
+    try:
+        if interaction.response.is_done():
+            await interaction.followup.send(f"Error: {str(error)}", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"Error: {str(error)}", ephemeral=True)
+    except Exception as e:
+        print(f"Could not send error message: {e}")
+
+@bot.event
+async def on_interaction(interaction: discord.Interaction):
+    """Debug: Log all interactions"""
+    print(f"🔵 Interaction received: {interaction.type} - {interaction.data if hasattr(interaction, 'data') else 'Unknown'}")
 
 @bot.command(name='help')
 async def help_command(ctx):
