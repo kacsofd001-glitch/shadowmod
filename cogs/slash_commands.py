@@ -15,8 +15,10 @@ class SlashCommands(commands.Cog):
         """Simple ping command to test bot responsiveness"""
         try:
             latency = round(self.bot.latency * 1000)
+            guild_id = interaction.guild.id if interaction.guild else 0
+            lang = translations.get_guild_language(guild_id)
             print(f"🔵 /ping command received from {interaction.user}")
-            await interaction.response.send_message(f"🏓 Pong! {latency}ms")
+            await interaction.response.send_message(translations.get_text(guild_id, 'pong', latency, lang=lang))
             print(f"✅ /ping response sent")
         except Exception as e:
             print(f"❌ Error in ping: {e}")
@@ -63,10 +65,10 @@ class SlashCommands(commands.Cog):
                 view = HelpView(self.bot, guild_id)
                 await interaction.followup.send(embed=embed, view=view)
             else:
-                await interaction.followup.send("Help system is currently unavailable.", ephemeral=True)
+                await interaction.followup.send(translations.get_text(guild_id, 'help_unavailable'), ephemeral=True)
         except Exception as e:
             print(f"Error in help command: {e}")
-            await interaction.followup.send(f"Error loading help: {str(e)}", ephemeral=True)
+            await interaction.followup.send(translations.get_text(guild_id, 'error_loading_help', str(e)), ephemeral=True)
     
     @app_commands.command(name="ticket", description="Create a ticket panel / Jegy panel létrehozása")
     @app_commands.checks.has_permissions(administrator=True)
@@ -506,11 +508,12 @@ class SlashCommands(commands.Cog):
     async def slash_say(self, interaction: discord.Interaction, message: str):
         # Check if user is bot owner or has permissions
         is_owner = await self.bot.is_owner(interaction.user)
+        guild_id = interaction.guild.id if interaction.guild else 0
         if not is_owner and not interaction.user.guild_permissions.manage_messages:
-            await interaction.response.send_message("❌ You don't have permission to use this! / Nincs jogosultságod ehhez!", ephemeral=True)
+            await interaction.response.send_message(translations.get_text(guild_id, 'permission_denied'), ephemeral=True)
             return
             
-        await interaction.response.send_message("✅ Message sent / Üzenet elküldve", ephemeral=True)
+        await interaction.response.send_message(translations.get_text(guild_id, 'message_sent'), ephemeral=True)
         await interaction.channel.send(message)
 
     @app_commands.command(name="embedsay", description="Make the bot say something in an embed / Bot rábeszélése embed küldésére")
@@ -518,8 +521,9 @@ class SlashCommands(commands.Cog):
     async def slash_embedsay(self, interaction: discord.Interaction, description: str, title: str = None, color: str = "#00F3FF"):
         # Check if user is bot owner or has permissions
         is_owner = await self.bot.is_owner(interaction.user)
+        guild_id = interaction.guild.id if interaction.guild else 0
         if not is_owner and not interaction.user.guild_permissions.manage_messages:
-            await interaction.response.send_message("❌ You don't have permission to use this! / Nincs jogosultságod ehhez!", ephemeral=True)
+            await interaction.response.send_message(translations.get_text(guild_id, 'permission_denied'), ephemeral=True)
             return
             
         try:
@@ -530,7 +534,8 @@ class SlashCommands(commands.Cog):
                 description=description,
                 color=color_int
             )
-            await interaction.response.send_message("✅ Embed sent / Embed elküldve", ephemeral=True)
+            guild_id = interaction.guild.id if interaction.guild else 0
+            await interaction.response.send_message(translations.get_text(guild_id, 'embed_sent'), ephemeral=True)
             await interaction.channel.send(embed=embed)
         except ValueError:
             await interaction.response.send_message("❌ Invalid color format! Use hex (e.g. #00F3FF) / Érvénytelen színformátum! Használj hex kódot (pl. #00F3FF)", ephemeral=True)
