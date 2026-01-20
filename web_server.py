@@ -30,8 +30,27 @@ DISCORD_CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET')
 DISCORD_REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI', 'https://shadowmod.onrender.com/auth/discord/callback')
 DISCORD_API_BASE = 'https://discordapp.com/api'
 
+# Check if OAuth2 is configured
+OAUTH_CONFIGURED = bool(DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET)
+
 # Initialize database on startup
 init_db()
+
+# Log OAuth configuration status
+if not OAUTH_CONFIGURED:
+    print("\n⚠️ WARNING: Discord OAuth2 is not configured!")
+    print("❌ DISCORD_CLIENT_ID:", "NOT SET" if not DISCORD_CLIENT_ID else "✅ SET")
+    print("❌ DISCORD_CLIENT_SECRET:", "NOT SET" if not DISCORD_CLIENT_SECRET else "✅ SET")
+    print("\nTo fix this, set environment variables on Render:")
+    print("  1. Go to Render Dashboard → Your Service")
+    print("  2. Environment → Add Variable")
+    print("  3. Add: DISCORD_CLIENT_ID=<your_client_id>")
+    print("  4. Add: DISCORD_CLIENT_SECRET=<your_client_secret>")
+    print("="*70)
+else:
+    print("\n✅ Discord OAuth2 is configured!")
+    print(f"   Client ID: {DISCORD_CLIENT_ID[:10]}...")
+    print("="*70)
 
 STATS_FILE = 'bot_stats.json'
 
@@ -87,6 +106,9 @@ def index():
 @app.route('/auth/discord')
 def auth_discord():
     """Redirect to Discord OAuth2"""
+    if not OAUTH_CONFIGURED:
+        return render_template('oauth_error.html', error_type='not_configured'), 503
+    
     state = secrets.token_urlsafe(32)
     session['oauth_state'] = state
     
