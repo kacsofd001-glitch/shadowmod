@@ -1,4 +1,4 @@
-print("🔄 Loading bot modules...")
+print("🔄 Loading bot modules...", flush=True)
 
 import discord
 from discord.ext import commands
@@ -9,9 +9,9 @@ from datetime import datetime, timezone
 import json
 import config
 
-print("📁 Loading environment variables...")
+print("📁 Loading environment variables...", flush=True)
 load_dotenv()
-print("✅ Environment variables loaded")
+print("✅ Environment variables loaded", flush=True)
 
 intents = discord.Intents.all()
 
@@ -362,15 +362,20 @@ async def ping_command(ctx):
     await ctx.send(embed=embed)
 
 if __name__ == '__main__':
+    print("\n🚀 Starting bot with token...", flush=True)
     TOKEN = os.getenv('DISCORD_TOKEN')
     if not TOKEN:
-        print("ERROR: DISCORD_TOKEN not found in environment variables!")
-        print("Please set up your Discord bot token.")
+        print("❌ ERROR: DISCORD_TOKEN not found in environment variables!", flush=True)
+        print("Please set up your Discord bot token.", flush=True)
+        exit(1)
     else:
-        print("🚀 Starting bot with token...")
+        print(f"✅ TOKEN found, length: {len(TOKEN)}", flush=True)
         try:
+            print("🔗 Connecting to Discord...", flush=True)
             bot.run(TOKEN)
+        except KeyboardInterrupt:
+            print("\n⏹️ Bot stopped by user", flush=True)
         except Exception as e:
-            print(f"❌ Bot crashed with error: {e}")
+            print(f"❌ Bot crashed with error: {e}", flush=True)
             import traceback
             traceback.print_exc()

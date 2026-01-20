@@ -1,57 +1,98 @@
+#!/usr/bin/env python3
 import os
 import sys
+import subprocess
 import threading
 import time
 
-# Add current directory to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Ensure output is not buffered
+os.environ['PYTHONUNBUFFERED'] = '1'
 
-print("=" * 60)
-print("🚀 DiscordSage Application Startup")
-print("=" * 60)
+print("=" * 70, flush=True)
+print("🚀 DiscordSage Application Startup", flush=True)
+print("=" * 70, flush=True)
+print(f"📁 Working directory: {os.getcwd()}", flush=True)
+print(f"🐍 Python: {sys.executable}", flush=True)
+print(f"🔑 DISCORD_TOKEN: {'✅ SET' if os.getenv('DISCORD_TOKEN') else '❌ NOT SET'}", flush=True)
+print("=" * 70, flush=True)
 
 def run_bot():
-    """Run the Discord bot directly"""
-    print("\n🤖 [BOT THREAD] Starting Discord bot...")
+    """Run the Discord bot in subprocess with output capture"""
+    print("\n🤖 [BOT] Starting bot subprocess...", flush=True)
     try:
-        # Import and run the bot
-        import main
-        TOKEN = os.getenv('DISCORD_TOKEN')
-        if not TOKEN:
-            print("❌ [BOT] DISCORD_TOKEN not found in environment!")
-            return
-        print("[BOT] Connecting to Discord...")
-        main.bot.run(TOKEN)
-    except KeyboardInterrupt:
-        print("[BOT] Bot stopped by keyboard interrupt")
+        # Run bot.py with unbuffered output
+        env = os.environ.copy()
+        env['PYTHONUNBUFFERED'] = '1'
+        
+        process = subprocess.Popen(
+            [sys.executable, '-u', 'main.py'],
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+        
+        print("🤖 [BOT] Bot subprocess started, reading output...", flush=True)
+        
+        # Stream output from bot
+        for line in process.stdout:
+            print(f"🤖 [BOT] {line.rstrip()}", flush=True)
+        
+        # Wait for process
+        return_code = process.wait()
+        print(f"❌ [BOT] Bot process exited with code {return_code}", flush=True)
+        
     except Exception as e:
-        print(f"❌ [BOT] Bot crashed: {e}")
+        print(f"❌ [BOT] Failed to start bot: {e}", flush=True)
         import traceback
         traceback.print_exc()
 
 def run_web():
-    """Run the Flask web server directly"""
-    print("\n🌐 [WEB THREAD] Starting Flask web server...")
+    """Run the Flask web server"""
+    print("\n🌐 [WEB] Starting web server...", flush=True)
     try:
-        import web_server
-        print("[WEB] Starting Flask on 0.0.0.0:5000...")
-        web_server.app.run(host='0.0.0.0', port=5000, debug=False)
+        env = os.environ.copy()
+        env['PYTHONUNBUFFERED'] = '1'
+        
+        process = subprocess.Popen(
+            [sys.executable, '-u', 'web_server.py'],
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+        
+        print("🌐 [WEB] Web server subprocess started, reading output...", flush=True)
+        
+        # Stream output from web server
+        for line in process.stdout:
+            print(f"🌐 [WEB] {line.rstrip()}", flush=True)
+        
+        # Wait for process
+        return_code = process.wait()
+        print(f"❌ [WEB] Web server process exited with code {return_code}", flush=True)
+        
     except Exception as e:
-        print(f"❌ [WEB] Web server crashed: {e}")
+        print(f"❌ [WEB] Failed to start web server: {e}", flush=True)
         import traceback
         traceback.print_exc()
 
 if __name__ == "__main__":
-    print(f"\n📁 Working directory: {os.getcwd()}")
-    print(f"🐍 Python version: {sys.version}")
-    print(f"🔑 DISCORD_TOKEN set: {'Yes' if os.getenv('DISCORD_TOKEN') else 'No'}\n")
+    print("\n📋 Starting both services...\n", flush=True)
     
-    # Start bot in background thread (daemon=False so it keeps process alive)
+    # Start bot in background thread
     bot_thread = threading.Thread(target=run_bot, daemon=False, name="BotThread")
     bot_thread.start()
     
     # Give bot a moment to start
-    time.sleep(1)
+    time.sleep(2)
     
     # Start web server in main thread (blocking)
     run_web()
+    
+    # If web server exits, wait for bot thread
+    print("\n⏳ Waiting for bot thread...", flush=True)
+    bot_thread.join(timeout=5)
+    print("🛑 Application shutdown complete", flush=True)
