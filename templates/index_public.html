@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow-MOD - Discord Bot Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <style>
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 100, 0.1) 100%);
+            border-bottom: 2px solid #00d4ff;
+            margin-bottom: 3rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            color: #00d4ff;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            color: #aaa;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-login {
+            background: #00d4ff;
+            color: #1a1a2e;
+        }
+        
+        .btn-login:hover {
+            background: #00ff00;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+        
+        .btn-dashboard {
+            background: #ff0064;
+            color: white;
+        }
+        
+        .btn-dashboard:hover {
+            background: #ff3385;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 0, 100, 0.3);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background: rgba(30, 30, 60, 0.8);
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-5px);
+            border-color: #00ff00;
+        }
+        
+        .feature-card h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .feature-card p {
+            color: #aaa;
+            line-height: 1.6;
+        }
+        
+        .section {
+            margin: 3rem 0;
+        }
+        
+        .section h2 {
+            color: #00d4ff;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            color: #aaa;
+            margin-top: 0.5rem;
+        }
+        
+        .logged-in-nav {
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Shadow-MOD</div>
+            <div class="nav-links">
+                <div class="lang-toggle">
+                    <label for="langToggle" class="lang-label">
+                        <input type="checkbox" id="langToggle">
+                        <span class="lang-text" data-translate="lang_en">EN</span>
+                        <span class="lang-slider"></span>
+                        <span class="lang-text" data-translate="lang_hu">HU</span>
+                    </label>
+                </div>
+                
+                {% if user_id %}
+                    <span class="user-info logged-in-nav">
+                        <img src="{{ avatar_url }}" alt="{{ username }}" class="user-avatar">
+                        {{ username }}
+                    </span>
+                    <a href="/dashboard" class="logout-btn" style="background: #00d4ff; color: #1a1a2e;">Dashboard</a>
+                    <a href="/auth/logout" class="logout-btn">Logout</a>
+                {% else %}
+                    <a href="/auth/discord" class="logout-btn" style="background: #00d4ff; color: #1a1a2e;">Login with Discord</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="hero">
+            <h1>⚡ Shadow-MOD</h1>
+            <p>Next-Gen Discord Moderation & Management System</p>
+            <div class="hero-buttons">
+                {% if not user_id %}
+                    <a href="/auth/discord" class="btn-large btn-login">
+                        🔓 Login with Discord
+                    </a>
+                {% else %}
+                    <a href="/dashboard" class="btn-large btn-dashboard">
+                        ⚙️ Go to Dashboard
+                    </a>
+                {% endif %}
+                <a href="https://discord.com/oauth2/authorize?client_id=YOUR_BOT_ID&scope=bot&permissions=8" class="btn-large btn-dashboard" target="_blank">
+                    ➕ Add Bot to Server
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 data-translate="features_title">✨ Core Features</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h3>🛡️ Advanced Moderation</h3>
+                    <p>Warnings, timeouts, kicks, bans, and more with customizable thresholds</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤖 AI Integration</h3>
+                    <p>OpenAI-powered chat responses and intelligent moderation assistance</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎵 Music Player</h3>
+                    <p>Play songs from YouTube, Spotify, and SoundCloud in voice channels</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎮 Games & Fun</h3>
+                    <p>Rock-Paper-Scissors, Tic-Tac-Toe, and other interactive mini-games</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌍 Multilingual</h3>
+                    <p>Full support for English and Hungarian with language auto-detection</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Analytics</h3>
+                    <p>Track server growth, user engagement, and member statistics</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎟️ Ticket System</h3>
+                    <p>Professional support tickets with categories and auto-archiving</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💰 Economy</h3>
+                    <p>Currency system with shops, leaderboards, and reward mechanisms</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔔 Smart Automation</h3>
+                    <p>Auto-roles, welcome messages, and custom command responses</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 data-translate="stats_title">📊 Bot Statistics</h2>
+            <div class="stats" id="statsContainer">
+                <div class="stat-box">
+                    <div class="stat-number" id="guildCount">Loading...</div>
+                    <div class="stat-label">Active Servers</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="userCount">Loading...</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="channelCount">Loading...</div>
+                    <div class="stat-label">Channels</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="uptime">Loading...</div>
+                    <div class="stat-label">System Uptime</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" style="text-align: center; padding: 3rem; background: rgba(0, 212, 255, 0.1); border-radius: 8px; border: 2px solid #00d4ff;">
+            <h2>Ready to Power Up Your Server?</h2>
+            <p style="color: #aaa; margin: 1rem 0; font-size: 1.1rem;">
+                {% if not user_id %}
+                    Log in with Discord to access the management dashboard and configure your server
+                {% else %}
+                    Go to the dashboard to configure your server settings
+                {% endif %}
+            </p>
+            {% if not user_id %}
+                <a href="/auth/discord" class="btn-large btn-login" style="margin-top: 1.5rem;">
+                    🔓 Login Now
+                </a>
+            {% else %}
+                <a href="/dashboard" class="btn-large btn-dashboard" style="margin-top: 1.5rem;">
+                    ⚙️ Open Dashboard
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                lang_en: "EN",
+                lang_hu: "HU",
+                features_title: "✨ Core Features",
+                stats_title: "📊 Bot Statistics"
+            },
+            hu: {
+                lang_en: "EN",
+                lang_hu: "HU",
+                features_title: "✨ Alapvető Funkciók",
+                stats_title: "📊 Bot Statisztikák"
+            }
+        };
+
+        let currentLang = localStorage.getItem('dashboardLang') || 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('dashboardLang', lang);
+            
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            const toggle = document.getElementById('langToggle');
+            if (toggle) {
+                toggle.checked = (lang === 'hu');
+            }
+        }
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+                
+                document.getElementById('guildCount').textContent = stats.guilds || '0';
+                document.getElementById('userCount').textContent = stats.users || '0';
+                document.getElementById('channelCount').textContent = stats.channels || '0';
+                
+                const uptime = stats.uptime_seconds || 0;
+                const days = Math.floor(uptime / 86400);
+                const hours = Math.floor((uptime % 86400) / 3600);
+                document.getElementById('uptime').textContent = `${days}d ${hours}h`;
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLang);
+            loadStats();
+        });
+        
+        const toggle = document.getElementById('langToggle');
+        if (toggle) {
+            toggle.addEventListener('change', (e) => {
+                setLanguage(e.target.checked ? 'hu' : 'en');
+            });
+        }
+    </script>
+</body>
+</html>

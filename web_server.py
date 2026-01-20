@@ -98,10 +98,15 @@ def get_bot_stats():
 
 @app.route('/')
 def index():
-    """Redirect root path to dashboard"""
-    if session.get('user_id'):
-        return redirect('/dashboard', code=302)
-    return redirect('/auth/discord', code=302)
+    """Public homepage"""
+    user_id = session.get('user_id')
+    
+    response = app.make_response(render_template('index_public.html',
+                         user_id=user_id,
+                         username=session.get('username'),
+                         avatar_url=session.get('avatar_url')))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
 
 @app.route('/auth/discord')
 def auth_discord():
