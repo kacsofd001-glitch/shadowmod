@@ -194,40 +194,40 @@
             <h2 data-translate="features_title">✨ Core Features</h2>
             <div class="features">
                 <div class="feature-card">
-                    <h3>🛡️ Advanced Moderation</h3>
-                    <p>Warnings, timeouts, kicks, bans, and more with customizable thresholds</p>
+                    <h3 data-translate="mod_feature">🛡️ Advanced Moderation</h3>
+                    <p data-translate="mod_desc">Warnings, timeouts, kicks, bans, and more with customizable thresholds</p>
                 </div>
                 <div class="feature-card">
-                    <h3>🤖 AI Integration</h3>
-                    <p>OpenAI-powered chat responses and intelligent moderation assistance</p>
+                    <h3 data-translate="ai_feature">🤖 AI Integration</h3>
+                    <p data-translate="ai_desc">OpenAI-powered chat responses and intelligent moderation assistance</p>
                 </div>
                 <div class="feature-card">
-                    <h3>🎵 Music Player</h3>
-                    <p>Play songs from YouTube, Spotify, and SoundCloud in voice channels</p>
+                    <h3 data-translate="music_feature">🎵 Music Player</h3>
+                    <p data-translate="music_desc">Play songs from YouTube, Spotify, and SoundCloud in voice channels</p>
                 </div>
                 <div class="feature-card">
-                    <h3>🎮 Games & Fun</h3>
-                    <p>Rock-Paper-Scissors, Tic-Tac-Toe, and other interactive mini-games</p>
+                    <h3 data-translate="games_feature">🎮 Games & Fun</h3>
+                    <p data-translate="games_desc">Rock-Paper-Scissors, Tic-Tac-Toe, and other interactive mini-games</p>
                 </div>
                 <div class="feature-card">
-                    <h3>🌍 Multilingual</h3>
-                    <p>Full support for English and Hungarian with language auto-detection</p>
+                    <h3 data-translate="multi_feature">🌍 Multilingual</h3>
+                    <p data-translate="multi_desc">Full support for English and Hungarian with language auto-detection</p>
                 </div>
                 <div class="feature-card">
-                    <h3>📊 Analytics</h3>
-                    <p>Track server growth, user engagement, and member statistics</p>
+                    <h3 data-translate="analytics_feature">📊 Analytics</h3>
+                    <p data-translate="analytics_desc">Track server growth, user engagement, and member statistics</p>
                 </div>
                 <div class="feature-card">
-                    <h3>🎟️ Ticket System</h3>
-                    <p>Professional support tickets with categories and auto-archiving</p>
+                    <h3 data-translate="ticket_feature">🎟️ Ticket System</h3>
+                    <p data-translate="ticket_desc">Professional support tickets with categories and auto-archiving</p>
                 </div>
                 <div class="feature-card">
-                    <h3>💰 Economy</h3>
-                    <p>Currency system with shops, leaderboards, and reward mechanisms</p>
+                    <h3 data-translate="economy_feature">💰 Economy</h3>
+                    <p data-translate="economy_desc">Currency system with shops, leaderboards, and reward mechanisms</p>
                 </div>
                 <div class="feature-card">
-                    <h3>🔔 Smart Automation</h3>
-                    <p>Auto-roles, welcome messages, and custom command responses</p>
+                    <h3 data-translate="auto_feature">🔔 Smart Automation</h3>
+                    <p data-translate="auto_desc">Auto-roles, welcome messages, and custom command responses</p>
                 </div>
             </div>
         </div>
@@ -237,38 +237,38 @@
             <div class="stats" id="statsContainer">
                 <div class="stat-box">
                     <div class="stat-number" id="guildCount">Loading...</div>
-                    <div class="stat-label">Active Servers</div>
+                    <div class="stat-label" data-translate="guilds_label">Active Servers</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-number" id="userCount">Loading...</div>
-                    <div class="stat-label">Total Users</div>
+                    <div class="stat-label" data-translate="users_label">Total Users</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-number" id="channelCount">Loading...</div>
-                    <div class="stat-label">Channels</div>
+                    <div class="stat-label" data-translate="channels_label">Channels</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-number" id="uptime">Loading...</div>
-                    <div class="stat-label">System Uptime</div>
+                    <div class="stat-label" data-translate="uptime_label">System Uptime</div>
                 </div>
             </div>
         </div>
 
         <div class="section" style="text-align: center; padding: 3rem; background: rgba(0, 212, 255, 0.1); border-radius: 8px; border: 2px solid #00d4ff;">
-            <h2>Ready to Power Up Your Server?</h2>
+            <h2 data-translate="cta_title">Ready to Power Up Your Server?</h2>
             <p style="color: #aaa; margin: 1rem 0; font-size: 1.1rem;">
                 {% if not user_id %}
-                    Log in with Discord to access the management dashboard and configure your server
+                    <span data-translate="cta_desc_logout">Log in with Discord to access the management dashboard and configure your server</span>
                 {% else %}
-                    Go to the dashboard to configure your server settings
+                    <span data-translate="cta_desc_login">Go to the dashboard to configure your server settings</span>
                 {% endif %}
             </p>
             {% if not user_id %}
-                <a href="/auth/discord" class="btn-large btn-login" style="margin-top: 1.5rem;">
+                <a href="/auth/discord" class="btn-large btn-login" style="margin-top: 1.5rem;" data-translate="cta_button_logout">
                     🔓 Login Now
                 </a>
             {% else %}
-                <a href="/dashboard" class="btn-large btn-dashboard" style="margin-top: 1.5rem;">
+                <a href="/dashboard" class="btn-large btn-dashboard" style="margin-top: 1.5rem;" data-translate="cta_button_login">
                     ⚙️ Open Dashboard
                 </a>
             {% endif %}
@@ -281,13 +281,67 @@
                 lang_en: "EN",
                 lang_hu: "HU",
                 features_title: "✨ Core Features",
-                stats_title: "📊 Bot Statistics"
+                stats_title: "📊 Bot Statistics",
+                mod_feature: "Advanced Moderation",
+                mod_desc: "Warnings, timeouts, kicks, bans, and more with customizable thresholds",
+                ai_feature: "AI Integration",
+                ai_desc: "OpenAI-powered chat responses and intelligent moderation assistance",
+                music_feature: "Music Player",
+                music_desc: "Play songs from YouTube, Spotify, and SoundCloud in voice channels",
+                games_feature: "Games & Fun",
+                games_desc: "Rock-Paper-Scissors, Tic-Tac-Toe, and other interactive mini-games",
+                multi_feature: "Multilingual",
+                multi_desc: "Full support for English and Hungarian with language auto-detection",
+                analytics_feature: "Analytics",
+                analytics_desc: "Track server growth, user engagement, and member statistics",
+                ticket_feature: "Ticket System",
+                ticket_desc: "Professional support tickets with categories and auto-archiving",
+                economy_feature: "Economy",
+                economy_desc: "Currency system with shops, leaderboards, and reward mechanisms",
+                auto_feature: "Smart Automation",
+                auto_desc: "Auto-roles, welcome messages, and custom command responses",
+                guilds_label: "Active Servers",
+                users_label: "Total Users",
+                channels_label: "Channels",
+                uptime_label: "System Uptime",
+                cta_title: "Ready to Power Up Your Server?",
+                cta_desc_logout: "Log in with Discord to access the management dashboard and configure your server",
+                cta_desc_login: "Go to the dashboard to configure your server settings",
+                cta_button_logout: "🔓 Login Now",
+                cta_button_login: "⚙️ Open Dashboard"
             },
             hu: {
                 lang_en: "EN",
                 lang_hu: "HU",
                 features_title: "✨ Alapvető Funkciók",
-                stats_title: "📊 Bot Statisztikák"
+                stats_title: "📊 Bot Statisztikák",
+                mod_feature: "Fejlett Moderáció",
+                mod_desc: "Figyelmeztetések, időzítések, kirúgások, kitiltások és még sok más testreszabható küszöbértékekkel",
+                ai_feature: "AI Integráció",
+                ai_desc: "OpenAI-alapú csevegési válaszok és intelligens moderációs segítség",
+                music_feature: "Zene Lejátszó",
+                music_desc: "Dalok lejátszása YouTube-ról, Spotify-ról és SoundCloudról hancsatornákon",
+                games_feature: "Játékok és Szórakozás",
+                games_desc: "Kő-Papír-Olló, Tic-Tac-Toe és egyéb interaktív miniójáték",
+                multi_feature: "Többnyelvű",
+                multi_desc: "Teljes angol és magyar támogatás nyelvfelismeréssel",
+                analytics_feature: "Analitika",
+                analytics_desc: "Szerver növekedésének, felhasználói aktivitásának és tagstatisztikák nyomon követése",
+                ticket_feature: "Ticket Rendszer",
+                ticket_desc: "Professzionális támogatási jegyek kategóriákkal és automatikus archiválással",
+                economy_feature: "Gazdaság",
+                economy_desc: "Pénzrendszer üzletekkel, ranglistákkal és jutalom mechanizmusokkal",
+                auto_feature: "Okos Automatizálás",
+                auto_desc: "Automatikus szerepkörök, üdvözlő üzenetek és egyéni parancsválaszok",
+                guilds_label: "Aktív Szerverek",
+                users_label: "Összes Felhasználó",
+                channels_label: "Csatornák",
+                uptime_label: "Rendszer Üzemidő",
+                cta_title: "Készen állsz a Szervered Fejlesztésére?",
+                cta_desc_logout: "Jelentkezz be Discord-dal az irányítópult eléréséhez és szervered konfigurálásához",
+                cta_desc_login: "Menj az irányítópultra szervered beállításainak konfigurálásához",
+                cta_button_logout: "🔓 Jelentkezz Be Most",
+                cta_button_login: "⚙️ Nyisd meg az Irányítópultot"
             }
         };
 
