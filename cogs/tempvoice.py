@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import config
 
 class TempVoice(commands.Cog):
@@ -26,6 +27,36 @@ class TempVoice(commands.Cog):
         cfg['tempvoice'][str(guild_id)] = settings
         config.save_config(cfg)
     
+    @app_commands.command(name="setupvoice", description="Setup temporary voice channels / Ideiglenes hangcsatornák beállítása")
+    @app_commands.describe(channel="The 'Join to Create' voice channel / A 'Csatlakozz a létrehozáshoz' csatorna", category="The category for new channels / Az új csatornák kategóriája")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def slash_setupvoice(self, interaction: discord.Interaction, channel: discord.VoiceChannel, category: discord.CategoryChannel = None):
+        settings = self.get_tempvoice_config(interaction.guild.id)
+        settings['enabled'] = True
+        settings['create_channel_id'] = channel.id
+        settings['category_id'] = category.id if category else None
+        self.save_tempvoice_config(interaction.guild.id, settings)
+        
+        embed = discord.Embed(
+            title="🔊 Temp Voice Setup / Hangcsatorna beállítás",
+            description=f"✅ System enabled! Join {channel.mention} to create a channel.\n✅ Rendszer aktiválva! Csatlakozz a(z) {channel.mention} csatornához.",
+            color=0x00F3FF
+        )
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="voicename", description="Change your temp channel name / Ideiglenes csatorna nevének módosítása")
+    @app_commands.describe(name="New name for the channel / A csatorna új neve")
+    async def slash_voicename(self, interaction: discord.Interaction, name: str):
+        if not isinstance(interaction.user, discord.Member):
+            return
+            
+        settings = self.get_tempvoice_config(interaction.guild.id)
+        if interaction.user.voice and interaction.user.voice.channel and interaction.user.voice.channel.id in settings.get('temp_channels', []):
+            await interaction.user.voice.channel.edit(name=name)
+            await interaction.response.send_message(f"✅ Channel name updated to: **{name}**", ephemeral=True)
+        else:
+            await interaction.response.send_message("❌ You must be in your own temporary channel! / Saját ideiglenes csatornádban kell lenned!", ephemeral=True)
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         settings = self.get_tempvoice_config(member.guild.id)

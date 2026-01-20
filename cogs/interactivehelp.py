@@ -127,7 +127,9 @@ class HelpView(discord.ui.View):
                 "`/setlang` - Change language\n"
                 "`/setprefix` - Role nickname prefix\n"
                 "`/setlog` - Set log channel\n"
-                "`/setwebhook` - Set logging webhook"
+                "`/setwebhook` - Set logging webhook\n"
+                "`/setupvoice` - Setup temp voice system\n"
+                "`/voicename` - Rename your temp voice channel"
             ),
             color=0x00F3FF
         )
