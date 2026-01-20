@@ -564,13 +564,17 @@ class Music(commands.Cog):
                 vc: wavelink.Player = ctx.voice_client
             
             # Wavelink 3.x/4.x search for the stream
-            # Rádió 1 stream direct link search or fallback
             try:
-                # Direct stream search
-                tracks = await wavelink.Playable.search("https://radio1.hu/stream/radio1.mp3")
-                if not tracks:
-                    tracks = await wavelink.Playable.search("Rádió 1 Hungary Live")
+                # Use search query instead of direct URL for Lavalink nodes that might block direct stream decoding
+                tracks = await wavelink.Playable.search("Rádió 1 Hungary Live")
                 
+                if not tracks:
+                    # Fallback to direct stream URL as raw identifier
+                    tracks = await wavelink.Playable.search("https://radio1.hu/stream/radio1.mp3")
+                
+                if not tracks:
+                    raise Exception("No tracks found / Nem található adás")
+
                 track = tracks[0] if isinstance(tracks, list) else tracks
                 await vc.play(track)
                 
@@ -582,11 +586,18 @@ class Music(commands.Cog):
                 embed.set_thumbnail(url="https://radio1.hu/wp-content/themes/radio1/img/logo.png")
                 await ctx.send(embed=embed, view=MusicControlView(self.bot, vc))
             except Exception as e:
-                await ctx.send(f"❌ Radio stream error: {str(e)}")
-        else:
-            # Standard engine fallback
+                # If Lavalink fails, automatically trigger FFmpeg fallback
+                await ctx.send(f"⚠️ Lavalink stream error. Switching to fallback engine... / Lavalink hiba. Átváltás tartalék motorra...")
+                lavalink_available = False # Trigger the 'else' block
+        
+        if not lavalink_available:
+            # Standard engine fallback (FFmpeg)
             if not ctx.voice_client:
-                vc = await voice_channel.connect()
+                try:
+                    vc = await voice_channel.connect()
+                except Exception as e:
+                    await ctx.send(f"❌ Connection failed: {str(e)}")
+                    return
             else:
                 vc = ctx.voice_client
             
@@ -598,7 +609,7 @@ class Music(commands.Cog):
                     'options': '-vn'
                 }
                 
-                if vc.is_playing():
+                if hasattr(vc, 'is_playing') and vc.is_playing():
                     vc.stop()
                 
                 audio_source = discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS)
