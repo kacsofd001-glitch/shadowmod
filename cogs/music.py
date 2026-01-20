@@ -71,8 +71,19 @@ class Music(commands.Cog):
 
     async def cog_load(self):
         """Connect to Lavalink nodes when cog loads"""
-        # Connect to reliable public Lavalink nodes in the background to avoid blocking bot startup
-        self.bot.loop.create_task(self.connect_nodes())
+        print("🎵 Music cog loaded (Lavalink connection will be attempted in background)")
+        # Don't block startup - connect in background with timeout
+        self.bot.loop.create_task(self.connect_nodes_with_timeout())
+
+    async def connect_nodes_with_timeout(self):
+        """Internal method to handle node connection with timeout"""
+        try:
+            # Add a 5-second timeout to prevent hanging
+            await asyncio.wait_for(self.connect_nodes(), timeout=5.0)
+        except asyncio.TimeoutError:
+            print("⚠️ Lavalink connection timeout (music features may be unavailable)")
+        except Exception as e:
+            print(f"⚠️ Lavalink connection failed: {e} (music features may be unavailable)")
 
     async def connect_nodes(self):
         """Internal method to handle node connection"""
