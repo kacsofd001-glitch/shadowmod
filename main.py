@@ -34,66 +34,10 @@ class DiscordBot(commands.Bot):
         self.start_time = datetime.now(timezone.utc)
         
     async def setup_hook(self):
+        # TEMPORARY: Only load slash_commands to test if cogs are the issue
+        print("⚠️ TESTING MODE: Only loading slash_commands cog")
         cogs_to_load = [
-            'cogs.tickets',
-            'cogs.antialt',
-            'cogs.logging',
-            'cogs.moderation',
-            'cogs.games',
-            'cogs.fun',
-            'cogs.polls',
-            'cogs.roles',
-            'cogs.giveaways',
-            'cogs.nameauto',
-            'cogs.webhook_logging',
-            'cogs.language',
-            'cogs.aichat',
-            'cogs.verify',
-            'cogs.info',
-            'cogs.music',
-            'cogs.admin',
-            'cogs.customcommands',
-            'cogs.automod',
-            'cogs.welcome',
-            'cogs.reactionroles',
-            'cogs.leveling',
-            'cogs.reminders',
-            'cogs.afk',
-            'cogs.serverstats',
-            'cogs.suggestions',
-            'cogs.economy',
-            'cogs.starboard',
-            'cogs.counting',
-            'cogs.birthdays',
-            'cogs.confessions',
-            'cogs.modmail',
-            'cogs.antiraid',
-            'cogs.advancedlogging',
-            'cogs.rolepersist',
-            'cogs.tempbans',
-            'cogs.embedbuilder',
-            'cogs.tempvoice',
-            'cogs.streamalerts',
-            'cogs.serverbackup',
-            'cogs.playlists',
-            'cogs.growthtracking',
-            'cogs.achievements',
-            'cogs.socialmedia',
-            'cogs.commandstats',
-            'cogs.minigames',
-            'cogs.connectfour',
-            'cogs.reputation',
-            'cogs.events',
-            'cogs.setupwizard',
-            'cogs.interactivehelp',
-            'cogs.advancedeconomy',
-            'cogs.aimoderation',
-            'cogs.voiceanalytics',
-            'cogs.appealssystem',
-            'cogs.memeeconomy',
-            'cogs.botstatus',
-            'cogs.webhooks',
-            'cogs.slash_commands'
+            'cogs.slash_commands',
         ]
         
         loaded_count = 0
@@ -104,8 +48,10 @@ class DiscordBot(commands.Bot):
                 print(f"✅ Loaded: {cog}")
             except Exception as e:
                 print(f"❌ Failed to load {cog}: {e}")
+                import traceback
+                traceback.print_exc()
         
-        print(f"\n✅ All cogs loaded successfully! ({loaded_count}/{len(cogs_to_load)})")
+        print(f"\n✅ Test cogs loaded! ({loaded_count}/{len(cogs_to_load)})")
         
     async def on_ready(self):
         print(f'✅ Bot is ready! Logged in as {self.user}')
