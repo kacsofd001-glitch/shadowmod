@@ -453,15 +453,25 @@ class SlashCommands(commands.Cog):
     
     @app_commands.command(name="say", description="Make the bot say something / Bot rábeszélése üzenetküldésre")
     @app_commands.describe(message="The message to send / Az elküldendő üzenet")
-    @app_commands.checks.has_permissions(manage_messages=True)
     async def slash_say(self, interaction: discord.Interaction, message: str):
+        # Check if user is bot owner or has permissions
+        is_owner = await self.bot.is_owner(interaction.user)
+        if not is_owner and not interaction.user.guild_permissions.manage_messages:
+            await interaction.response.send_message("❌ You don't have permission to use this! / Nincs jogosultságod ehhez!", ephemeral=True)
+            return
+            
         await interaction.response.send_message("✅ Message sent / Üzenet elküldve", ephemeral=True)
         await interaction.channel.send(message)
 
     @app_commands.command(name="embedsay", description="Make the bot say something in an embed / Bot rábeszélése embed küldésére")
     @app_commands.describe(title="Embed title / Embed címe", description="Embed description / Embed leírása", color="Embed color (hex, e.g. #00F3FF) / Embed színe")
-    @app_commands.checks.has_permissions(manage_messages=True)
     async def slash_embedsay(self, interaction: discord.Interaction, description: str, title: str = None, color: str = "#00F3FF"):
+        # Check if user is bot owner or has permissions
+        is_owner = await self.bot.is_owner(interaction.user)
+        if not is_owner and not interaction.user.guild_permissions.manage_messages:
+            await interaction.response.send_message("❌ You don't have permission to use this! / Nincs jogosultságod ehhez!", ephemeral=True)
+            return
+            
         try:
             # Parse color
             color_int = int(color.lstrip('#'), 16)
