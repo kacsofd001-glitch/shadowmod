@@ -3,6 +3,12 @@ from flask_cors import CORS
 from datetime import datetime, timezone
 import json
 import os
+import threading
+import time
+import sys
+
+# Ensure unbuffered output
+os.environ['PYTHONUNBUFFERED'] = '1'
 
 app = Flask(__name__)
 CORS(app)
@@ -87,11 +93,49 @@ def api_stats():
             'error': str(e)
         }), 500
 
+def start_bot():
+    """Start the Discord bot in background thread"""
+    print("\n🤖 Starting Discord bot in background...", flush=True)
+    try:
+        # Import bot module
+        import main
+        TOKEN = os.getenv('DISCORD_TOKEN')
+        if not TOKEN:
+            print("❌ DISCORD_TOKEN not found!", flush=True)
+            return
+        print("✅ TOKEN found, connecting to Discord...", flush=True)
+        main.bot.run(TOKEN)
+    except KeyboardInterrupt:
+        print("\n⏹️ Bot stopped", flush=True)
+    except Exception as e:
+        print(f"❌ Bot error: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
+
 if __name__ == '__main__':
-    print("🌐 Starting Flask web server on 0.0.0.0:5000...")
+    print("=" * 70, flush=True)
+    print("🚀 DiscordSage Application Startup", flush=True)
+    print("=" * 70, flush=True)
+    print(f"🔑 DISCORD_TOKEN: {'✅ SET' if os.getenv('DISCORD_TOKEN') else '❌ NOT SET'}", flush=True)
+    print("=" * 70, flush=True)
+    
+    # Start bot in background thread
+    print("\n📋 Initializing services...", flush=True)
+    bot_thread = threading.Thread(target=start_bot, daemon=False, name="DiscordBot")
+    bot_thread.start()
+    
+    # Give bot a moment to initialize
+    time.sleep(2)
+    
+    # Start Flask web server (blocking)
+    print("\n🌐 Starting Flask web server on 0.0.0.0:5000...", flush=True)
     try:
         app.run(host='0.0.0.0', port=5000, debug=False)
     except Exception as e:
-        print(f"❌ Web server crashed: {e}")
+        print(f"❌ Web server crashed: {e}", flush=True)
         import traceback
         traceback.print_exc()
+    
+    print("\n⏳ Waiting for bot thread...", flush=True)
+    bot_thread.join(timeout=5)
+    print("🛑 Application shutdown complete", flush=True)
