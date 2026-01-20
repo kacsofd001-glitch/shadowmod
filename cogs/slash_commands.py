@@ -9,14 +9,56 @@ class SlashCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+    @app_commands.command(name="ping", description="Check bot response time")
+    async def slash_ping(self, interaction: discord.Interaction):
+        """Simple ping command to test bot responsiveness"""
+        latency = round(self.bot.latency * 1000)
+        await interaction.response.send_message(f"🏓 Pong! {latency}ms")
+    
     @app_commands.command(name="help", description="Show help menu / Súgó menü")
     async def slash_help(self, interaction: discord.Interaction):
-        # We handle everything in one go to avoid complex interaction states
-        help_cog = self.bot.get_cog('InteractiveHelp')
-        if help_cog:
-            await help_cog.show_help(interaction)
-        else:
-            await interaction.response.send_message("Help system is currently unavailable.", ephemeral=True)
+        # Defer immediately to avoid timeout
+        await interaction.response.defer()
+        
+        try:
+            help_cog = self.bot.get_cog('InteractiveHelp')
+            if help_cog:
+                # Call the help function but use followup instead
+                from translations import get_text, get_guild_language
+                guild_id = interaction.guild.id
+                lang = get_guild_language(guild_id)
+                
+                embed = discord.Embed(
+                    title=get_text(guild_id, 'help_title', lang=lang),
+                    description=get_text(guild_id, 'help_description', lang=lang),
+                    color=0x00F3FF
+                )
+                
+                embed.set_thumbnail(url=self.bot.user.display_avatar.url)
+                embed.add_field(
+                    name=get_text(guild_id, 'help_engagement', lang=lang),
+                    value=(
+                        "Click a button below to explore commands by category!\n\n"
+                        "🛡️ **Moderation** - Manage your server\n"
+                        "💰 **Economy** - Currency & shop system\n"
+                        "🎮 **Games** - Fun mini-games\n"
+                        "🎭 **Fun** - Entertainment commands\n"
+                        "⚙️ **Utility** - Helpful tools\n"
+                        "📊 **Stats** - Analytics & tracking"
+                    ),
+                    inline=False
+                )
+                
+                embed.set_footer(text=get_text(guild_id, 'help_footer', lang=lang))
+                
+                from cogs.interactivehelp import HelpView
+                view = HelpView(self.bot, guild_id)
+                await interaction.followup.send(embed=embed, view=view)
+            else:
+                await interaction.followup.send("Help system is currently unavailable.", ephemeral=True)
+        except Exception as e:
+            print(f"Error in help command: {e}")
+            await interaction.followup.send(f"Error loading help: {str(e)}", ephemeral=True)
     
     @app_commands.command(name="ticket", description="Create a ticket panel / Jegy panel létrehozása")
     @app_commands.checks.has_permissions(administrator=True)
