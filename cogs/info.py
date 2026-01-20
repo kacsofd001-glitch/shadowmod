@@ -8,7 +8,7 @@ class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         # Use Render domain for production
-        self.custom_domain = 'https://discord-sage-web.onrender.com'
+        self.custom_domain = 'https://shadowmod.onrender.com'
         # Add /dashboard path to URL
         self.dashboard_url = f'{self.custom_domain}/dashboard'
     
