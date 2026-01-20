@@ -7,8 +7,8 @@ import os
 class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # Use localhost for development
-        self.custom_domain = 'http://localhost:5000'
+        # Use Render domain for production
+        self.custom_domain = 'https://discord-sage-web.onrender.com'
         # Add /dashboard path to URL
         self.dashboard_url = f'{self.custom_domain}/dashboard'
     

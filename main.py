@@ -288,7 +288,7 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🌐 WEB RESOURCES",
-        value="[📖 Full Command List](http://localhost:5000/help)\n[📊 Live Dashboard](http://localhost:5000/dashboard)",
+        value="[📖 Full Command List](https://discord-sage-web.onrender.com/help)\n[📊 Live Dashboard](https://discord-sage-web.onrender.com/dashboard)",
         inline=False
     )
     
