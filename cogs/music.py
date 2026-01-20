@@ -61,26 +61,41 @@ class Music(commands.Cog):
             await player.play(next_track)
 
     def parse_spotify_url(self, url):
-        """Extract Spotify track ID from URL"""
-        spotify_regex = r'https?://open\.spotify\.com/track/([a-zA-Z0-9]+)'
-        match = re.search(spotify_regex, url)
-        return match.group(1) if match else None
+        """Extract Spotify track or playlist ID from URL"""
+        track_regex = r'https?://open\.spotify\.com/track/([a-zA-Z0-9]+)'
+        playlist_regex = r'https?://open\.spotify\.com/playlist/([a-zA-Z0-9]+)'
+        
+        track_match = re.search(track_regex, url)
+        if track_match:
+            return {'type': 'track', 'id': track_match.group(1)}
+            
+        playlist_match = re.search(playlist_regex, url)
+        if playlist_match:
+            return {'type': 'playlist', 'id': playlist_match.group(1)}
+            
+        return None
 
-    async def search_spotify_track(self, track_id):
-        """Get track info from Spotify and search on YouTube"""
+    async def get_spotify_playlist(self, playlist_id):
+        """Get all tracks from a Spotify playlist"""
         if not self.spotify:
-            return None
-
+            return []
+            
         try:
-            track = self.spotify.track(track_id)
-            if not track:
-                return None
-            artists = ', '.join(
-                [artist['name'] for artist in track['artists']])
-            query = f"{artists} - {track['name']}"
-            return query
+            results = self.spotify.playlist_tracks(playlist_id)
+            tracks = results['items']
+            while results['next']:
+                results = self.spotify.next(results)
+                tracks.extend(results['items'])
+            
+            queries = []
+            for item in tracks:
+                track = item['track']
+                if not track: continue
+                artists = ', '.join([artist['name'] for artist in track['artists']])
+                queries.append(f"{artists} - {track['name']}")
+            return queries
         except:
-            return None
+            return []
 
     @commands.command(name='play')
     async def play(self, ctx, *, query: str):
@@ -109,8 +124,7 @@ class Music(commands.Cog):
         if lavalink_available:
             if not ctx.voice_client:
                 try:
-                    vc: wavelink.Player = await voice_channel.connect(
-                        cls=wavelink.Player)
+                    vc: wavelink.Player = await voice_channel.connect(cls=wavelink.Player)
                 except Exception as e:
                     embed = discord.Embed(
                         title="❌ Connection Error",
@@ -121,9 +135,41 @@ class Music(commands.Cog):
             else:
                 vc: wavelink.Player = ctx.voice_client
 
-            spotify_id = self.parse_spotify_url(query)
-            if spotify_id:
-                spotify_query = await self.search_spotify_track(spotify_id)
+            spotify_info = self.parse_spotify_url(query)
+            
+            # Handle Spotify Playlists
+            if spotify_info and spotify_info['type'] == 'playlist':
+                await ctx.send("⌛ Processing Spotify playlist... This might take a moment.")
+                queries = await self.get_spotify_playlist(spotify_info['id'])
+                
+                if not queries:
+                    await ctx.send("❌ Failed to load Spotify playlist.")
+                    return
+                
+                added_count = 0
+                for q in queries:
+                    try:
+                        tracks = await wavelink.Playable.search(q)
+                        if tracks:
+                            track = tracks[0] if isinstance(tracks, list) else tracks
+                            if vc.playing:
+                                await vc.queue.put_wait(track)
+                            else:
+                                await vc.play(track)
+                            added_count += 1
+                    except:
+                        continue
+                
+                embed = discord.Embed(
+                    title="✅ Playlist Added",
+                    description=f"Added **{added_count}** tracks from the Spotify playlist to the queue.",
+                    color=0x1DB954)
+                await ctx.send(embed=embed)
+                return
+
+            # Handle Spotify Tracks
+            if spotify_info and spotify_info['type'] == 'track':
+                spotify_query = await self.search_spotify_track(spotify_info['id'])
                 if spotify_query:
                     query = spotify_query
 
@@ -137,32 +183,40 @@ class Music(commands.Cog):
                     await ctx.send(embed=embed)
                     return
 
-                # Handle if tracks is a playlist or list
+                # Handle YouTube Playlists
                 if isinstance(tracks, wavelink.Playlist):
-                    track = tracks.tracks[0]
-                elif isinstance(tracks, (list, tuple)):
-                    track = tracks[0]
-                else:
-                    track = tracks
+                    added_count = 0
+                    for track in tracks.tracks:
+                        if vc.playing:
+                            await vc.queue.put_wait(track)
+                        else:
+                            await vc.play(track)
+                        added_count += 1
+                    
+                    embed = discord.Embed(
+                        title="✅ YouTube Playlist Added",
+                        description=f"Added **{added_count}** tracks from **{tracks.name}** to the queue.",
+                        color=0x8B00FF)
+                    await ctx.send(embed=embed)
+                    return
+
+                track = tracks[0] if isinstance(tracks, list) else tracks
 
                 if vc.playing:
                     await vc.queue.put_wait(track)
                     embed = discord.Embed(
                         title="➕ Added to Queue",
-                        description=
-                        f"**{track.title}**\n`Position: {vc.queue.count}`",
+                        description=f"**{track.title}**\n`Position: {vc.queue.count}`",
                         color=0x8B00FF)
-                    if hasattr(track, 'artwork') and track.artwork:
-                        embed.set_thumbnail(url=track.artwork)
                 else:
                     await vc.play(track)
                     embed = discord.Embed(
                         title="🎵 Now Playing",
                         description=f"**{track.title}**\n`{track.author}`",
                         color=0x00F3FF)
-                    if hasattr(track, 'artwork') and track.artwork:
-                        embed.set_thumbnail(url=track.artwork)
 
+                if hasattr(track, 'artwork') and track.artwork:
+                    embed.set_thumbnail(url=track.artwork)
                 await ctx.send(embed=embed)
 
             except Exception as e:
@@ -171,6 +225,9 @@ class Music(commands.Cog):
                                       color=0xFF006E)
                 await ctx.send(embed=embed)
         else:
+            # Fallback engine doesn't easily support playlists via yt-dlp search without more complexity
+            await ctx.send("⚠️ Lavalink is unavailable. Playlist support is limited in fallback mode.")
+            # Original single-track fallback logic follows...        else:
             # Fallback to discord.FFmpegPCMAudio if Lavalink is down
             await ctx.send("⚠️ Lavalink is currently unavailable. Using standard audio engine...")
             
