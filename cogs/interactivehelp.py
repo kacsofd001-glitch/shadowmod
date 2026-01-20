@@ -134,6 +134,41 @@ class HelpView(discord.ui.View):
             color=0x00F3FF
         )
         await interaction.response.edit_message(embed=embed)
+
+    @discord.ui.button(label="🎭 Fun", style=discord.ButtonStyle.secondary, emoji="🎭", row=1)
+    async def fun_help(self, interaction: discord.Interaction, button: discord.ui.Button):
+        import translations
+        from translations import get_text
+        lang = translations.get_guild_language(self.guild_id)
+        embed = discord.Embed(
+            title=get_text(self.guild_id, 'help_fun', lang=lang),
+            description=(
+                "`/meme` - Get random memes\n"
+                "`/8ball` - Ask questions\n"
+                "`/joke` - Tell a joke\n"
+                "`/echo` - Repeat text\n"
+                "`/avatar` - Show avatar"
+            ),
+            color=0xFF00FF
+        )
+        await interaction.response.edit_message(embed=embed)
+
+    @discord.ui.button(label="📊 Stats", style=discord.ButtonStyle.secondary, emoji="📊", row=1)
+    async def stats_help(self, interaction: discord.Interaction, button: discord.ui.Button):
+        import translations
+        from translations import get_text
+        lang = translations.get_guild_language(self.guild_id)
+        embed = discord.Embed(
+            title=get_text(self.guild_id, 'help_stats', lang=lang),
+            description=(
+                "`/serverstats` - Server analytics\n"
+                "`/rank` - Your level\n"
+                "`/leaderboard` - XP rankings\n"
+                "`/growth` - Member growth stats"
+            ),
+            color=0x00FF00
+        )
+        await interaction.response.edit_message(embed=embed)
     
     @discord.ui.button(label="🏠 Back", style=discord.ButtonStyle.secondary, row=1)
     async def back_button(self, interaction: discord.Interaction, button: discord.ui.Button):
