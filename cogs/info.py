@@ -7,8 +7,8 @@ import os
 class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # Use custom domain shadowmod.net
-        self.custom_domain = 'https://shadowmod.net'
+        # Use localhost for development
+        self.custom_domain = 'http://localhost:5000'
         # Add /dashboard path to URL
         self.dashboard_url = f'{self.custom_domain}/dashboard'
     

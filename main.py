@@ -288,7 +288,7 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🌐 WEB RESOURCES",
-        value="[📖 Full Command List](https://shadowmod.net/help)\n[📊 Live Dashboard](https://shadowmod.net/dashboard)",
+        value="[📖 Full Command List](http://localhost:5000/help)\n[📊 Live Dashboard](http://localhost:5000/dashboard)",
         inline=False
     )
     
