@@ -536,6 +536,81 @@ class Music(commands.Cog):
                               color=0x00F3FF)
         await ctx.send(embed=embed)
 
+    @commands.command(name='radio1')
+    async def radio1(self, ctx):
+        """Play Hungarian Rádió 1 (24/7) / Rádió 1 lejátszása (0-24)"""
+        if not ctx.author.voice:
+            await ctx.send("❌ You need to be in a voice channel! / Hangcsatornában kell lenned!")
+            return
+
+        voice_channel = ctx.author.voice.channel
+        stream_url = "https://myradioonline.hu/radio1" # We'll use a direct stream search for wavelink
+        
+        # Lavalink connection check
+        lavalink_available = False
+        try:
+            if hasattr(wavelink, 'Pool') and wavelink.Pool.nodes:
+                for node in wavelink.Pool.nodes.values():
+                    if node.status == wavelink.NodeStatus.CONNECTED:
+                        lavalink_available = True
+                        break
+        except Exception:
+            lavalink_available = False
+
+        if lavalink_available:
+            if not ctx.voice_client:
+                vc: wavelink.Player = await voice_channel.connect(cls=wavelink.Player)
+            else:
+                vc: wavelink.Player = ctx.voice_client
+            
+            # Wavelink 3.x/4.x search for the stream
+            # Rádió 1 stream direct link search or fallback
+            try:
+                # Direct stream search
+                tracks = await wavelink.Playable.search("https://radio1.hu/stream/radio1.mp3")
+                if not tracks:
+                    tracks = await wavelink.Playable.search("Rádió 1 Hungary Live")
+                
+                track = tracks[0] if isinstance(tracks, list) else tracks
+                await vc.play(track)
+                
+                embed = discord.Embed(
+                    title="📻 Rádió 1 - 0/24 Live",
+                    description="Now broadcasting Hungarian Rádió 1! / Rádió 1 élő adás indítva!",
+                    color=0xFFFF00
+                )
+                embed.set_thumbnail(url="https://radio1.hu/wp-content/themes/radio1/img/logo.png")
+                await ctx.send(embed=embed, view=MusicControlView(self.bot, vc))
+            except Exception as e:
+                await ctx.send(f"❌ Radio stream error: {str(e)}")
+        else:
+            # Standard engine fallback
+            if not ctx.voice_client:
+                vc = await voice_channel.connect()
+            else:
+                vc = ctx.voice_client
+            
+            try:
+                # Rádió 1 stream direct URL for FFmpeg
+                url = "https://radio1.hu/stream/radio1.mp3"
+                FFMPEG_OPTIONS = {
+                    'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+                    'options': '-vn'
+                }
+                
+                if vc.is_playing():
+                    vc.stop()
+                
+                audio_source = discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS)
+                vc.play(audio_source)
+                
+                embed = discord.Embed(
+                    title="📻 Rádió 1 - 0/24 Live (Standard Engine)",
+                    description="Now broadcasting Hungarian Rádió 1! / Rádió 1 élő adás indítva!",
+                    color=0xFFFF00)
+                await ctx.send(embed=embed)
+            except Exception as e:
+                await ctx.send(f"❌ Standard radio error: {str(e)}")
 
 async def setup(bot):
     await bot.add_cog(Music(bot))
