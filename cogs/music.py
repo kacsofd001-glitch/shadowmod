@@ -34,16 +34,22 @@ class Music(commands.Cog):
     async def connect_nodes(self):
         """Internal method to handle node connection"""
         # Using a set of known stable public Lavalink nodes for 2026
+        # These are commonly available public nodes that often have high uptime
         nodes = [
-            wavelink.Node(uri='https://lava2.horizxon.studio:80',
-                          password='horizxon.studio'),
             wavelink.Node(uri='https://lavalink.lexis.host:443',
                           password='lexis.host'),
             wavelink.Node(uri='https://lava-v3.ajieblogs.eu.org:443',
+                          password='youshallnotpass'),
+            wavelink.Node(uri='https://lavalink.panther-hosting.com:443',
+                          password='youshallnotpass'),
+            wavelink.Node(uri='https://lavalink.moe:443',
+                          password='youshallnotpass'),
+            wavelink.Node(uri='https://lava-v4.ajieblogs.eu.org:443',
                           password='youshallnotpass')
         ]
 
         try:
+            # We use a smaller timeout and try to connect to the pool
             await wavelink.Pool.connect(client=self.bot, nodes=nodes)
             print(f"✅ Connected to Lavalink pool with {len(nodes)} nodes")
         except Exception as e:
@@ -101,63 +107,117 @@ class Music(commands.Cog):
 
         voice_channel = ctx.author.voice.channel
 
-        if not ctx.voice_client:
-            try:
-                vc: wavelink.Player = await voice_channel.connect(
-                    cls=wavelink.Player)
-            except Exception as e:
-                embed = discord.Embed(
-                    title="❌ Connection Error",
-                    description=f"Failed to connect: {str(e)}",
-                    color=0xFF006E)
-                await ctx.send(embed=embed)
-                return
-        else:
-            vc: wavelink.Player = ctx.voice_client
-
-        spotify_id = self.parse_spotify_url(query)
-        if spotify_id:
-            spotify_query = await self.search_spotify_track(spotify_id)
-            if spotify_query:
-                query = spotify_query
-
+        # Check if Lavalink is connected
+        lavalink_available = False
         try:
-            tracks: wavelink.Search = await wavelink.Playable.search(query)
-            if not tracks:
-                embed = discord.Embed(
-                    title="❌ No Results",
-                    description="No tracks found matching your query.",
-                    color=0xFF006E)
-                await ctx.send(embed=embed)
-                return
+            if wavelink.Pool.nodes:
+                for node in wavelink.Pool.nodes.values():
+                    if node.status == wavelink.NodeStatus.CONNECTED:
+                        lavalink_available = True
+                        break
+        except:
+            lavalink_available = False
 
-            track = tracks[0] if isinstance(tracks, list) else tracks
-
-            if vc.playing:
-                await vc.queue.put_wait(track)
-                embed = discord.Embed(
-                    title="➕ Added to Queue",
-                    description=
-                    f"**{track.title}**\n`Position: {vc.queue.count}`",
-                    color=0x8B00FF)
-                if hasattr(track, 'artwork') and track.artwork:
-                    embed.set_thumbnail(url=track.artwork)
+        if lavalink_available:
+            if not ctx.voice_client:
+                try:
+                    vc: wavelink.Player = await voice_channel.connect(
+                        cls=wavelink.Player)
+                except Exception as e:
+                    embed = discord.Embed(
+                        title="❌ Connection Error",
+                        description=f"Failed to connect: {str(e)}",
+                        color=0xFF006E)
+                    await ctx.send(embed=embed)
+                    return
             else:
-                await vc.play(track)
+                vc: wavelink.Player = ctx.voice_client
+
+            spotify_id = self.parse_spotify_url(query)
+            if spotify_id:
+                spotify_query = await self.search_spotify_track(spotify_id)
+                if spotify_query:
+                    query = spotify_query
+
+            try:
+                tracks: wavelink.Search = await wavelink.Playable.search(query)
+                if not tracks:
+                    embed = discord.Embed(
+                        title="❌ No Results",
+                        description="No tracks found matching your query.",
+                        color=0xFF006E)
+                    await ctx.send(embed=embed)
+                    return
+
+                track = tracks[0] if isinstance(tracks, list) else tracks
+
+                if vc.playing:
+                    await vc.queue.put_wait(track)
+                    embed = discord.Embed(
+                        title="➕ Added to Queue",
+                        description=
+                        f"**{track.title}**\n`Position: {vc.queue.count}`",
+                        color=0x8B00FF)
+                    if hasattr(track, 'artwork') and track.artwork:
+                        embed.set_thumbnail(url=track.artwork)
+                else:
+                    await vc.play(track)
+                    embed = discord.Embed(
+                        title="🎵 Now Playing",
+                        description=f"**{track.title}**\n`{track.author}`",
+                        color=0x00F3FF)
+                    if hasattr(track, 'artwork') and track.artwork:
+                        embed.set_thumbnail(url=track.artwork)
+
+                await ctx.send(embed=embed)
+
+            except Exception as e:
+                embed = discord.Embed(title="❌ Playback Error",
+                                      description=f"An error occurred: {str(e)}",
+                                      color=0xFF006E)
+                await ctx.send(embed=embed)
+        else:
+            # Fallback to discord.FFmpegPCMAudio if Lavalink is down
+            await ctx.send("⚠️ Lavalink is currently unavailable. Using standard audio engine (experimental)...")
+            
+            if not ctx.voice_client:
+                vc = await voice_channel.connect()
+            else:
+                vc = ctx.voice_client
+
+            # Simple fallback using yt-dlp (requires yt-dlp installed)
+            import subprocess
+            import json
+
+            try:
+                proc = await asyncio.create_subprocess_exec(
+                    'yt-dlp', '--get-url', '--format', 'bestaudio', '--default-search', 'ytsearch', query,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                )
+                stdout, stderr = await proc.communicate()
+                
+                if proc.returncode != 0:
+                    await ctx.send("❌ Failed to fetch audio.")
+                    return
+
+                url = stdout.decode().strip()
+                
+                FFMPEG_OPTIONS = {
+                    'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+                    'options': '-vn'
+                }
+                
+                vc.stop()
+                vc.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
+                
                 embed = discord.Embed(
-                    title="🎵 Now Playing",
-                    description=f"**{track.title}**\n`{track.author}`",
+                    title="🎵 Now Playing (Standard Engine)",
+                    description=f"**{query}**",
                     color=0x00F3FF)
-                if hasattr(track, 'artwork') and track.artwork:
-                    embed.set_thumbnail(url=track.artwork)
+                await ctx.send(embed=embed)
 
-            await ctx.send(embed=embed)
-
-        except Exception as e:
-            embed = discord.Embed(title="❌ Playback Error",
-                                  description=f"An error occurred: {str(e)}",
-                                  color=0xFF006E)
-            await ctx.send(embed=embed)
+            except Exception as e:
+                await ctx.send(f"❌ Standard playback error: {str(e)}")
 
     @commands.command(name='pause')
     async def pause(self, ctx):
