@@ -129,5 +129,15 @@ class Leveling(commands.Cog):
             # Save XP
             self.save_user_xp(message.guild.id, message.author.id, new_xp, current_level, new_total_xp)
 
+    @commands.hybrid_command(name="xp-toggle", description="Toggle the XP system for this server")
+    @commands.has_permissions(manage_guild=True)
+    async def xp_toggle(self, ctx):
+        settings = self.get_leveling_config(ctx.guild.id)
+        settings['enabled'] = not settings['enabled']
+        self.save_leveling_config(ctx.guild.id, settings)
+        
+        status = "enabled" if settings['enabled'] else "disabled"
+        await ctx.send(f"✅ XP system has been **{status}** for this server.")
+
 async def setup(bot):
     await bot.add_cog(Leveling(bot))
