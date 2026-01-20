@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Management Dashboard</title>
+    <title data-translate="dash_title">Server Management Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
@@ -11,55 +11,118 @@
         <div class="nav-container">
             <div class="logo">Shadow-MOD</div>
             <div class="nav-links">
+                <div class="lang-toggle">
+                    <label for="langToggle" class="lang-label">
+                        <input type="checkbox" id="langToggle">
+                        <span class="lang-text" data-translate="lang_en">EN</span>
+                        <span class="lang-slider"></span>
+                        <span class="lang-text" data-translate="lang_hu">HU</span>
+                    </label>
+                </div>
                 <span class="user-info">
                     <img src="{{ avatar_url }}" alt="{{ username }}" class="user-avatar">
                     {{ username }}
                 </span>
-                <a href="/auth/logout" class="logout-btn">Logout</a>
+                <a href="/auth/logout" class="logout-btn" data-translate="logout">Logout</a>
             </div>
         </div>
     </nav>
 
     <div class="main-container">
         <div class="header">
-            <h1>Server Management</h1>
-            <p>Select a server to manage</p>
+            <h1 data-translate="dash_select">Server Management</h1>
+            <p data-translate="dash_select_desc">Select a server to manage</p>
         </div>
 
         <div class="servers-grid" id="serversGrid">
-            <div class="loading">Loading your servers...</div>
+            <div class="loading" data-translate="dash_loading">Loading your servers...</div>
         </div>
     </div>
 
     <script>
-        async function loadServers() {
-            try {
-                const response = await fetch('/api/servers');
-                const data = await response.json();
-                
-                const grid = document.getElementById('serversGrid');
-                grid.innerHTML = '';
-                
-                if (data.servers.length === 0) {
-                    grid.innerHTML = '<p class="no-servers">No servers where you are admin</p>';
-                    return;
+        const translations = {
+            en: {
+                dash_title: "Server Management Dashboard",
+                dash_select: "Server Management",
+                dash_select_desc: "Select a server to manage",
+                dash_loading: "Loading your servers...",
+                dash_no_servers: "No servers where you are admin",
+                dash_error: "Failed to load servers",
+                lang_en: "EN",
+                lang_hu: "HU",
+                logout: "Logout"
+            },
+            hu: {
+                dash_title: "Szerver Kezelési Irányítópult",
+                dash_select: "Szerver Kezelés",
+                dash_select_desc: "Válassz egy szervert a kezeléshez",
+                dash_loading: "Szervereid betöltése...",
+                dash_no_servers: "Nincs olyan szerver, ahol admin vagy",
+                dash_error: "Szerverek betöltése sikertelen",
+                lang_en: "EN",
+                lang_hu: "HU",
+                logout: "Kijelentkezés"
+            }
+        };
+
+        let currentLang = localStorage.getItem('dashboardLang') || 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('dashboardLang', lang);
+            
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
                 }
-                
-                data.servers.forEach(guild_id => {
-                    const card = document.createElement('a');
-                    card.href = `/dashboard/server/${guild_id}`;
-                    card.className = 'server-card';
-                    card.innerHTML = `<div class="server-id">${guild_id}</div>`;
-                    grid.appendChild(card);
-                });
-            } catch (error) {
-                console.error('Failed to load servers:', error);
-                document.getElementById('serversGrid').innerHTML = '<p class="error">Failed to load servers</p>';
+            });
+            
+            const toggle = document.getElementById('langToggle');
+            if (toggle) {
+                toggle.checked = (lang === 'hu');
             }
         }
 
-        // Load servers on page load
+        function loadServers() {
+            setLanguage(currentLang);
+            
+            fetch('/api/servers')
+                .then(response => response.json())
+                .then(data => {
+                    const grid = document.getElementById('serversGrid');
+                    grid.innerHTML = '';
+                    
+                    if (data.servers.length === 0) {
+                        grid.innerHTML = `<p class="no-servers" data-translate="dash_no_servers">No servers where you are admin</p>`;
+                        setLanguage(currentLang);
+                        return;
+                    }
+                    
+                    data.servers.forEach(guild_id => {
+                        const card = document.createElement('a');
+                        card.href = `/dashboard/server/${guild_id}`;
+                        card.className = 'server-card';
+                        card.innerHTML = `<div class="server-id">${guild_id}</div>`;
+                        grid.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Failed to load servers:', error);
+                    const grid = document.getElementById('serversGrid');
+                    grid.innerHTML = `<p class="error" data-translate="dash_error">Failed to load servers</p>`;
+                    setLanguage(currentLang);
+                });
+        }
+
         document.addEventListener('DOMContentLoaded', loadServers);
+        
+        const toggle = document.getElementById('langToggle');
+        if (toggle) {
+            toggle.addEventListener('change', (e) => {
+                setLanguage(e.target.checked ? 'hu' : 'en');
+            });
+        }
     </script>
 </body>
 </html>
