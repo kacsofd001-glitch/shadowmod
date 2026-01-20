@@ -61,7 +61,9 @@ class HelpView(discord.ui.View):
                 "`/warn` - Warn user\n"
                 "`/purge` - Delete messages\n"
                 "`/tempmute` - Timeout user\n"
-                "`/lock` / `/unlock` - Channel lock"
+                "`/lock` / `/unlock` - Channel lock\n"
+                "`/say` - Make bot send a message\n"
+                "`/embedsay` - Make bot send an embed"
             ),
             color=0xFF0000
         )
@@ -81,7 +83,9 @@ class HelpView(discord.ui.View):
                 "`/shop` - View items\n"
                 "`/buy` - Purchase item\n"
                 "`/rob` - Attempt robbery\n"
-                "`/pay` - Send money"
+                "`/pay` - Send money\n"
+                "`/top` - Economy leaderboard\n"
+                "`/inventory` - Show items"
             ),
             color=0xFFD700
         )
@@ -100,7 +104,9 @@ class HelpView(discord.ui.View):
                 "`/dice` - Roll dice\n"
                 "`/coinflip` - Flip coin\n"
                 "`/trivia` - Fun trivia\n"
-                "`/blackjack` - Casino game"
+                "`/blackjack` - Casino game\n"
+                "`/slots` - Slot machine\n"
+                "`/connectfour` - Connect Four"
             ),
             color=0xFF00FF
         )
@@ -119,7 +125,9 @@ class HelpView(discord.ui.View):
                 "`/botinfo` - Bot details\n"
                 "`/userinfo` - User profile\n"
                 "`/setlang` - Change language\n"
-                "`/setprefix` - Role nickname prefix"
+                "`/setprefix` - Role nickname prefix\n"
+                "`/setlog` - Set log channel\n"
+                "`/setwebhook` - Set logging webhook"
             ),
             color=0x00F3FF
         )
