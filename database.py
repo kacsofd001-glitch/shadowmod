@@ -18,26 +18,26 @@ def init_db():
         
         # Guild settings table
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS guild_settings (
-                guild_id TEXT PRIMARY KEY,
-                user_id TEXT,
-                guild_name TEXT,
-                is_admin INTEGER DEFAULT 0,
-                primary_key (user_id, guild_id),
-                moderation_settings TEXT,
-                automod_settings TEXT,
-                logging_settings TEXT,
-                welcome_settings TEXT,
-                bad_words TEXT,
-                whitelisted_links TEXT,
-                custom_commands TEXT,
-                role_settings TEXT,
-                music_settings TEXT,
-                games_settings TEXT,
-                language TEXT DEFAULT 'en',
-                prefix TEXT DEFAULT '!',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        CREATE TABLE IF NOT EXISTS guild_settings (
+        guild_id TEXT,
+        user_id TEXT,
+        guild_name TEXT,
+        is_admin INTEGER DEFAULT 0,
+        moderation_settings TEXT,
+        automod_settings TEXT,
+        logging_settings TEXT,
+        welcome_settings TEXT,
+        bad_words TEXT,
+        whitelisted_links TEXT,
+        custom_commands TEXT,
+        role_settings TEXT,
+        music_settings TEXT,
+        games_settings TEXT,
+        language TEXT DEFAULT 'en',
+        prefix TEXT DEFAULT '!',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (user_id, guild_id)
             )
         ''')
         
