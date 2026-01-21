@@ -362,21 +362,15 @@ async def ping_command(ctx):
     
     await ctx.send(embed=embed)
 
+# A main.py legvége:
 if __name__ == '__main__':
-    print("\n🚀 Starting bot with token...", flush=True)
+    print("\n🚀 Starting bot standalone mode...", flush=True)
     TOKEN = os.getenv('DISCORD_TOKEN')
     if not TOKEN:
-        print("❌ ERROR: DISCORD_TOKEN not found in environment variables!", flush=True)
-        print("Please set up your Discord bot token.", flush=True)
+        print("❌ ERROR: DISCORD_TOKEN not found!", flush=True)
         exit(1)
-    else:
-        print(f"✅ TOKEN found, length: {len(TOKEN)}", flush=True)
-        try:
-            print("🔗 Connecting to Discord...", flush=True)
-            bot.run(TOKEN)
-        except KeyboardInterrupt:
-            print("\n⏹️ Bot stopped by user", flush=True)
-        except Exception as e:
-            print(f"❌ Bot crashed with error: {e}", flush=True)
-            import traceback
-            traceback.print_exc()
+    
+    try:
+        bot.run(TOKEN)
+    except Exception as e:
+        print(f"❌ Bot crashed: {e}", flush=True)

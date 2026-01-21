@@ -315,27 +315,31 @@ def start_bot():
     """Start the Discord bot in background thread"""
     print("\n🤖 Starting Discord bot in background...", flush=True)
     try:
-        # Import bot module
-        import main
+        # FONTOS: Csak az objektumot importáljuk, nem futtatjuk a main.py-t!
+        from main import bot
         TOKEN = os.getenv('DISCORD_TOKEN')
         if not TOKEN:
             print("❌ DISCORD_TOKEN not found!", flush=True)
             return
-        print("✅ TOKEN found, connecting to Discord...", flush=True)
-        main.bot.run(TOKEN)
-    except KeyboardInterrupt:
-        print("\n⏹️ Bot stopped", flush=True)
+        
+        # A botot egy asyncio loop-ban kell futtatni, ha thread-ben van
+        bot.run(TOKEN)
     except Exception as e:
         print(f"❌ Bot error: {e}", flush=True)
         import traceback
         traceback.print_exc()
 
+# Ezt a részt a Gunicorn is látja
+# Indítsuk el a botot AZONNAL egy háttérszálon, daemon módban
+print("\n📋 Initializing background services...", flush=True)
+bot_thread = threading.Thread(target=start_bot, daemon=True, name="DiscordBot")
+bot_thread.start()
+
 if __name__ == '__main__':
-    print("=" * 70, flush=True)
-    print("🚀 DiscordSage Application Startup", flush=True)
-    print("=" * 70, flush=True)
-    print(f"🔑 DISCORD_TOKEN: {'✅ SET' if os.getenv('DISCORD_TOKEN') else '❌ NOT SET'}", flush=True)
-    print("=" * 70, flush=True)
+    # Ez a rész csak akkor fut, ha: python web_server.py
+    port = int(os.environ.get("PORT", 10000))
+    print(f"🚀 Manual startup on port {port}", flush=True)
+    app.run(host='0.0.0.0', port=port, debug=False)
     
     # Start bot in background thread
     print("\n📋 Initializing services...", flush=True)
