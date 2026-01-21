@@ -346,16 +346,23 @@ if __name__ == '__main__':
     time.sleep(2)
     
 # Start Flask web server (blocking)
-    port = int(os.environ.get("PORT", 5000)) # Beolvassa a Render portját, ha nincs, marad az 5000
-    print(f"\n🌐 Starting Flask web server on 0.0.0.0:{port}...", flush=True)
+if __name__ == '__main__':
+    # A Render szerint ez a biztos út: process.env.PORT || 10000
+    port = int(os.environ.get("PORT", 10000))
+    
+    # Indítsd a botot, de ne hagyd, hogy bármi megakassza a Flask indulását
+    bot_thread = threading.Thread(target=start_bot, daemon=True)
+    bot_thread.start()
+    
+    print(f"🚀 Binding to 0.0.0.0:{port}", flush=True)
     try:
+        # A debug=False fontos éles környezetben (Renderen is)
         app.run(host='0.0.0.0', port=port, debug=False)
     except Exception as e:
-        # ... a többi marad változatlan
-        print(f"❌ Web server crashed: {e}", flush=True)
+        print(f"❌ Server error: {e}")
         import traceback
         traceback.print_exc()
     
-    print("\n⏳ Waiting for bot thread...", flush=True)
-    bot_thread.join(timeout=5)
+    # Ez a rész csak akkor fut le, ha a Flask szerver valamiért leáll
+    print("\n⏳ Shutting down...", flush=True)
     print("🛑 Application shutdown complete", flush=True)
