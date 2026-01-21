@@ -9,6 +9,7 @@ import sys
 import requests
 import secrets
 from functools import wraps
+from urllib.parse import quote
 
 # Ensure unbuffered output
 os.environ['PYTHONUNBUFFERED'] = '1'
@@ -28,7 +29,7 @@ from database import (
 DISCORD_CLIENT_ID = os.getenv('DISCORD_CLIENT_ID')
 DISCORD_CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET')
 DISCORD_REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI', 'https://shadowmod.onrender.com/auth/discord/callback')
-DISCORD_API_BASE = 'https://discordapp.com/api'
+DISCORD_API_BASE = 'https://discord.com/api'
 
 # Check if OAuth2 is configured
 OAUTH_CONFIGURED = bool(DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET)
@@ -118,13 +119,13 @@ def auth_discord():
     session['oauth_state'] = state
     
     auth_url = (
-        f'https://discord.com/api/oauth2/authorize?'
-        f'client_id={DISCORD_CLIENT_ID}&'
-        f'redirect_uri={DISCORD_REDIRECT_URI}&'
-        f'response_type=code&'
-        f'scope=identify+guilds&'
-        f'state={state}'
-    )
+    f'https://discord.com/api/oauth2/authorize?'
+    f'client_id={DISCORD_CLIENT_ID}&'
+    f'redirect_uri={quote(DISCORD_REDIRECT_URI)}&'
+    f'response_type=code&'
+    f'scope=identify%20guilds&'
+    f'state={state}'
+)
     return redirect(auth_url)
 
 @app.route('/auth/discord/callback')
@@ -151,7 +152,12 @@ def auth_callback():
     }
     
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    response = requests.post(f'{DISCORD_API_BASE}/v10/oauth2/token', data=data, headers=headers)
+    response = requests.post(
+    'https://discord.com/api/oauth2/token',
+    data=data,
+    headers=headers
+)
+
     
     if response.status_code != 200:
         return 'Failed to authenticate with Discord', 401
