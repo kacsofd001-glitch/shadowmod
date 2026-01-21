@@ -19,26 +19,26 @@ def init_db():
         # Guild settings table
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS guild_settings (
-        guild_id TEXT,
-        user_id TEXT,
-        guild_name TEXT,
-        is_admin INTEGER DEFAULT 0,
-        moderation_settings TEXT,
-        automod_settings TEXT,
-        logging_settings TEXT,
-        welcome_settings TEXT,
-        bad_words TEXT,
-        whitelisted_links TEXT,
-        custom_commands TEXT,
-        role_settings TEXT,
-        music_settings TEXT,
-        games_settings TEXT,
-        language TEXT DEFAULT 'en',
-        prefix TEXT DEFAULT '!',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (user_id, guild_id)
-            )
+            guild_id TEXT,
+            user_id TEXT,
+            guild_name TEXT,
+            is_admin INTEGER DEFAULT 0,
+            moderation_settings TEXT,
+            automod_settings TEXT,
+            logging_settings TEXT,
+            welcome_settings TEXT,
+            bad_words TEXT,
+            whitelisted_links TEXT,
+            custom_commands TEXT,
+            role_settings TEXT,
+            music_settings TEXT,
+            games_settings TEXT,
+            language TEXT DEFAULT 'en',
+            prefix TEXT DEFAULT '!',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (user_id, guild_id)
+        )
         ''')
         
         # User sessions table
@@ -64,6 +64,12 @@ def init_db():
                 PRIMARY KEY (user_id, guild_id)
             )
         ''')
+        
+        # Ellenőrizzük, hogy létezik-e a guild_name oszlop, és ha nem, hozzáadjuk
+        try:
+            cursor.execute('ALTER TABLE user_guilds ADD COLUMN guild_name TEXT')
+        except sqlite3.OperationalError:
+            pass  # Az oszlop már létezik
         
         conn.commit()
         conn.close()
@@ -241,20 +247,7 @@ def get_user_admin_guilds(user_id):
         rows = cursor.fetchall()
         conn.close()
         
-def get_user_admin_guilds(user_id):
-    with db_lock:
-        conn = sqlite3.connect(DB_FILE)
-        try:
-            cursor = conn.cursor()
-            cursor.execute("SELECT guild_id FROM guilds WHERE admin_id = ?", (user_id,))
-            return [row[0] for row in cursor.fetchall()]
-        finally:
-            conn.close()
-
-        return [
-            {"id": row[0], "name": row[1]}
-            for row in rows
-        ]
+        return [row['guild_id'] for row in rows] if rows else []
 
 def guild_exists_in_cache(user_id, guild_id):
     """Check if guild is in user's cache"""
