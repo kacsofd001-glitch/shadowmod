@@ -77,6 +77,13 @@ def get_discord_user_guilds(access_token):
     response = requests.get(f'{DISCORD_API_BASE}/v10/users/@me/guilds', headers=headers)
     return response.json() if response.status_code == 200 else []
 
+def get_user_admin_guilds(user_id):
+    with db_lock:
+        with sqlite3.connect(DB_FILE) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT guild_id FROM guilds WHERE admin_id = ?", (user_id,))
+            return [r[0] for r in cursor.fetchall()]
+
 def get_bot_stats():
     """Load stats from file"""
     try:
