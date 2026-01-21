@@ -20,6 +20,10 @@ def init_db():
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS guild_settings (
                 guild_id TEXT PRIMARY KEY,
+                user_id TEXT,
+                guild_name TEXT,
+                is_admin INTEGER DEFAULT 0,
+                primary_key (user_id, guild_id),
                 moderation_settings TEXT,
                 automod_settings TEXT,
                 logging_settings TEXT,
@@ -196,19 +200,30 @@ def cache_user_guilds(user_id, guilds_data):
     with db_lock:
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
-        
-        # Clear old cache
-        cursor.execute('DELETE FROM user_guilds WHERE user_id = ?', (user_id,))
-        
-        # Insert new cache
+
+        # töröljük a régi cache-t
+        cursor.execute(
+            "DELETE FROM user_guilds WHERE user_id = ?",
+            (user_id,)
+        )
+
         for guild in guilds_data:
-            guild_id = guild['id']
-            is_admin = 1 if (int(guild['permissions']) & 0x8) else 0  # 0x8 = ADMINISTRATOR
-            cursor.execute('''
-                INSERT INTO user_guilds (user_id, guild_id, is_admin)
-                VALUES (?, ?, ?)
-            ''', (user_id, guild_id, is_admin))
-        
+            guild_id = guild["id"]
+            guild_name = guild["name"]
+            permissions = int(guild.get("permissions", 0))
+
+            # Discord admin permission bit
+            is_admin = 1 if (permissions & 0x20) == 0x20 else 0
+
+            cursor.execute(
+                """
+                INSERT OR REPLACE INTO user_guilds
+                (user_id, guild_id, guild_name, is_admin)
+                VALUES (?, ?, ?, ?)
+                """,
+                (user_id, guild_id, guild_name, is_admin)
+            )
+
         conn.commit()
         conn.close()
 
@@ -226,7 +241,27 @@ def get_user_admin_guilds(user_id):
         rows = cursor.fetchall()
         conn.close()
         
-        return [row['guild_id'] for row in rows]
+        def get_user_admin_guilds(user_id):
+        with db_lock:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT guild_id, guild_name
+            FROM user_guilds
+            WHERE user_id = ? AND is_admin = 1
+            """,
+            (user_id,)
+        )
+
+        rows = cursor.fetchall()
+        conn.close()
+
+        return [
+            {"id": row[0], "name": row[1]}
+            for row in rows
+        ]
 
 def guild_exists_in_cache(user_id, guild_id):
     """Check if guild is in user's cache"""
