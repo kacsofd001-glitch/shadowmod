@@ -345,11 +345,13 @@ if __name__ == '__main__':
     # Give bot a moment to initialize
     time.sleep(2)
     
-    # Start Flask web server (blocking)
-    print("\n🌐 Starting Flask web server on 0.0.0.0:5000...", flush=True)
+# Start Flask web server (blocking)
+    port = int(os.environ.get("PORT", 5000)) # Beolvassa a Render portját, ha nincs, marad az 5000
+    print(f"\n🌐 Starting Flask web server on 0.0.0.0:{port}...", flush=True)
     try:
-        app.run(host='0.0.0.0', port=5000, debug=False)
+        app.run(host='0.0.0.0', port=port, debug=False)
     except Exception as e:
+        # ... a többi marad változatlan
         print(f"❌ Web server crashed: {e}", flush=True)
         import traceback
         traceback.print_exc()
