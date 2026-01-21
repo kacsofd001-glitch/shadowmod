@@ -74,6 +74,9 @@ def init_db():
         conn.commit()
         conn.close()
 
+        # Call the init_db function to initialize the database
+        init_db()
+
 def get_guild_settings(guild_id):
     """Get all settings for a guild"""
     with db_lock:
