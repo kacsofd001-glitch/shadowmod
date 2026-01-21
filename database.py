@@ -241,22 +241,15 @@ def get_user_admin_guilds(user_id):
         rows = cursor.fetchall()
         conn.close()
         
-        def get_user_admin_guilds(user_id):
-        with db_lock:
+def get_user_admin_guilds(user_id):
+    with db_lock:
         conn = sqlite3.connect(DB_FILE)
-        cursor = conn.cursor()
-
-        cursor.execute(
-            """
-            SELECT guild_id, guild_name
-            FROM user_guilds
-            WHERE user_id = ? AND is_admin = 1
-            """,
-            (user_id,)
-        )
-
-        rows = cursor.fetchall()
-        conn.close()
+        try:
+            cursor = conn.cursor()
+            cursor.execute("SELECT guild_id FROM guilds WHERE admin_id = ?", (user_id,))
+            return [row[0] for row in cursor.fetchall()]
+        finally:
+            conn.close()
 
         return [
             {"id": row[0], "name": row[1]}
