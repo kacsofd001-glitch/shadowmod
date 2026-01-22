@@ -10,34 +10,35 @@ import requests
 import secrets
 from functools import wraps
 from urllib.parse import quote
+import sqlite3
 
-# Kényszerített azonnali naplózás
+# Kényszerített azonnali naplózás a Render logokhoz
 os.environ['PYTHONUNBUFFERED'] = '1'
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', secrets.token_hex(32))
 CORS(app)
 
-# Import database module
-from database import (
-    init_db, get_guild_settings, update_guild_settings,
-    save_user_session, get_user_session, delete_user_session,
-    cache_user_guilds, get_user_admin_guilds, guild_exists_in_cache
-)
+# --- ADATBÁZIS MODUL IMPORTÁLÁSA ---
+try:
+    from database import (
+        init_db, get_guild_settings, update_guild_settings,
+        save_user_session, get_user_session, delete_user_session,
+        cache_user_guilds, get_user_admin_guilds, guild_exists_in_cache
+    )
+    init_db()
+except Exception as e:
+    print(f"⚠️ Database import error: {e}", flush=True)
 
-# Discord OAuth2 configuration
+# Discord OAuth2 konfiguráció
 DISCORD_CLIENT_ID = os.getenv('DISCORD_CLIENT_ID')
 DISCORD_CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET')
 DISCORD_REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI', 'https://shadowmod.onrender.com/auth/discord/callback')
 DISCORD_API_BASE = 'https://discord.com/api'
 
-# Check if OAuth2 is configured
 OAUTH_CONFIGURED = bool(DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET)
 
-# Initialize database on startup
-init_db()
-
-# Log OAuth configuration status
+# OAuth konfiguráció ellenőrzése a logban
 if not OAUTH_CONFIGURED:
     print("\n⚠️ WARNING: Discord OAuth2 is not configured!", flush=True)
 else:
@@ -45,7 +46,10 @@ else:
 
 STATS_FILE = 'bot_stats.json'
 
+# --- SEGÉDFÜGGVÉNYEK ---
+
 def login_required(f):
+    """Dekorátor a bejelentkezés ellenőrzéséhez"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user_id = session.get('user_id')
@@ -65,6 +69,7 @@ def get_discord_user_guilds(access_token):
     return response.json() if response.status_code == 200 else []
 
 def get_bot_stats():
+    """Bot statisztikák betöltése fájlból"""
     try:
         if os.path.exists(STATS_FILE):
             with open(STATS_FILE, 'r') as f:
@@ -78,7 +83,7 @@ def get_bot_stats():
         'guilds': 0, 'users': 0, 'channels': 0, 'status': 'initializing'
     }
 
-# --- ROUTES ---
+# --- WEB OLDALAK (ROUTES) ---
 
 @app.route('/')
 def index():
@@ -121,7 +126,6 @@ def auth_callback():
         'redirect_uri': DISCORD_REDIRECT_URI,
         'scope': 'identify guilds'
     }
-    
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     response = requests.post(f'{DISCORD_API_BASE}/v10/oauth2/token', data=data, headers=headers)
     
@@ -144,7 +148,6 @@ def auth_callback():
     session['user_id'] = user_id
     session['username'] = username
     session['avatar_url'] = avatar_url
-    
     return redirect('/dashboard')
 
 @app.route('/auth/logout')
@@ -219,29 +222,30 @@ def api_stats():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# --- STABIL INDÍTÁSI LOGIKA ---
+# --- STABIL INDÍTÁSI LOGIKA (Render Fix) ---
 
-def start_bot():
+def start_bot_process():
     """Bot indítása késleltetve a Web Szerver után"""
-    print("\n⏳ Web Server stabilization: waiting 10s...", flush=True)
+    print("\n⏳ Stabilization: Waiting 10s for Flask to bind port...", flush=True)
     time.sleep(10)
-    print("\n🤖 Background Thread: Connecting Discord bot...", flush=True)
+    print("\n🤖 Background process: Loading Discord modules...", flush=True)
     try:
-        # FONTOS: Csak itt importálunk, hogy a Gunicorn ne fagyjon le az elején
+        # Itt importálunk, hogy a Gunicorn ne fagyjon le az elején
         from main import bot
         TOKEN = os.getenv('DISCORD_TOKEN')
         if TOKEN:
             bot.run(TOKEN)
         else:
-            print("❌ DISCORD_TOKEN missing!", flush=True)
+            print("❌ DISCORD_TOKEN is missing!", flush=True)
     except Exception as e:
-        print(f"❌ Bot Thread Error: {e}", flush=True)
+        print(f"❌ Bot thread error: {e}", flush=True)
 
-# Indítás szálon (Gunicorn és Python esetén is lefut)
-threading.Thread(target=start_bot, daemon=True, name="DiscordBot").start()
+# Háttérszál regisztrálása (Gunicorn is elindítja)
+print("\n📋 System: Registering background threads...", flush=True)
+threading.Thread(target=start_bot_process, daemon=True, name="DiscordBot").start()
 
 if __name__ == '__main__':
     # Lokális indítás (python web_server.py)
     port = int(os.environ.get("PORT", 10000))
-    print(f"🚀 Manual Startup: 0.0.0.0:{port}", flush=True)
+    print(f"🚀 Manual Startup on port {port}", flush=True)
     app.run(host='0.0.0.0', port=port, debug=False)
