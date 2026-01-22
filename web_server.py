@@ -161,11 +161,10 @@ def logout():
 @login_required
 def dashboard():
     user_id = session.get('user_id')
-    admin_guilds = get_user_admin_guilds(user_id)
+    # A template-nek átadjuk a username-t és avatar-t a fejléchez
     response = app.make_response(render_template('dashboard.html', 
                          username=session.get('username'),
-                         avatar_url=session.get('avatar_url'),
-                         admin_guilds=admin_guilds))
+                         avatar_url=session.get('avatar_url')))
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     return response
 
@@ -173,6 +172,7 @@ def dashboard():
 @login_required
 def server_settings(guild_id):
     user_id = session.get('user_id')
+    # Ellenőrizzük az ID alapján a jogosultságot
     if not guild_exists_in_cache(user_id, guild_id): return 'Unauthorized', 403
     settings = get_guild_settings(guild_id)
     response = app.make_response(render_template('server_settings.html',
@@ -205,13 +205,11 @@ def api_update_settings(guild_id):
 @app.route('/api/servers')
 @login_required
 def api_servers():
+    """Visszaadja a szerverek TELJES adatait (ID, név, ikon) a Dashboardnak"""
     user_id = session.get('user_id')
-    admin_guilds = get_user_admin_guilds(user_id) # Ez objektumokat ad vissza
-    
-    # Kicseréljük az objektumokat csak a nevekre (vagy ID-kra, amit a HTML vár)
-    server_names = [guild['guild_name'] for guild in admin_guilds if 'guild_name' in guild]
-    
-    return jsonify({'servers': server_names})
+    # Itt az objektumok listáját adjuk át, hogy a JS kiolvashassa a nevet és ID-t
+    admin_guilds = get_user_admin_guilds(user_id) 
+    return jsonify({'servers': admin_guilds})
 
 @app.route('/help')
 def help_page():

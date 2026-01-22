@@ -59,17 +59,24 @@ def init_db():
             CREATE TABLE IF NOT EXISTS user_guilds (
                 user_id TEXT NOT NULL,
                 guild_id TEXT NOT NULL,
+                guild_name TEXT,
+                icon TEXT,
                 is_admin INTEGER DEFAULT 0,
                 cached_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (user_id, guild_id)
             )
         ''')
         
-        # Ellenőrizzük, hogy létezik-e a guild_name oszlop, és ha nem, hozzáadjuk
+        # Biztonsági ellenőrzés: oszlopok hozzáadása ha a tábla már létezne
         try:
             cursor.execute('ALTER TABLE user_guilds ADD COLUMN guild_name TEXT')
         except sqlite3.OperationalError:
-            pass  # Az oszlop már létezik
+            pass
+            
+        try:
+            cursor.execute('ALTER TABLE user_guilds ADD COLUMN icon TEXT')
+        except sqlite3.OperationalError:
+            pass
         
         conn.commit()
         conn.close()
@@ -105,7 +112,6 @@ def get_guild_settings(guild_id):
                 'updated_at': row['updated_at']
             }
         
-        # Return defaults for new guild
         return {
             'guild_id': guild_id,
             'moderation': {}, 'automod': {}, 'logging': {}, 'welcome': {},
@@ -189,22 +195,21 @@ def cache_user_guilds(user_id, guilds_data):
     with db_lock:
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
-        # Régi cache törlése a frissítéshez
         cursor.execute("DELETE FROM user_guilds WHERE user_id = ?", (user_id,))
 
         for guild in guilds_data:
             guild_id = guild["id"]
             guild_name = guild["name"]
-            icon_hash = guild.get("icon", "") # Ikon lekérése
+            icon_hash = guild.get("icon", "")
             permissions = int(guild.get("permissions", 0))
+            # Discord admin permission bit ellenőrzése
             is_admin = 1 if (permissions & 0x20) == 0x20 else 0
 
-            # Itt elmentjük az összes adatot a későbbi megjelenítéshez
             cursor.execute(
                 """INSERT OR REPLACE INTO user_guilds 
-                (user_id, guild_id, guild_name, is_admin) 
-                VALUES (?, ?, ?, ?)""",
-                (user_id, guild_id, guild_name, is_admin)
+                (user_id, guild_id, guild_name, icon, is_admin) 
+                VALUES (?, ?, ?, ?, ?)""",
+                (user_id, guild_id, guild_name, icon_hash, is_admin)
             )
         conn.commit()
         conn.close()
@@ -216,14 +221,13 @@ def get_user_admin_guilds(user_id):
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute(
-            'SELECT guild_id, guild_name FROM user_guilds WHERE user_id = ? AND is_admin = 1', 
+            'SELECT guild_id, guild_name, icon FROM user_guilds WHERE user_id = ? AND is_admin = 1', 
             (user_id,)
         )
         rows = cursor.fetchall()
         conn.close()
-        # Fontos: szótárként adjuk vissza az adatokat
         return [dict(row) for row in rows]
-    
+        
 def guild_exists_in_cache(user_id, guild_id):
     """Check if guild is in user's cache and user is admin"""
     with db_lock:
@@ -234,6 +238,5 @@ def guild_exists_in_cache(user_id, guild_id):
         conn.close()
         return row is not None and row[0] == 1
 
-# Ez a rész biztosítja, hogy az inicializálás lefusson, ha a fájlt indítják
 if __name__ == "__main__":
     init_db()
