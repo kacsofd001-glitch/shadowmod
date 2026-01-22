@@ -202,6 +202,14 @@ def api_update_settings(guild_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
+@app.route('/api/servers')
+@login_required
+def api_servers():
+    """API végpont a Dashboard szerverlistájához"""
+    user_id = session.get('user_id')
+    admin_guilds = get_user_admin_guilds(user_id)
+    return jsonify({'servers': admin_guilds})
+
 @app.route('/help')
 def help_page():
     response = app.make_response(render_template('help.html'))
@@ -230,7 +238,7 @@ def start_bot_process():
     time.sleep(10)
     print("\n🤖 Background process: Loading Discord modules...", flush=True)
     try:
-        # Itt importálunk, hogy a Gunicorn ne fagyjon le az elején
+        # Késleltetett import a Gunicorn fagyás ellen
         from main import bot
         TOKEN = os.getenv('DISCORD_TOKEN')
         if TOKEN:
