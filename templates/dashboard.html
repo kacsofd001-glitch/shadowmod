@@ -99,24 +99,25 @@
                         return;
                     }
                     
-                    data.servers.forEach(server => {
-                        // Kiszűrjük, ha esetleg csak egy string jönne, de objektumot várunk
-                        const guildId = server.guild_id || server;
-                        const guildName = server.guild_name || "Discord Server";
-                        
-                        const card = document.createElement('a');
-                        card.href = `/dashboard/server/${guildId}`;
-                        card.className = 'server-card';
-                        
-                        // Itt állítjuk össze a kártyát névvel és ikonnal
-                        card.innerHTML = `
-                            <div class="server-icon-container">
-                                <div class="server-name-display">${guildName}</div>
-                                <div class="server-id-small">${guildId}</div>
-                            </div>
-                        `;
-                        grid.appendChild(card);
-                    });
+                    // A dashboard.html megfelelő része:
+data.servers.forEach(server => {
+    // Biztosítjuk, hogy az ID és a Név is megvan
+    const guildId = server.guild_id;
+    const guildName = server.guild_name || "Ismeretlen szerver";
+
+    const card = document.createElement('a');
+    // A linkbe az ID kell!
+    card.href = `/dashboard/server/${guildId}`;
+    card.className = 'server-card';
+    
+    card.innerHTML = `
+        <div class="server-icon-placeholder">
+            ${guildName.charAt(0).toUpperCase()}
+        </div>
+        <div class="server-name">${guildName}</div>
+    `;
+    grid.appendChild(card);
+});
                 })
                 .catch(error => {
                     console.error('Failed to load servers:', error);
