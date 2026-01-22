@@ -205,10 +205,13 @@ def api_update_settings(guild_id):
 @app.route('/api/servers')
 @login_required
 def api_servers():
-    """API végpont a Dashboard szerverlistájához"""
     user_id = session.get('user_id')
-    admin_guilds = get_user_admin_guilds(user_id)
-    return jsonify({'servers': admin_guilds})
+    admin_guilds = get_user_admin_guilds(user_id) # Ez objektumokat ad vissza
+    
+    # Kicseréljük az objektumokat csak a nevekre (vagy ID-kra, amit a HTML vár)
+    server_names = [guild['guild_name'] for guild in admin_guilds if 'guild_name' in guild]
+    
+    return jsonify({'servers': server_names})
 
 @app.route('/help')
 def help_page():
