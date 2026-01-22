@@ -185,36 +185,45 @@ def delete_user_session(user_id):
         conn.close()
 
 def cache_user_guilds(user_id, guilds_data):
-    """Cache user's guild memberships and admin status"""
+    """Cache user's guild memberships with name and icon"""
     with db_lock:
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
+        # Régi cache törlése a frissítéshez
         cursor.execute("DELETE FROM user_guilds WHERE user_id = ?", (user_id,))
 
         for guild in guilds_data:
             guild_id = guild["id"]
             guild_name = guild["name"]
+            icon_hash = guild.get("icon", "") # Ikon lekérése
             permissions = int(guild.get("permissions", 0))
             is_admin = 1 if (permissions & 0x20) == 0x20 else 0
 
+            # Itt elmentjük az összes adatot a későbbi megjelenítéshez
             cursor.execute(
-                "INSERT OR REPLACE INTO user_guilds (user_id, guild_id, guild_name, is_admin) VALUES (?, ?, ?, ?)",
+                """INSERT OR REPLACE INTO user_guilds 
+                (user_id, guild_id, guild_name, is_admin) 
+                VALUES (?, ?, ?, ?)""",
                 (user_id, guild_id, guild_name, is_admin)
             )
         conn.commit()
         conn.close()
 
 def get_user_admin_guilds(user_id):
+    """Returns detailed objects for the dashboard"""
     with db_lock:
         conn = sqlite3.connect(DB_FILE)
-        conn.row_factory = sqlite3.Row # Ez kritikus!
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute('SELECT guild_id, guild_name FROM user_guilds WHERE user_id = ? AND is_admin = 1', (user_id,))
+        cursor.execute(
+            'SELECT guild_id, guild_name FROM user_guilds WHERE user_id = ? AND is_admin = 1', 
+            (user_id,)
+        )
         rows = cursor.fetchall()
         conn.close()
-        # Itt szótárakat készítünk belőlük
-        return [{"guild_id": row['guild_id'], "guild_name": row['guild_name']} for row in rows]
-
+        # Fontos: szótárként adjuk vissza az adatokat
+        return [dict(row) for row in rows]
+    
 def guild_exists_in_cache(user_id, guild_id):
     """Check if guild is in user's cache and user is admin"""
     with db_lock:
