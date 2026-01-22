@@ -349,24 +349,24 @@ if __name__ == '__main__':
     # Give bot a moment to initialize
     time.sleep(2)
     
-# Start Flask web server (blocking)
+# --- A MODUL SZINTEN (az if __name__ blokkon KÍVÜL) ---
+# Ez biztosítja, hogy a Gunicorn betöltésekor is elinduljon a bot háttérszálon
+print("\n📋 Initializing background services...", flush=True)
+bot_thread = threading.Thread(target=start_bot, daemon=True, name="DiscordBot")
+bot_thread.start()
+
+# --- AZ INDÍTÓ BLOKK ---
 if __name__ == '__main__':
     # A Render szerint ez a biztos út: process.env.PORT || 10000
     port = int(os.environ.get("PORT", 10000))
     
-    # Indítsd a botot, de ne hagyd, hogy bármi megakassza a Flask indulását
-    bot_thread = threading.Thread(target=start_bot, daemon=True)
-    bot_thread.start()
-    
-    print(f"🚀 Binding to 0.0.0.0:{port}", flush=True)
+    print(f"🚀 Application starting on port {port}...", flush=True)
     try:
-        # A debug=False fontos éles környezetben (Renderen is)
+        # A debug=False kritikus a Render stabilitásához
         app.run(host='0.0.0.0', port=port, debug=False)
     except Exception as e:
         print(f"❌ Server error: {e}")
         import traceback
         traceback.print_exc()
     
-    # Ez a rész csak akkor fut le, ha a Flask szerver valamiért leáll
-    print("\n⏳ Shutting down...", flush=True)
-    print("🛑 Application shutdown complete", flush=True)
+    print("\n⏳ Shutting down web server...", flush=True)

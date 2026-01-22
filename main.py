@@ -362,7 +362,8 @@ async def ping_command(ctx):
     
     await ctx.send(embed=embed)
 
-# A main.py legvége:
+# ... a többi kódod felette változatlan ...
+
 if __name__ == '__main__':
     print("\n🚀 Starting bot standalone mode...", flush=True)
     TOKEN = os.getenv('DISCORD_TOKEN')
@@ -371,6 +372,7 @@ if __name__ == '__main__':
         exit(1)
     
     try:
+        # Ez a sor CSAK akkor fut le, ha a python main.py-t indítod
         bot.run(TOKEN)
     except Exception as e:
         print(f"❌ Bot crashed: {e}", flush=True)
