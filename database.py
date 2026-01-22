@@ -73,9 +73,7 @@ def init_db():
         
         conn.commit()
         conn.close()
-
-        # Call the init_db function to initialize the database
-        init_db()
+    print("✅ Database initialized successfully.", flush=True)
 
 def get_guild_settings(guild_id):
     """Get all settings for a guild"""
@@ -110,18 +108,10 @@ def get_guild_settings(guild_id):
         # Return defaults for new guild
         return {
             'guild_id': guild_id,
-            'moderation': {},
-            'automod': {},
-            'logging': {},
-            'welcome': {},
-            'bad_words': [],
-            'whitelisted_links': [],
-            'custom_commands': {},
-            'role_settings': {},
-            'music_settings': {},
-            'games_settings': {},
-            'language': 'en',
-            'prefix': '!'
+            'moderation': {}, 'automod': {}, 'logging': {}, 'welcome': {},
+            'bad_words': [], 'whitelisted_links': [], 'custom_commands': {},
+            'role_settings': {}, 'music_settings': {}, 'games_settings': {},
+            'language': 'en', 'prefix': '!'
         }
 
 def update_guild_settings(guild_id, settings_dict):
@@ -160,7 +150,6 @@ def save_user_session(user_id, access_token, refresh_token, username, avatar_url
     with db_lock:
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
-        
         expires_at = datetime.now(timezone.utc).timestamp() + expires_in
         
         cursor.execute('''
@@ -178,21 +167,12 @@ def get_user_session(user_id):
         conn = sqlite3.connect(DB_FILE)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        
         cursor.execute('SELECT * FROM user_sessions WHERE user_id = ?', (user_id,))
         row = cursor.fetchone()
         conn.close()
         
         if row:
-            return {
-                'user_id': row['user_id'],
-                'access_token': row['access_token'],
-                'refresh_token': row['refresh_token'],
-                'username': row['username'],
-                'avatar_url': row['avatar_url'],
-                'expires_at': row['expires_at'],
-                'created_at': row['created_at']
-            }
+            return dict(row)
         return None
 
 def delete_user_session(user_id):
@@ -209,30 +189,18 @@ def cache_user_guilds(user_id, guilds_data):
     with db_lock:
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
-
-        # töröljük a régi cache-t
-        cursor.execute(
-            "DELETE FROM user_guilds WHERE user_id = ?",
-            (user_id,)
-        )
+        cursor.execute("DELETE FROM user_guilds WHERE user_id = ?", (user_id,))
 
         for guild in guilds_data:
             guild_id = guild["id"]
             guild_name = guild["name"]
             permissions = int(guild.get("permissions", 0))
-
-            # Discord admin permission bit
             is_admin = 1 if (permissions & 0x20) == 0x20 else 0
 
             cursor.execute(
-                """
-                INSERT OR REPLACE INTO user_guilds
-                (user_id, guild_id, guild_name, is_admin)
-                VALUES (?, ?, ?, ?)
-                """,
+                "INSERT OR REPLACE INTO user_guilds (user_id, guild_id, guild_name, is_admin) VALUES (?, ?, ?, ?)",
                 (user_id, guild_id, guild_name, is_admin)
             )
-
         conn.commit()
         conn.close()
 
@@ -242,27 +210,21 @@ def get_user_admin_guilds(user_id):
         conn = sqlite3.connect(DB_FILE)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        
-        cursor.execute(
-            'SELECT guild_id FROM user_guilds WHERE user_id = ? AND is_admin = 1',
-            (user_id,)
-        )
+        cursor.execute('SELECT guild_id FROM user_guilds WHERE user_id = ? AND is_admin = 1', (user_id,))
         rows = cursor.fetchall()
         conn.close()
-        
         return [row['guild_id'] for row in rows] if rows else []
 
 def guild_exists_in_cache(user_id, guild_id):
-    """Check if guild is in user's cache"""
+    """Check if guild is in user's cache and user is admin"""
     with db_lock:
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
-        
-        cursor.execute(
-            'SELECT is_admin FROM user_guilds WHERE user_id = ? AND guild_id = ?',
-            (user_id, guild_id)
-        )
+        cursor.execute('SELECT is_admin FROM user_guilds WHERE user_id = ? AND guild_id = ?', (user_id, guild_id))
         row = cursor.fetchone()
         conn.close()
-        
         return row is not None and row[0] == 1
+
+# Ez a rész biztosítja, hogy az inicializálás lefusson, ha a fájlt indítják
+if __name__ == "__main__":
+    init_db()
