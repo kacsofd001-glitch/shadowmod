@@ -11,7 +11,7 @@ import secrets
 from functools import wraps
 from urllib.parse import quote
 
-# Ensure unbuffered output
+# Kényszerített azonnali naplózás
 os.environ['PYTHONUNBUFFERED'] = '1'
 
 app = Flask(__name__)
@@ -39,24 +39,13 @@ init_db()
 
 # Log OAuth configuration status
 if not OAUTH_CONFIGURED:
-    print("\n⚠️ WARNING: Discord OAuth2 is not configured!")
-    print("❌ DISCORD_CLIENT_ID:", "NOT SET" if not DISCORD_CLIENT_ID else "✅ SET")
-    print("❌ DISCORD_CLIENT_SECRET:", "NOT SET" if not DISCORD_CLIENT_SECRET else "✅ SET")
-    print("\nTo fix this, set environment variables on Render:")
-    print("  1. Go to Render Dashboard → Your Service")
-    print("  2. Environment → Add Variable")
-    print("  3. Add: DISCORD_CLIENT_ID=<your_client_id>")
-    print("  4. Add: DISCORD_CLIENT_SECRET=<your_client_secret>")
-    print("="*70)
+    print("\n⚠️ WARNING: Discord OAuth2 is not configured!", flush=True)
 else:
-    print("\n✅ Discord OAuth2 is configured!")
-    print(f"   Client ID: {DISCORD_CLIENT_ID[:10]}...")
-    print("="*70)
+    print("\n✅ Discord OAuth2 is configured!", flush=True)
 
 STATS_FILE = 'bot_stats.json'
 
 def login_required(f):
-    """Decorator to require Discord login"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user_id = session.get('user_id')
@@ -66,26 +55,16 @@ def login_required(f):
     return decorated_function
 
 def get_discord_user_info(access_token):
-    """Get current user info from Discord"""
     headers = {'Authorization': f'Bearer {access_token}'}
     response = requests.get(f'{DISCORD_API_BASE}/v10/users/@me', headers=headers)
     return response.json() if response.status_code == 200 else None
 
 def get_discord_user_guilds(access_token):
-    """Get user's guilds from Discord"""
     headers = {'Authorization': f'Bearer {access_token}'}
     response = requests.get(f'{DISCORD_API_BASE}/v10/users/@me/guilds', headers=headers)
     return response.json() if response.status_code == 200 else []
 
-def get_user_admin_guilds(user_id):
-    with db_lock:
-        with sqlite3.connect(DB_FILE) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT guild_id FROM guilds WHERE admin_id = ?", (user_id,))
-            return [r[0] for r in cursor.fetchall()]
-
 def get_bot_stats():
-    """Load stats from file"""
     try:
         if os.path.exists(STATS_FILE):
             with open(STATS_FILE, 'r') as f:
@@ -94,21 +73,16 @@ def get_bot_stats():
                 return stats
     except:
         pass
-    
-    # Default stats if file doesn't exist
     return {
         'start_time': datetime.now(timezone.utc),
-        'guilds': 0,
-        'users': 0,
-        'channels': 0,
-        'status': 'initializing'
+        'guilds': 0, 'users': 0, 'channels': 0, 'status': 'initializing'
     }
+
+# --- ROUTES ---
 
 @app.route('/')
 def index():
-    """Public homepage"""
     user_id = session.get('user_id')
-    
     response = app.make_response(render_template('index_public.html',
                          user_id=user_id,
                          username=session.get('username'),
@@ -118,37 +92,27 @@ def index():
 
 @app.route('/auth/discord')
 def auth_discord():
-    """Redirect to Discord OAuth2"""
     if not OAUTH_CONFIGURED:
         return render_template('oauth_error.html', error_type='not_configured'), 503
-    
     state = secrets.token_urlsafe(32)
     session['oauth_state'] = state
-    
     auth_url = (
-    f'https://discord.com/api/oauth2/authorize?'
-    f'client_id={DISCORD_CLIENT_ID}&'
-    f'redirect_uri={quote(DISCORD_REDIRECT_URI)}&'
-    f'response_type=code&'
-    f'scope=identify%20guilds&'
-    f'state={state}'
-)
+        f'https://discord.com/api/oauth2/authorize?'
+        f'client_id={DISCORD_CLIENT_ID}&'
+        f'redirect_uri={quote(DISCORD_REDIRECT_URI)}&'
+        f'response_type=code&'
+        f'scope=identify%20guilds&'
+        f'state={state}'
+    )
     return redirect(auth_url)
 
 @app.route('/auth/discord/callback')
 def auth_callback():
-    """Handle Discord OAuth2 callback"""
     code = request.args.get('code')
     state = request.args.get('state')
-    
-    # Verify state
-    if state != session.get('oauth_state'):
-        return 'Invalid state', 403
-    
-    if not code:
-        return 'No authorization code', 400
-    
-    # Exchange code for token
+    if state != session.get('oauth_state'): return 'Invalid state', 403
+    if not code: return 'No authorization code', 400
+
     data = {
         'client_id': DISCORD_CLIENT_ID,
         'client_secret': DISCORD_CLIENT_SECRET,
@@ -159,39 +123,24 @@ def auth_callback():
     }
     
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    response = requests.post(
-    'https://discord.com/api/oauth2/token',
-    data=data,
-    headers=headers
-)
-
+    response = requests.post(f'{DISCORD_API_BASE}/v10/oauth2/token', data=data, headers=headers)
     
-    if response.status_code != 200:
-        return 'Failed to authenticate with Discord', 401
+    if response.status_code != 200: return 'Failed to authenticate', 401
     
     token_data = response.json()
     access_token = token_data.get('access_token')
-    refresh_token = token_data.get('refresh_token')
-    expires_in = token_data.get('expires_in', 604800)  # 7 days default
-    
-    # Get user info
     user_info = get_discord_user_info(access_token)
-    if not user_info:
-        return 'Failed to get user info', 401
+    if not user_info: return 'Failed to get user info', 401
     
     user_id = user_info['id']
     username = user_info['username']
     avatar_hash = user_info.get('avatar')
     avatar_url = f'https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png' if avatar_hash else ''
     
-    # Get guilds and cache
     guilds = get_discord_user_guilds(access_token)
     cache_user_guilds(user_id, guilds)
+    save_user_session(user_id, access_token, token_data.get('refresh_token'), username, avatar_url, token_data.get('expires_in', 604800))
     
-    # Save session
-    save_user_session(user_id, access_token, refresh_token, username, avatar_url, expires_in)
-    
-    # Set session
     session['user_id'] = user_id
     session['username'] = username
     session['avatar_url'] = avatar_url
@@ -200,21 +149,16 @@ def auth_callback():
 
 @app.route('/auth/logout')
 def logout():
-    """Logout user"""
     user_id = session.get('user_id')
-    if user_id:
-        delete_user_session(user_id)
+    if user_id: delete_user_session(user_id)
     session.clear()
     return redirect('/')
-
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    """Main dashboard with guild list"""
     user_id = session.get('user_id')
     admin_guilds = get_user_admin_guilds(user_id)
-    
     response = app.make_response(render_template('dashboard.html', 
                          username=session.get('username'),
                          avatar_url=session.get('avatar_url'),
@@ -225,15 +169,9 @@ def dashboard():
 @app.route('/dashboard/server/<guild_id>')
 @login_required
 def server_settings(guild_id):
-    """Server settings page"""
     user_id = session.get('user_id')
-    
-    # Verify user is admin
-    if not guild_exists_in_cache(user_id, guild_id):
-        return 'Unauthorized', 403
-    
+    if not guild_exists_in_cache(user_id, guild_id): return 'Unauthorized', 403
     settings = get_guild_settings(guild_id)
-    
     response = app.make_response(render_template('server_settings.html',
                          guild_id=guild_id,
                          username=session.get('username'),
@@ -245,24 +183,15 @@ def server_settings(guild_id):
 @app.route('/api/settings/<guild_id>', methods=['GET'])
 @login_required
 def api_get_settings(guild_id):
-    """Get guild settings API"""
     user_id = session.get('user_id')
-    
-    if not guild_exists_in_cache(user_id, guild_id):
-        return jsonify({'error': 'Unauthorized'}), 403
-    
-    settings = get_guild_settings(guild_id)
-    return jsonify(settings)
+    if not guild_exists_in_cache(user_id, guild_id): return jsonify({'error': 'Unauthorized'}), 403
+    return jsonify(get_guild_settings(guild_id))
 
 @app.route('/api/settings/<guild_id>', methods=['POST'])
 @login_required
 def api_update_settings(guild_id):
-    """Update guild settings API"""
     user_id = session.get('user_id')
-    
-    if not guild_exists_in_cache(user_id, guild_id):
-        return jsonify({'error': 'Unauthorized'}), 403
-    
+    if not guild_exists_in_cache(user_id, guild_id): return jsonify({'error': 'Unauthorized'}), 403
     try:
         data = request.get_json()
         update_guild_settings(guild_id, data)
@@ -270,22 +199,10 @@ def api_update_settings(guild_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-@app.route('/api/servers')
-@login_required
-def api_servers():
-    """Get user's admin servers"""
-    user_id = session.get('user_id')
-    admin_guilds = get_user_admin_guilds(user_id)
-    return jsonify({'servers': admin_guilds})
-
-
 @app.route('/help')
 def help_page():
-    """Display bot commands and help information"""
     response = app.make_response(render_template('help.html'))
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
     return response
 
 @app.route('/api/stats')
@@ -293,80 +210,38 @@ def api_stats():
     try:
         stats = get_bot_stats()
         uptime = datetime.now(timezone.utc) - stats['start_time']
-        
         return jsonify({
             'guilds': stats.get('guilds', 0),
             'users': stats.get('users', 0),
-            'channels': stats.get('channels', 0),
             'uptime_seconds': int(uptime.total_seconds()),
             'status': stats.get('status', 'online')
         })
     except Exception as e:
-        return jsonify({
-            'guilds': 0,
-            'users': 0,
-            'channels': 0,
-            'uptime_seconds': 0,
-            'status': 'initializing',
-            'error': str(e)
-        }), 500
+        return jsonify({'error': str(e)}), 500
+
+# --- STABIL INDÍTÁSI LOGIKA ---
 
 def start_bot():
-    """Start the Discord bot in background thread"""
-    print("\n🤖 Starting Discord bot in background...", flush=True)
+    """Bot indítása késleltetve a Web Szerver után"""
+    print("\n⏳ Web Server stabilization: waiting 10s...", flush=True)
+    time.sleep(10)
+    print("\n🤖 Background Thread: Connecting Discord bot...", flush=True)
     try:
-        # FONTOS: Csak az objektumot importáljuk, nem futtatjuk a main.py-t!
+        # FONTOS: Csak itt importálunk, hogy a Gunicorn ne fagyjon le az elején
         from main import bot
         TOKEN = os.getenv('DISCORD_TOKEN')
-        if not TOKEN:
-            print("❌ DISCORD_TOKEN not found!", flush=True)
-            return
-        
-        # A botot egy asyncio loop-ban kell futtatni, ha thread-ben van
-        bot.run(TOKEN)
+        if TOKEN:
+            bot.run(TOKEN)
+        else:
+            print("❌ DISCORD_TOKEN missing!", flush=True)
     except Exception as e:
-        print(f"❌ Bot error: {e}", flush=True)
-        import traceback
-        traceback.print_exc()
+        print(f"❌ Bot Thread Error: {e}", flush=True)
 
-# Ezt a részt a Gunicorn is látja
-# Indítsuk el a botot AZONNAL egy háttérszálon, daemon módban
-print("\n📋 Initializing background services...", flush=True)
-bot_thread = threading.Thread(target=start_bot, daemon=True, name="DiscordBot")
-bot_thread.start()
+# Indítás szálon (Gunicorn és Python esetén is lefut)
+threading.Thread(target=start_bot, daemon=True, name="DiscordBot").start()
 
 if __name__ == '__main__':
-    # Ez a rész csak akkor fut, ha: python web_server.py
+    # Lokális indítás (python web_server.py)
     port = int(os.environ.get("PORT", 10000))
-    print(f"🚀 Manual startup on port {port}", flush=True)
+    print(f"🚀 Manual Startup: 0.0.0.0:{port}", flush=True)
     app.run(host='0.0.0.0', port=port, debug=False)
-    
-    # Start bot in background thread
-    print("\n📋 Initializing services...", flush=True)
-    bot_thread = threading.Thread(target=start_bot, daemon=False, name="DiscordBot")
-    bot_thread.start()
-    
-    # Give bot a moment to initialize
-    time.sleep(2)
-    
-# --- A MODUL SZINTEN (az if __name__ blokkon KÍVÜL) ---
-# Ez biztosítja, hogy a Gunicorn betöltésekor is elinduljon a bot háttérszálon
-print("\n📋 Initializing background services...", flush=True)
-bot_thread = threading.Thread(target=start_bot, daemon=True, name="DiscordBot")
-bot_thread.start()
-
-# --- AZ INDÍTÓ BLOKK ---
-if __name__ == '__main__':
-    # A Render szerint ez a biztos út: process.env.PORT || 10000
-    port = int(os.environ.get("PORT", 10000))
-    
-    print(f"🚀 Application starting on port {port}...", flush=True)
-    try:
-        # A debug=False kritikus a Render stabilitásához
-        app.run(host='0.0.0.0', port=port, debug=False)
-    except Exception as e:
-        print(f"❌ Server error: {e}")
-        import traceback
-        traceback.print_exc()
-    
-    print("\n⏳ Shutting down web server...", flush=True)
