@@ -205,15 +205,22 @@ def cache_user_guilds(user_id, guilds_data):
         conn.close()
 
 def get_user_admin_guilds(user_id):
-    """Get guilds where user is admin"""
+    """Get guilds where user is admin with full data"""
     with db_lock:
         conn = sqlite3.connect(DB_FILE)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute('SELECT guild_id FROM user_guilds WHERE user_id = ? AND is_admin = 1', (user_id,))
+        
+        # Lekérjük a guild_id mellett a nevet is, hogy a dashboard ki tudja írni
+        cursor.execute(
+            'SELECT guild_id, guild_name FROM user_guilds WHERE user_id = ? AND is_admin = 1',
+            (user_id,)
+        )
         rows = cursor.fetchall()
         conn.close()
-        return [row['guild_id'] for row in rows] if rows else []
+        
+        # Adjunk vissza objektumokat, ne csak ID-kat, ha a frontend ezt várja
+        return [dict(row) for row in rows] if rows else []
 
 def guild_exists_in_cache(user_id, guild_id):
     """Check if guild is in user's cache and user is admin"""
