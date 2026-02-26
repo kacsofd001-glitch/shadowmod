@@ -241,7 +241,7 @@ def commands():
 
 @app.route('/why-us')
 def why_us():
-    """Why Us page - explains ShadowMod benefits"""
+    """Why Us page - explains ShadowMod benefits and features"""
     response = app.make_response(render_template('why_us.html'))
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     return response
