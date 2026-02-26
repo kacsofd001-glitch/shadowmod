@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why ShadowMod - Advanced Discord Bot Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern_dashboard.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">ShadowMod</a>
+            <div class="nav-links">
+                <a href="/commands" class="nav-link" data-translate="nav_commands">Commands</a>
+                <a href="/why-us" class="nav-link" data-translate="nav_why_us">Why Us</a>
+                <div class="lang-toggle">
+                    <label class="lang-label">
+                        <input type="checkbox" id="langToggle">
+                        <span class="lang-text" id="langIndicator">EN</span>
+                        <div class="lang-slider"></div>
+                    </label>
+                </div>
+                <div id="userInfo"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1 data-translate="why_hero_title">Why Choose ShadowMod?</h1>
+            <p data-translate="why_hero_subtitle">The most comprehensive Discord bot solution for community management and growth</p>
+        </section>
+
+        <!-- Why Choose Us Section -->
+        <section class="section">
+            <h2 data-translate="why_reasons_title">Why ShadowMod Stands Out</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h3 data-translate="why_comprehensive">🎯 Comprehensive Solution</h3>
+                    <p data-translate="why_comprehensive_desc">One bot to handle moderation, entertainment, analytics, economy, and automation - eliminating the need for multiple bots</p>
+                </div>
+                <div class="feature-card">
+                    <h3 data-translate="why_ai_powered">🧠 AI-Powered Features</h3>
+                    <p data-translate="why_ai_powered_desc">Advanced AI integration for intelligent moderation decisions, content filtering, and natural conversations</p>
+                </div>
+                <div class="feature-card">
+                    <h3 data-translate="why_easy_setup">⚡ Easy Setup & Configuration</h3>
+                    <p data-translate="why_easy_setup_desc">Intuitive dashboard with point-and-click configuration. No coding required - setup your server in minutes</p>
+                </div>
+                <div class="feature-card">
+                    <h3 data-translate="why_multilingual">🌐 Truly Multilingual</h3>
+                    <p data-translate="why_multilingual_desc">Full English and Hungarian support with automatic message translation and localized command detection</p>
+                </div>
+                <div class="feature-card">
+                    <h3 data-translate="why_active_development">🚀 Active Development</h3>
+                    <p data-translate="why_active_development_desc">Regular updates, new features, bug fixes, and improvements based on community feedback</p>
+                </div>
+                <div class="feature-card">
+                    <h3 data-translate="why_support">💬 Community Support</h3>
+                    <p data-translate="why_support_desc">Dedicated support team, active community, documentation, and tutorials to help you succeed</p>
+                </div>
+                <div class="feature-card">
+                    <h3 data-translate="why_secure">🔒 Secure & Reliable</h3>
+                    <p data-translate="why_secure_desc">Enterprise-grade security, data privacy compliance, regular backups, and 99.8%+ uptime guarantee</p>
+                </div>
+                <div class="feature-card">
+                    <h3 data-translate="why_affordable">💰 Affordable Pricing</h3>
+                    <p data-translate="why_affordable_desc">Premium features at competitive rates. Start free with essential features, upgrade as your community grows</p>
+                </div>
+                <div class="feature-card">
+                    <h3 data-translate="why_analytics">📊 Advanced Analytics</h3>
+                    <p data-translate="why_analytics_desc">Real-time insights into server metrics, user behavior, growth trends, and command usage patterns</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Section -->
+        <section class="section">
+            <h2 data-translate="why_comparison_title">What Makes Us Different</h2>
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <h3>📦 All-in-One Platform</h3>
+                    <p data-translate="why_comparison_allinone">Most bots specialize in one area. ShadowMod excels in 15+ categories, reducing bot clutter and complexity</p>
+                </div>
+                <div class="comparison-item">
+                    <h3>🎮 Entertainment Built-In</h3>
+                    <p data-translate="why_comparison_entertainment">Games, music, economy systems - keep your community engaged without additional bots</p>
+                </div>
+                <div class="comparison-item">
+                    <h3>🛠️ No Code Required</h3>
+                    <p data-translate="why_comparison_nocode">Complete visual dashboard. Customize everything through the web interface without touching a command line</p>
+                </div>
+                <div class="comparison-item">
+                    <h3>⏰ 24/7 Availability</h3>
+                    <p data-translate="why_comparison_availability">Hosted on reliable infrastructure with automatic failover and redundancy for maximum uptime</p>
+                </div>
+                <div class="comparison-item">
+                    <h3>🔄 Real-Time Sync</h3>
+                    <p data-translate="why_comparison_sync">Changes in the dashboard instantly apply to Discord. No waiting, no confusion about which settings are active</p>
+                </div>
+                <div class="comparison-item">
+                    <h3>🌟 Growing Ecosystem</h3>
+                    <p data-translate="why_comparison_ecosystem">Join 2.5K+ servers and 250K+ users benefiting from regular updates and community-driven improvements</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="section">
+            <h2 data-translate="why_testimonials_title">What Our Users Say</h2>
+            <div class="testimonials">
+                <div class="testimonial-card">
+                    <p data-translate="why_testimonial_1">"ShadowMod transformed how we manage our server. The AI moderation alone has saved us hours of work!"</p>
+                    <p class="testimonial-author">- Experienced Community Manager</p>
+                </div>
+                <div class="testimonial-card">
+                    <p data-translate="why_testimonial_2">"Finally, one bot that does it all. No more managing 5 different bots with conflicting commands!"</p>
+                    <p class="testimonial-author">- Growing Server Owner</p>
+                </div>
+                <div class="testimonial-card">
+                    <p data-translate="why_testimonial_3">"The dashboard is so intuitive. Even non-technical staff can configure features without help."</p>
+                    <p class="testimonial-author">- Server Administrator</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <h2 data-translate="why_cta_title">Experience ShadowMod Today</h2>
+            <p data-translate="why_cta_subtitle">Join thousands of communities already using ShadowMod to grow and manage their Discord servers</p>
+            <a href="/auth/discord" class="btn-large btn-dashboard cta-btn" data-translate="why_cta_button">Add to Your Server</a>
+        </section>
+    </div>
+
+    <script>
+        // Translation system
+        const translations = {
+            en: {
+                nav_commands: "Commands",
+                nav_why_us: "Why Us",
+                why_hero_title: "Why Choose ShadowMod?",
+                why_hero_subtitle: "The most comprehensive Discord bot solution for community management and growth",
+                why_reasons_title: "Why ShadowMod Stands Out",
+                why_comprehensive: "🎯 Comprehensive Solution",
+                why_comprehensive_desc: "One bot to handle moderation, entertainment, analytics, economy, and automation - eliminating the need for multiple bots",
+                why_ai_powered: "🧠 AI-Powered Features",
+                why_ai_powered_desc: "Advanced AI integration for intelligent moderation decisions, content filtering, and natural conversations",
+                why_easy_setup: "⚡ Easy Setup & Configuration",
+                why_easy_setup_desc: "Intuitive dashboard with point-and-click configuration. No coding required - setup your server in minutes",
+                why_multilingual: "🌐 Truly Multilingual",
+                why_multilingual_desc: "Full English and Hungarian support with automatic message translation and localized command detection",
+                why_active_development: "🚀 Active Development",
+                why_active_development_desc: "Regular updates, new features, bug fixes, and improvements based on community feedback",
+                why_support: "💬 Community Support",
+                why_support_desc: "Dedicated support team, active community, documentation, and tutorials to help you succeed",
+                why_secure: "🔒 Secure & Reliable",
+                why_secure_desc: "Enterprise-grade security, data privacy compliance, regular backups, and 99.8%+ uptime guarantee",
+                why_affordable: "💰 Affordable Pricing",
+                why_affordable_desc: "Premium features at competitive rates. Start free with essential features, upgrade as your community grows",
+                why_analytics: "📊 Advanced Analytics",
+                why_analytics_desc: "Real-time insights into server metrics, user behavior, growth trends, and command usage patterns",
+                why_comparison_title: "What Makes Us Different",
+                why_comparison_allinone: "Most bots specialize in one area. ShadowMod excels in 15+ categories, reducing bot clutter and complexity",
+                why_comparison_entertainment: "Games, music, economy systems - keep your community engaged without additional bots",
+                why_comparison_nocode: "Complete visual dashboard. Customize everything through the web interface without touching a command line",
+                why_comparison_availability: "Hosted on reliable infrastructure with automatic failover and redundancy for maximum uptime",
+                why_comparison_sync: "Changes in the dashboard instantly apply to Discord. No waiting, no confusion about which settings are active",
+                why_comparison_ecosystem: "Join 2.5K+ servers and 250K+ users benefiting from regular updates and community-driven improvements",
+                why_testimonials_title: "What Our Users Say",
+                why_testimonial_1: "ShadowMod transformed how we manage our server. The AI moderation alone has saved us hours of work!",
+                why_testimonial_2: "Finally, one bot that does it all. No more managing 5 different bots with conflicting commands!",
+                why_testimonial_3: "The dashboard is so intuitive. Even non-technical staff can configure features without help.",
+                why_cta_title: "Experience ShadowMod Today",
+                why_cta_subtitle: "Join thousands of communities already using ShadowMod to grow and manage their Discord servers",
+                why_cta_button: "Add to Your Server"
+            },
+            hu: {
+                nav_commands: "Parancsok",
+                nav_why_us: "Miért mi?",
+                why_hero_title: "Miért válassza a ShadowMod-ot?",
+                why_hero_subtitle: "A legátfogóbb Discord bot megoldás a közösségkezeléshez és növekedéshez",
+                why_reasons_title: "Miért különleges a ShadowMod",
+                why_comprehensive: "🎯 Átfogó megoldás",
+                why_comprehensive_desc: "Egy bot a moderációhoz, szórakoztatáshoz, analitikához, gazdasági rendszerhez és automatizáláshoz - eliminálva több bot szükségességét",
+                why_ai_powered: "🧠 Mesterséges Intelligencia alapú funkciók",
+                why_ai_powered_desc: "Fejlett AI integráció intelligens moderációs döntésekhez, tartalom szűréshez és természetes beszélgetésekhez",
+                why_easy_setup: "⚡ Egyszerű beállítás és konfigurálás",
+                why_easy_setup_desc: "Intuitív irányítópult pont-és-kattintás konfigurálással. Nincs szükség kódolásra - állítsd be szervereid percek alatt",
+                why_multilingual: "🌐 Igazi többnyelvű támogatás",
+                why_multilingual_desc: "Teljes angol és magyar támogatás automatikus üzenet fordítással és honosított parancsfelismeréssel",
+                why_active_development: "🚀 Aktív fejlesztés",
+                why_active_development_desc: "Rendszeres frissítések, új funkciók, hibajavítások és fejlesztések a közösségi visszajelzések alapján",
+                why_support: "💬 Közösségi támogatás",
+                why_support_desc: "Dedikált támogatási csapat, aktív közösség, dokumentáció és oktatóanyagok a sikerhez",
+                why_secure: "🔒 Biztonságos és megbízható",
+                why_secure_desc: "Nagyvállalati szintű biztonság, adatvédelem megfelelőség, rendszeres biztonsági másolatok és 99,8%+ üzemidő garancia",
+                why_affordable: "💰 Megfizethető árak",
+                why_affordable_desc: "Prémium funkciók versenyképes árakon. Kezdd ingyen az alapvető funkciókkal, frissíts ahogy közöséged növekszik",
+                why_analytics: "📊 Fejlett analitika",
+                why_analytics_desc: "Valós idejű betekintések a szerver metrikáiba, felhasználói viselkedésbe, növekedési trendekbe és parancshasználati mintákba",
+                why_comparison_title: "Mi tesz minket másé",
+                why_comparison_allinone: "A legtöbb bot egy területre szakosodott. A ShadowMod 15+ kategóriában kiváló, csökkentve a bot zsúfoltságot és összetettséget",
+                why_comparison_entertainment: "Játékok, zene, gazdasági rendszerek - tartsd közöséged foglalkoztatottnak további botok nélkül",
+                why_comparison_nocode: "Teljes vizuális irányítópult. Szabd testre mindent a webes felületen keresztül anélkül, hogy parancssorozzál",
+                why_comparison_availability: "Megbízható infrastruktúrán hosztolt automatikus feladatátvétellel és redundanciával a maximális üzemidőért",
+                why_comparison_sync: "Az irányítópulton végzett módosítások azonnal alkalmazódnak a Discordon. Nincs várakozás, nincs zavar mely beállítások aktívak",
+                why_comparison_ecosystem: "Csatlakozz a 2,5K+ szerverhez és 250K+ felhasználóhoz akik már élvezik az rendszeres frissítéseket és közösség-vezérelt fejlesztéseket",
+                why_testimonials_title: "Mit mondanak felhasználóink",
+                why_testimonial_1: "A ShadowMod megváltoztatta, ahogy kezeljük szerverünket. Az AI moderáció egyedül rengeteg óra munkát takarított meg!",
+                why_testimonial_2: "Végre, egy bot amely mindent tud. Nem kell több 5 különböző botot kezelni ütköző parancsokkal!",
+                why_testimonial_3: "Az irányítópult olyan intuitív. Még nem technikai személyzet is tudja konfigurálni a funkciókat segítség nélkül.",
+                why_cta_title: "Tapasztald meg a ShadowMod-ot Ma",
+                why_cta_subtitle: "Csatlakozz azokhoz a közösségekhez akik már a ShadowMod-ot használják szerverik növekedéséhez és kezeléséhez",
+                why_cta_button: "Hozzáadás a szerveredhez"
+            }
+        };
+
+        let currentLanguage = localStorage.getItem('language') || 'en';
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
+            
+            const toggle = document.getElementById('langToggle');
+            if (toggle) {
+                toggle.checked = lang === 'hu';
+            }
+            
+            const indicator = document.getElementById('langIndicator');
+            if (indicator) {
+                indicator.textContent = lang.toUpperCase();
+            }
+            
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+        }
+
+        const langToggle = document.getElementById('langToggle');
+        if (langToggle) {
+            langToggle.addEventListener('change', () => {
+                setLanguage(langToggle.checked ? 'hu' : 'en');
+            });
+        }
+
+        function checkUserSession() {
+            const userInfo = document.getElementById('userInfo');
+            if (!userInfo) return;
+            
+            fetch('/api/user')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.user) {
+                        userInfo.innerHTML = `
+                            <div class="user-info">
+                                <img src="https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png" class="user-avatar" alt="Avatar">
+                                <span>${data.user.username}</span>
+                            </div>
+                            <a href="/auth/logout" class="btn-large" style="padding: 0.7rem 1.5rem; background: rgba(255, 0, 100, 0.2); border: 1px solid #ff0064; color: #ff0064;">Logout</a>
+                        `;
+                    } else {
+                        userInfo.innerHTML = '<a href="/auth/discord" class="btn-large btn-login" style="padding: 0.7rem 1.5rem;">Login with Discord</a>';
+                    }
+                })
+                .catch(() => {
+                    userInfo.innerHTML = '<a href="/auth/discord" class="btn-large btn-login" style="padding: 0.7rem 1.5rem;">Login with Discord</a>';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLanguage);
+            checkUserSession();
+        });
+    </script>
+</body>
+</html>

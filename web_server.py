@@ -239,6 +239,13 @@ def commands():
     """Alias for /help - redirects to commands page"""
     return redirect('/help')
 
+@app.route('/why-us')
+def why_us():
+    """Why Us page - explains ShadowMod benefits"""
+    response = app.make_response(render_template('why_us.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
+
 @app.route('/api/stats')
 def api_stats():
     try:
