@@ -4,6 +4,7 @@ from discord.ext import commands
 import config
 import translations
 from datetime import datetime, timezone, timedelta
+from cogs.tickets import TicketView, CloseTicketView
 
 class SlashCommands(commands.Cog):
     def __init__(self, bot):
@@ -73,12 +74,12 @@ class SlashCommands(commands.Cog):
     @app_commands.command(name="ticket", description="Create a ticket panel / Jegy panel létrehozása")
     @app_commands.checks.has_permissions(administrator=True)
     async def slash_ticket(self, interaction: discord.Interaction):
-        ticket_cog = self.bot.get_cog('Tickets')
-        if ticket_cog:
-            view = ticket_cog.TicketView()
-            self.bot.add_view(view)
-            
+        try:
+            from transactions import get_text
             guild_id = interaction.guild.id
+            
+            view = TicketView()
+            self.bot.add_view(view)
             
             embed = discord.Embed(
                 title=translations.get_text(guild_id, 'ticket_title'),
@@ -88,6 +89,15 @@ class SlashCommands(commands.Cog):
             embed.add_field(
                 name=translations.get_text(guild_id, 'ticket_how_it_works'),
                 value=translations.get_text(guild_id, 'ticket_steps'),
+                inline=False
+            )
+            
+            await interaction.response.send_message(embed=embed, view=view)
+        except Exception as e:
+            print(f"❌ Error in /ticket command: {e}")
+            import traceback
+            traceback.print_exc()
+            await interaction.response.send_message(f"Error creating ticket panel: {str(e)}", ephemeral=True)
                 inline=False
             )
             
