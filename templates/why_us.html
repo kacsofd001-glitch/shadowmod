@@ -221,33 +221,36 @@
         let currentLanguage = localStorage.getItem('language') || 'en';
 
         function setLanguage(lang) {
+            if (!translations[lang]) lang = 'en';
             currentLanguage = lang;
             localStorage.setItem('language', lang);
             
             const toggle = document.getElementById('langToggle');
-            if (toggle) {
-                toggle.checked = lang === 'hu';
-            }
+            if (toggle) toggle.checked = (lang === 'hu');
             
             const indicator = document.getElementById('langIndicator');
-            if (indicator) {
-                indicator.textContent = lang.toUpperCase();
-            }
+            if (indicator) indicator.textContent = lang.toUpperCase();
             
             document.querySelectorAll('[data-translate]').forEach(el => {
                 const key = el.getAttribute('data-translate');
-                if (translations[lang] && translations[lang][key]) {
+                if (translations[lang][key]) {
                     el.textContent = translations[lang][key];
                 }
             });
         }
 
-        const langToggle = document.getElementById('langToggle');
-        if (langToggle) {
-            langToggle.addEventListener('change', () => {
-                setLanguage(langToggle.checked ? 'hu' : 'en');
-            });
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLanguage);
+            
+            const langToggle = document.getElementById('langToggle');
+            if (langToggle) {
+                langToggle.addEventListener('change', (e) => {
+                    setLanguage(e.target.checked ? 'hu' : 'en');
+                });
+            }
+            
+            checkUserSession();
+        });
 
         function checkUserSession() {
             const userInfo = document.getElementById('userInfo');
@@ -272,11 +275,6 @@
                     userInfo.innerHTML = '<a href="/auth/discord" class="btn-large btn-login" style="padding: 0.7rem 1.5rem;">Login with Discord</a>';
                 });
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            setLanguage(currentLanguage);
-            checkUserSession();
-        });
     </script>
 </body>
 </html>
