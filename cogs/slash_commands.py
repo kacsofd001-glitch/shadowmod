@@ -75,7 +75,6 @@ class SlashCommands(commands.Cog):
     @app_commands.checks.has_permissions(administrator=True)
     async def slash_ticket(self, interaction: discord.Interaction):
         try:
-            from transactions import get_text
             guild_id = interaction.guild.id
             
             view = TicketView()
