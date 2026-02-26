@@ -98,10 +98,6 @@ class SlashCommands(commands.Cog):
             import traceback
             traceback.print_exc()
             await interaction.response.send_message(f"Error creating ticket panel: {str(e)}", ephemeral=True)
-                inline=False
-            )
-            
-            await interaction.response.send_message(embed=embed, view=view)
     
     @app_commands.command(name="meme", description="Get a random meme / Véletlen meme lekérése")
     async def slash_meme(self, interaction: discord.Interaction):
