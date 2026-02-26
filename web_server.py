@@ -3,9 +3,6 @@ from flask_cors import CORS
 from datetime import datetime, timezone
 import json
 import os
-import threading
-import time
-import sys
 import requests
 import secrets
 from functools import wraps
@@ -242,9 +239,25 @@ def commands():
 @app.route('/why-us')
 def why_us():
     """Why Us page - explains ShadowMod benefits and features"""
-    response = app.make_response(render_template('why_us.html'))
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    return response
+    try:
+        response = app.make_response(render_template('why_us.html'))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        print("✅ /why-us route accessed successfully", flush=True)
+        return response
+    except Exception as e:
+        print(f"❌ Error rendering /why-us: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e), 'hint': 'Check if why_us.html template exists'}), 500
+
+@app.route('/api/health')
+def health_check():
+    """Health check endpoint for monitoring"""
+    return jsonify({
+        'status': 'ok',
+        'service': 'web-server',
+        'bot': 'runs separately (python run_bot.py)'
+    }), 200
 
 @app.route('/api/stats')
 def api_stats():
@@ -260,27 +273,10 @@ def api_stats():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# --- STABIL INDÍTÁSI LOGIKA (Render Fix) ---
-
-def start_bot_process():
-    """Bot indítása késleltetve a Web Szerver után"""
-    print("\n⏳ Stabilization: Waiting 10s for Flask to bind port...", flush=True)
-    time.sleep(10)
-    print("\n🤖 Background process: Loading Discord modules...", flush=True)
-    try:
-        # Késleltetett import a Gunicorn fagyás ellen
-        from main import bot
-        TOKEN = os.getenv('DISCORD_TOKEN')
-        if TOKEN:
-            bot.run(TOKEN)
-        else:
-            print("❌ DISCORD_TOKEN is missing!", flush=True)
-    except Exception as e:
-        print(f"❌ Bot thread error: {e}", flush=True)
-
-# Háttérszál regisztrálása (Gunicorn is elindítja)
-print("\n📋 System: Registering background threads...", flush=True)
-threading.Thread(target=start_bot_process, daemon=True, name="DiscordBot").start()
+# --- WEB SERVER ONLY ---
+# Note: Discord bot is now run as a separate process (python run_bot.py)
+# This ensures better stability and proper error handling
+print("\n📋 System: Web Server initialized (Discord bot runs separately)", flush=True)
 
 if __name__ == '__main__':
     # Lokális indítás (python web_server.py)

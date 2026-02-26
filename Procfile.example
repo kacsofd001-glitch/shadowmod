@@ -1,0 +1,13 @@
+# Procfile - ShadowMod Deployment
+
+# OPTION 1: Single Dyno (Current - Simpler to deploy)
+# Web server and bot run in same process with proper isolation
+web: bash start.sh
+
+# OPTION 2: Separate Dynos (Recommended for production - More reliable)
+# Uncomment below and comment out above, then add a "Worker" service in Render
+# web: python run_web.py
+# worker: python run_bot.py
+
+# Note: start.sh currently runs "python run.py" which handles both services
+# The bot is now independent of Flask and has auto-restart capability
