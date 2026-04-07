@@ -34,8 +34,6 @@ class DiscordBot(commands.Bot):
         self.start_time = datetime.now(timezone.utc)
         
     async def setup_hook(self):
-        # TEMPORARY: Only load slash_commands to test if cogs are the issue
-        print("⚠️ TESTING MODE: Only loading slash_commands cog")
         cogs_to_load = [
             'cogs.tickets',
             'cogs.antialt',
@@ -96,6 +94,7 @@ class DiscordBot(commands.Bot):
             'cogs.botstatus',
             'cogs.webhooks',
             'cogs.hungariandefense',
+            'cogs.community',
             'cogs.slash_commands'
         ]
         
