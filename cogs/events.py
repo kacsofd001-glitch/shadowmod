@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 import config
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 class Events(commands.Cog):
     def __init__(self, bot):

@@ -1,13 +1,14 @@
 print("🔄 Loading bot modules...", flush=True)
 
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import asyncio
 import os
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 import json
 import config
+import sys
 
 print("📁 Loading environment variables...", flush=True)
 load_dotenv()
@@ -136,6 +137,29 @@ class DiscordBot(commands.Bot):
 
 bot = DiscordBot()
 
+# Keep-alive task to prevent inactivity timeout
+@tasks.loop(minutes=5)
+async def keep_alive():
+    """Periodic health check to prevent inactivity disconnects"""
+    try:
+        if bot.user:
+            current_time = datetime.now(timezone.utc).isoformat()
+            print(f"💓 [HEARTBEAT] Bot is alive at {current_time} | Latency: {round(bot.latency * 1000)}ms | Guilds: {len(bot.guilds)}")
+            bot.update_stats_file()
+        else:
+            print("⚠️ [HEARTBEAT] Warning: Bot user not initialized yet")
+    except Exception as e:
+        print(f"❌ [HEARTBEAT] Error: {e}")
+
+@keep_alive.before_loop
+async def before_keep_alive():
+    """Wait for bot to be ready before starting keep-alive"""
+    await bot.wait_until_ready()
+    print("✅ Keep-alive task started")
+
+# Start keep-alive on bot startup
+keep_alive.start()
+
 @bot.event
 async def on_ready():
     print(f'✅ Bot is ready! Logged in as {bot.user}')
@@ -160,9 +184,37 @@ async def on_ready():
     bot.update_stats_file()
 
 @bot.event
+async def on_disconnect():
+    """Handle bot disconnection"""
+    print("⚠️  Bot disconnected from Discord at " + datetime.now(timezone.utc).isoformat() + ". Saving config...")
+    await save_config_on_close()
+
+@bot.event
+async def on_resumed():
+    """Called when bot reconnects after being disconnected"""
+    print("✅ Bot has resumed connection to Discord!")
+    bot.update_stats_file()
+
+@bot.event
 async def on_error(event, *args, **kwargs):
-    """Global error handler"""
-    print(f"❌ Error in event {event}:", exc_info=True)
+    """Global error handler - prevents bot from crashing on event errors"""
+    error_info = sys.exc_info()
+    print(f"❌ Error in event '{event}' at {datetime.now(timezone.utc).isoformat()}:")
+    print(f"   Exception: {error_info[1]}")
+    
+    # Log to a file for debugging
+    try:
+        with open('bot_errors.log', 'a', encoding='utf-8') as f:
+            f.write(f"[{datetime.now(timezone.utc).isoformat()}] Event: {event}\n")
+            f.write(f"   Error: {error_info[1]}\n")
+            f.write("---\n")
+    except:
+        pass
+    
+    # Import traceback for full error logs
+    import traceback
+    traceback.print_exc()
+    print("⚡ Bot will continue running despite this error")
 
 async def save_config_on_close():
     """Save all config data before bot closes"""
@@ -173,12 +225,6 @@ async def save_config_on_close():
         print("✅ Configuration saved successfully!")
     except Exception as e:
         print(f"❌ Failed to save configuration on shutdown: {e}")
-
-@bot.event
-async def on_disconnect():
-    """Handle bot disconnection"""
-    print("⚠️  Bot disconnected from Discord. Saving config...")
-    await save_config_on_close()
 
 @bot.tree.error
 async def on_app_command_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
