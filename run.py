@@ -6,11 +6,15 @@ import threading
 import time
 import signal
 
+# Build version for tracking deployments  - tracks which version is running on Render
+BUILD_VERSION = "1.0.5-c64d991-process-fix"
+
 # Ensure output is not buffered
 os.environ['PYTHONUNBUFFERED'] = '1'
 
 print("=" * 70, flush=True)
 print("🚀 ShadowMod Application Startup", flush=True)
+print(f"📦 Build: {BUILD_VERSION}", flush=True)
 print("=" * 70, flush=True)
 print(f"📁 Working directory: {os.getcwd()}", flush=True)
 print(f"🐍 Python: {sys.executable}", flush=True)
@@ -66,8 +70,8 @@ def run_bot_with_restart():
                 else:
                     print(f"❌ [BOT] Max restart attempts ({max_restarts}) reached", flush=True)
         
-    except Exception as e:
-        print(f"❌ [BOT] Failed to start bot: {e}", flush=True)
+        except Exception as e:
+            print(f"❌ [BOT] Failed to start bot: {e}", flush=True)
             import traceback
             traceback.print_exc()
 
