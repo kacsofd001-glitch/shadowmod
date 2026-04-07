@@ -168,17 +168,6 @@ TRANSLATIONS = {
         'help_modmail': '📬 ModMail',
         'help_modmail_desc': '`/modmail_setup <category>` - Set up modmail\n`/modmail_disable` - Disable modmail\n`/modmail_status` - Check status\n`/close-modmail` - Close ticket',
     },
-        
-        # Additional help categories
-        'help_fun': '🎭 Fun',
-        'help_fun_desc': '`/meme` - Get random memes\n`/8ball` - Ask questions\n`/joke` - Tell a joke\n`/echo` - Repeat text\n`/avatar` - Show avatar',
-        'help_stats': '📊 Stats',
-        'help_stats_desc': '`/serverstats` - Server analytics\n`/rank` - Your level\n`/leaderboard` - XP rankings\n`/growth` - Member growth stats',
-        
-        # Modmail
-        'help_modmail': '📬 ModMail',
-        'help_modmail_desc': '`/modmail_setup <category>` - Set up modmail\n`/modmail_disable` - Disable modmail\n`/modmail_status` - Check status\n`/close-modmail` - Close ticket',
-    },
     
     'hu': {
         # General

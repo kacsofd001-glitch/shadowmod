@@ -102,25 +102,39 @@ class AutoMod(commands.Cog):
     
     async def check_bad_words(self, message, settings):
         """Check for bad words with language support"""
+        # Load custom bad words from config
+        cfg = config.load_config()
+        custom_bad_words = settings.get('bad_words', [])
+        
         # Get guild language setting
-        db_settings = get_guild_settings(str(message.guild.id))
-        guild_language = db_settings.get('language', 'en')
+        guild_language = cfg.get('guild_languages', {}).get(str(message.guild.id), 'en')
         
-        # Merge language-specific bad words with custom ones
-        custom_bad_words = db_settings.get('bad_words', [])
-        bad_words_list = merge_bad_words(guild_language, custom_bad_words or [])
+        # Check for bad words (custom words take priority)
+        if custom_bad_words:
+            # Check custom bad words first
+            for bad_word in custom_bad_words:
+                if bad_word.lower() in message.content.lower():
+                    try:
+                        await message.delete()
+                        
+                        if guild_language == 'hu':
+                            msg = f"⚠️ {message.author.mention}, megfelelő viselkedés szükséges!"
+                        else:
+                            msg = f"⚠️ {message.author.mention}, please watch your language!"
+                        
+                        await message.channel.send(msg, delete_after=5)
+                        await self.punish_user(message, f"Used inappropriate word: {bad_word}", settings['punishment'])
+                    except:
+                        pass
+                    return True
         
-        # Auto-detect message language
-        detected_lang = detect_language(message.content)
-        
-        # Check for bad words
+        # Then check language-specific bad words
         found_bad, bad_word = has_bad_words(message.content, guild_language, custom_bad_words)
         
         if found_bad:
             try:
                 await message.delete()
                 
-                # Localized message
                 if guild_language == 'hu':
                     msg = f"⚠️ {message.author.mention}, megfelelő viselkedés szükséges!"
                 else:
