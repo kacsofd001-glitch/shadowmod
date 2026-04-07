@@ -2,6 +2,25 @@
 Hungarian and Multilingual AutoMod Support
 Contains Hungarian-specific content filtering and language-aware moderation
 """
+import config
+
+def get_bad_words_for_language(language_code):
+    """Get bad words list for a specific language (from config first, then defaults)"""
+    cfg = config.load_config()
+    
+    # Check if custom bad words are set in config
+    automod = cfg.get('automod', {})
+    if automod and str(0) in automod:  # 0 = global setting
+        custom_words = automod[str(0)].get('bad_words', [])
+        if custom_words:
+            return custom_words
+    
+    # Fall back to hardcoded defaults
+    if language_code == 'hu':
+        return HUNGARIAN_BAD_WORDS
+    elif language_code == 'en':
+        return ENGLISH_BAD_WORDS
+    return ENGLISH_BAD_WORDS
 
 # Common Hungarian bad words and profanity
 HUNGARIAN_BAD_WORDS = [
