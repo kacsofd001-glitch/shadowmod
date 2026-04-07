@@ -156,7 +156,29 @@ TRANSLATIONS = {
         'message_sent': '✅ Message sent',
         'embed_sent': '✅ Embed sent',
         'generic_error': '❌ Error: {}',
-        'pong': '🏓 Pong! {}ms',    },
+        'pong': '🏓 Pong! {}ms',
+        
+        # Additional help categories
+        'help_fun': '🎭 Fun',
+        'help_fun_desc': '`/meme` - Get random memes\n`/8ball` - Ask questions\n`/joke` - Tell a joke\n`/echo` - Repeat text\n`/avatar` - Show avatar',
+        'help_stats': '📊 Stats',
+        'help_stats_desc': '`/serverstats` - Server analytics\n`/rank` - Your level\n`/leaderboard` - XP rankings\n`/growth` - Member growth stats',
+        
+        # Modmail
+        'help_modmail': '📬 ModMail',
+        'help_modmail_desc': '`/modmail_setup <category>` - Set up modmail\n`/modmail_disable` - Disable modmail\n`/modmail_status` - Check status\n`/close-modmail` - Close ticket',
+    },
+        
+        # Additional help categories
+        'help_fun': '🎭 Fun',
+        'help_fun_desc': '`/meme` - Get random memes\n`/8ball` - Ask questions\n`/joke` - Tell a joke\n`/echo` - Repeat text\n`/avatar` - Show avatar',
+        'help_stats': '📊 Stats',
+        'help_stats_desc': '`/serverstats` - Server analytics\n`/rank` - Your level\n`/leaderboard` - XP rankings\n`/growth` - Member growth stats',
+        
+        # Modmail
+        'help_modmail': '📬 ModMail',
+        'help_modmail_desc': '`/modmail_setup <category>` - Set up modmail\n`/modmail_disable` - Disable modmail\n`/modmail_status` - Check status\n`/close-modmail` - Close ticket',
+    },
     
     'hu': {
         # General
@@ -307,11 +329,21 @@ TRANSLATIONS = {
         'invalid_user': '❌ Érvénytelen felhasználó! Adj meg egy érvényes mention-t vagy felhasználó ID-t.',
         'help_unavailable': '❌ A súgó rendszer jelenleg nem elérhető.',
         'error_loading_help': '❌ Hiba a súgó betöltésekor: {}',
-        'permission_denied': '❌ Nincs jogosultságod ehhez! / You don\'t have permission to use this!',
-        'message_sent': '✅ Üzenet elküldve / Message sent',
-        'embed_sent': '✅ Embed elküldve / Embed sent',
+        'permission_denied': '❌ Nincs jogosultságod ehhez!',
+        'message_sent': '✅ Üzenet elküldve',
+        'embed_sent': '✅ Embed elküldve',
         'generic_error': '❌ Hiba: {}',
         'pong': '🏓 Pong! {}ms',
+        
+        # Additional help categories
+        'help_fun': '🎭 Szórakozás',
+        'help_fun_desc': '`/meme` - Véletlen memek lekérése\n`/8ball` - Kérdezz fel\n`/joke` - Mondd el a viccet\n`/echo` - Szöveg ismétlése\n`/avatar` - Profilkép megjelenítése',
+        'help_stats': '📊 Statisztika',
+        'help_stats_desc': '`/serverstats` - Szerver analitika\n`/rank` - A te szinted\n`/leaderboard` - XP rangsor\n`/growth` - Tagok növekedési statisztikái',
+        
+        # Modmail
+        'help_modmail': '📬 ModMail',
+        'help_modmail_desc': '`/modmail_setup <category>` - ModMail beállítása\n`/modmail_disable` - ModMail letiltása\n`/modmail_status` - Állapot ellenőrzése\n`/close-modmail` - Jegy lezárása',
     },
 }
 

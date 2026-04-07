@@ -2120,6 +2120,113 @@ class SlashCommands(commands.Cog):
     
     # ==================== SETUP & HELP COMMANDS ====================
     
+    @app_commands.command(name="rules", description="Show all available commands / Összes parancs megjelenítése")
+    async def slash_rules(self, interaction: discord.Interaction):
+        """Display all available bot commands organized by category"""
+        guild_id = interaction.guild.id if interaction.guild else 0
+        
+        embed = discord.Embed(
+            title="📜 Bot Commands & Features",
+            description="Here are all the amazing commands this bot offers!",
+            color=0x00F3FF
+        )
+        
+        # Moderation
+        embed.add_field(
+            name="🛡️ **MODERATION**",
+            value=(
+                "`/ban` - Ban a user\n"
+                "`/kick` - Kick a user\n"
+                "`/mute` - Mute a user\n"
+                "`/unmute` - Unmute a user\n"
+                "`/warn` - Warn a user\n"
+                "`/warnings` - Check warnings\n"
+                "`/lock` - Lock a channel\n"
+                "`/unlock` - Unlock a channel\n"
+                "`/purge` - Delete messages"
+            ),
+            inline=False
+        )
+        
+        # Modmail
+        embed.add_field(
+            name="📬 **MODMAIL**",
+            value=(
+                "`/modmail_setup <category>` - Set up modmail\n"
+                "`/modmail_disable` - Disable modmail\n"
+                "`/modmail_status` - Check modmail status\n"
+                "`/close-modmail` - Close a ticket"
+            ),
+            inline=False
+        )
+        
+        # Tickets
+        embed.add_field(
+            name="🎫 **TICKETS**",
+            value=(
+                "`/ticket` - Create ticket panel\n"
+                "Users can create support tickets"
+            ),
+            inline=False
+        )
+        
+        # Economy
+        embed.add_field(
+            name="💰 **ECONOMY**",
+            value=(
+                "`/balance` - Check balance\n"
+                "`/daily` - Claim daily reward\n"
+                "`/shop` - View shop\n"
+                "`/buy` - Buy items\n"
+                "`/inventory` - Check inventory"
+            ),
+            inline=False
+        )
+        
+        # Fun & Games
+        embed.add_field(
+            name="🎮 **FUN & GAMES**",
+            value=(
+                "`/8ball` - Magic 8-ball\n"
+                "`/coinflip` - Flip a coin\n"
+                "`/roll` - Roll dice\n"
+                "`/meme` - Get a random meme\n"
+                "`/rps` - Rock, paper, scissors\n"
+                "`/tictactoe` - Play tic-tac-toe"
+            ),
+            inline=False
+        )
+        
+        # Info
+        embed.add_field(
+            name="ℹ️ **INFO**",
+            value=(
+                "`/ping` - Check bot latency\n"
+                "`/help` - Interactive help menu\n"
+                "`/rules` - Show all commands\n"
+                "`/userinfo` - User information\n"
+                "`/serverinfo` - Server information"
+            ),
+            inline=False
+        )
+        
+        # Utility
+        embed.add_field(
+            name="⚙️ **UTILITY**",
+            value=(
+                "`/setup` - Setup wizard\n"
+                "`/verify` - Verification system\n"
+                "`/polls` - Create polls\n"
+                "`/reminders` - Set reminders\n"
+                "`/music` - Music commands"
+            ),
+            inline=False
+        )
+        
+        embed.set_footer(text="Use /help for detailed command information | Type the command in chat to use it")
+        
+        await interaction.response.send_message(embed=embed, ephemeral=False)
+    
     @app_commands.command(name="setup", description="Interactive setup wizard / Telepítési varázsló")
     async def slash_setup(self, interaction: discord.Interaction):
         from translations import get_text

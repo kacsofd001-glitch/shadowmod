@@ -29,7 +29,17 @@ class InteractiveHelp(commands.Cog):
                 "🎮 **Games** - Fun mini-games\n"
                 "🎭 **Fun** - Entertainment commands\n"
                 "⚙️ **Utility** - Helpful tools\n"
-                "📊 **Stats** - Analytics & tracking"
+                "📊 **Stats** - Analytics & tracking\n"
+                "📬 **ModMail** - Support system"
+            ) if lang == 'en' else (
+                "Kattints az alábbi gombra a parancsok megtekintéséhez kategóriák szerint!\n\n"
+                "🛡️ **Moderáció** - Szerver kezelése\n"
+                "💰 **Gazdaság** - Pénzrendszer & bolt\n"
+                "🎮 **Játékok** - Szórakoztató minijátékok\n"
+                "🎭 **Szórakozás** - Szórakoztató parancsok\n"
+                "⚙️ **Eszközök** - Hasznos eszközök\n"
+                "📊 **Statisztika** - Analytics & nyomkövetés\n"
+                "📬 **ModMail** - Támogatási rendszer"
             ),
             inline=False
         )
@@ -52,8 +62,12 @@ class HelpView(discord.ui.View):
         import translations
         from translations import get_text
         lang = translations.get_guild_language(self.guild_id)
+        
+        mod_title_en = get_text(self.guild_id, 'help_moderation', lang='en')
+        mod_title = get_text(self.guild_id, 'help_moderation', lang=lang)
+        
         embed = discord.Embed(
-            title=get_text(self.guild_id, 'help_moderation', lang=lang),
+            title=mod_title,
             description=(
                 "`/ban` - Ban user\n"
                 "`/kick` - Kick user\n"
@@ -64,6 +78,16 @@ class HelpView(discord.ui.View):
                 "`/lock` / `/unlock` - Channel lock\n"
                 "`/say` - Make bot send a message\n"
                 "`/embedsay` - Make bot send an embed"
+            ) if lang == 'en' else (
+                "`/ban` - Felhasználó kitiltása\n"
+                "`/kick` - Felhasználó kirúgása\n"
+                "`/mute` / `/unmute` - Felhasználó némítása/visszahangosítása\n"
+                "`/warn` - Felhasználó figyelmeztetése\n"
+                "`/purge` - Üzenetek törlése\n"
+                "`/tempmute` - Felhasználó időtúltöltése\n"
+                "`/lock` / `/unlock` - Csatorna zárolása\n"
+                "`/say` - Bot szöveg küldése\n"
+                "`/embedsay` - Bot embed küldése"
             ),
             color=0xFF0000
         )
@@ -86,6 +110,16 @@ class HelpView(discord.ui.View):
                 "`/pay` - Send money\n"
                 "`/top` - Economy leaderboard\n"
                 "`/inventory` - Show items"
+            ) if lang == 'en' else (
+                "`/balance` - Egyenleg ellenőrzése\n"
+                "`/work` - Pénz keresése\n"
+                "`/daily` - Napi jutalom\n"
+                "`/shop` - Elérrhető tárgyak\n"
+                "`/buy` - Tárgy vásárlása\n"
+                "`/rob` - Rablási kísérlet\n"
+                "`/pay` - Pénz küldése\n"
+                "`/top` - Gazdasági rangsor\n"
+                "`/inventory` - Tárolóedény"
             ),
             color=0xFFD700
         )
@@ -107,6 +141,15 @@ class HelpView(discord.ui.View):
                 "`/blackjack` - Casino game\n"
                 "`/slots` - Slot machine\n"
                 "`/connectfour` - Connect Four"
+            ) if lang == 'en' else (
+                "`/rps` - Kő-papír-olló\n"
+                "`/tictactoe` - Amőba\n"
+                "`/dice` - Kocka dobása\n"
+                "`/coinflip` - Érmefeldobás\n"
+                "`/trivia` - Érdekes trivia\n"
+                "`/blackjack` - Kaszinó játék\n"
+                "`/slots` - Nyerőgép\n"
+                "`/connectfour` - Négy összeköt"
             ),
             color=0xFF00FF
         )
@@ -130,6 +173,17 @@ class HelpView(discord.ui.View):
                 "`/setwebhook` - Set logging webhook\n"
                 "`/setupvoice` - Setup temp voice system\n"
                 "`/voicename` - Rename your temp voice channel"
+            ) if lang == 'en' else (
+                "`/ping` - Késleltetés ellenőrzés\n"
+                "`/serverinfo` - Szerver statisztikák\n"
+                "`/botinfo` - Bot részletei\n"
+                "`/userinfo` - Felhasználó profil\n"
+                "`/setlang` - Nyelv módosítása\n"
+                "`/setprefix` - Szerep becenév prefix\n"
+                "`/setlog` - Naplócsatorna beállítása\n"
+                "`/setwebhook` - Webhook beállítása\n"
+                "`/setupvoice` - Temp hang rendszer\n"
+                "`/voicename` - Temp hang csatorna átnevezése"
             ),
             color=0x00F3FF
         )
@@ -142,13 +196,7 @@ class HelpView(discord.ui.View):
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
             title=get_text(self.guild_id, 'help_fun', lang=lang),
-            description=(
-                "`/meme` - Get random memes\n"
-                "`/8ball` - Ask questions\n"
-                "`/joke` - Tell a joke\n"
-                "`/echo` - Repeat text\n"
-                "`/avatar` - Show avatar"
-            ),
+            description=get_text(self.guild_id, 'help_fun_desc', lang=lang),
             color=0xFF00FF
         )
         await interaction.response.edit_message(embed=embed)
@@ -160,17 +208,24 @@ class HelpView(discord.ui.View):
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
             title=get_text(self.guild_id, 'help_stats', lang=lang),
-            description=(
-                "`/serverstats` - Server analytics\n"
-                "`/rank` - Your level\n"
-                "`/leaderboard` - XP rankings\n"
-                "`/growth` - Member growth stats"
-            ),
+            description=get_text(self.guild_id, 'help_stats_desc', lang=lang),
             color=0x00FF00
         )
         await interaction.response.edit_message(embed=embed)
     
-    @discord.ui.button(label="🏠 Back", style=discord.ButtonStyle.secondary, row=1)
+    @discord.ui.button(label="📬 ModMail", style=discord.ButtonStyle.secondary, emoji="📬", row=2)
+    async def modmail_help(self, interaction: discord.Interaction, button: discord.ui.Button):
+        import translations
+        from translations import get_text
+        lang = translations.get_guild_language(self.guild_id)
+        embed = discord.Embed(
+            title=get_text(self.guild_id, 'help_modmail', lang=lang),
+            description=get_text(self.guild_id, 'help_modmail_desc', lang=lang),
+            color=0x00F3FF
+        )
+        await interaction.response.edit_message(embed=embed)
+    
+    @discord.ui.button(label="🏠 Back", style=discord.ButtonStyle.secondary, row=2)
     async def back_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         import translations
         from translations import get_text
