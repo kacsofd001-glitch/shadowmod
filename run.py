@@ -140,15 +140,31 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, signal_handler)
     
     # Start bot in background thread with restart logic
+    print("🤖 [MAIN] Starting bot thread...", flush=True)
     bot_thread = threading.Thread(target=run_bot_with_restart, daemon=False, name="BotThread")
     bot_thread.start()
     
-    # Give bot a moment to initialize
-    time.sleep(2)
+    # Start web server in separate thread (non-blocking)
+    print("🌐 [MAIN] Starting web server thread...", flush=True)
+    web_thread = threading.Thread(target=run_web, daemon=False, name="WebThread")
+    web_thread.start()
     
-    # Start web server in main thread (blocking)
-    run_web()
+    print("✅ [MAIN] Both services started\n", flush=True)
     
-    # If web server exits, wait for bot thread
-    print("\n⏳ Waiting for bot thread to finish...", flush=True)
-    bot_thread.join(timeout=10)
+    # Keep main thread alive - wait for both threads
+    try:
+        print("⏳ [MAIN] Keeping application alive...", flush=True)
+        while True:
+            time.sleep(1)
+            # Check if threads are still alive periodically
+            if not bot_thread.is_alive():
+                print("⚠️  [MAIN] Bot thread died, restarting...", flush=True)
+                bot_thread = threading.Thread(target=run_bot_with_restart, daemon=False, name="BotThread")
+                bot_thread.start()
+            
+            if not web_thread.is_alive():
+                print("❌ [MAIN] Web thread died!", flush=True)
+                break
+    except KeyboardInterrupt:
+        print("\n⏹️  [MAIN] Interrupted", flush=True)
+        signal_handler(None, None)
