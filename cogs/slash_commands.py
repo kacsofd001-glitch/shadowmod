@@ -2150,16 +2150,6 @@ class SlashCommands(commands.Cog):
             return
         
         await setup_cog.start_setup(interaction)
-    
-    @app_commands.command(name="help", description="View bot help menu / Súgó menü megtekintése")
-    async def slash_help(self, interaction: discord.Interaction):
-        from translations import get_text
-        help_cog = self.bot.get_cog('InteractiveHelp')
-        if not help_cog:
-            await interaction.response.send_message("❌ Help system not loaded!", ephemeral=True)
-            return
-        
-        await help_cog.show_help(interaction)
 
 async def setup(bot):
     print("📝 Setting up SlashCommands cog...")
