@@ -554,17 +554,6 @@ class SlashCommands(commands.Cog):
         except ValueError:
             await interaction.response.send_message("❌ Invalid color format! Use hex (e.g. #00F3FF) / Érvénytelen színformátum! Használj hex kódot (pl. #00F3FF)", ephemeral=True)
 
-    @app_commands.command(name="ping", description="Check bot latency / Bot késleltetés ellenőrzése")
-    async def slash_ping(self, interaction: discord.Interaction):
-        await interaction.response.defer()
-        latency = round(self.bot.latency * 1000)
-        embed = discord.Embed(
-            title="🏓 Pong!",
-            description=f"Bot latency: **{latency}ms**",
-            color=0x00F3FF
-        )
-        await interaction.followup.send(embed=embed)
-    
     @app_commands.command(name="setannouncement", description="Set the announcement channel / Bejelentési csatorna beállítása")
     @app_commands.describe(channel="The channel for announcements / A bejelentések csatornája")
     @app_commands.checks.has_permissions(administrator=True)
@@ -2066,16 +2055,6 @@ class SlashCommands(commands.Cog):
             return
         
         await minigames_cog.play_slots(interaction, bet)
-    
-    @app_commands.command(name="coinflip", description="Flip a coin")
-    @app_commands.describe(bet="Amount to bet", choice="Heads or tails")
-    async def slash_coinflip(self, interaction: discord.Interaction, bet: int, choice: str):
-        minigames_cog = self.bot.get_cog('MiniGames')
-        if not minigames_cog:
-            await interaction.response.send_message("❌ Mini-games not loaded!", ephemeral=True)
-            return
-        
-        await minigames_cog.play_coinflip(interaction, bet, choice)
     
     @app_commands.command(name="scramble", description="Play word scramble")
     async def slash_scramble(self, interaction: discord.Interaction):
