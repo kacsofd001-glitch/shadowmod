@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ui import Button, View
+from discord import app_commands
 import config
 
 class TicketView(View):
@@ -67,34 +68,34 @@ class Tickets(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         
-    @commands.command(name='ticket')
-    @commands.has_permissions(administrator=True)
-    async def create_ticket_panel(self, ctx):
+    @app_commands.command(name='ticket', description='Execute ticket command')
+    @app_commands.checks.has_permissions(administrator=True)
+    async def create_ticket_panel(self, interaction: discord.Interaction):
         from translations import get_text
         embed = discord.Embed(
-            title=get_text(ctx.guild.id, 'ticket_title'),
-            description=get_text(ctx.guild.id, 'ticket_description') + "\n\n" + get_text(ctx.guild.id, 'ticket_steps'),
+            title=get_text(interaction.guild.id, 'ticket_title'),
+            description=get_text(interaction.guild.id, 'ticket_description') + "\n\n" + get_text(interaction.guild.id, 'ticket_steps'),
             color=0x8B00FF
         )
-        embed.set_footer(text=get_text(ctx.guild.id, 'help_footer'))
+        embed.set_footer(text=get_text(interaction.guild.id, 'help_footer'))
         
         view = TicketView()
-        await ctx.send(embed=embed, view=view)
-        await ctx.message.delete()
+        await interaction.response.send_message(embed=embed, view=view)
+        # Message deletion not supported in slash commands
     
-    @commands.command(name='closeticket')
-    @commands.has_permissions(manage_channels=True)
-    async def close_ticket_cmd(self, ctx):
-        if 'ticket-' in ctx.channel.name:
+    @app_commands.command(name='closeticket', description='Execute closeticket command')
+    @app_commands.checks.has_permissions(manage_channels=True)
+    async def close_ticket_cmd(self, interaction: discord.Interaction):
+        if 'ticket-' in interaction.channel.name:
             embed = discord.Embed(
                 title="🔒 Ticket Closed",
-                description=f"Ticket closed by {ctx.author.mention}",
+                description=f"Ticket closed by {interaction.user.mention}",
                 color=0xFF006E
             )
-            await ctx.send(embed=embed)
-            await ctx.channel.delete(reason=f"Ticket closed by {ctx.author}")
+            await interaction.response.send_message(embed=embed)
+            await interaction.channel.delete(reason=f"Ticket closed by {interaction.user}")
         else:
-            await ctx.send("❌ This command can only be used in ticket channels!")
+            await interaction.response.send_message("❌ This command can only be used in ticket channels!")
 
 async def setup(bot):
     await bot.add_cog(Tickets(bot))

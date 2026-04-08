@@ -61,7 +61,7 @@ class CommandStats(commands.Cog):
     async def on_command(self, ctx):
         """Track command usage"""
         if ctx.guild:
-            self.record_command(ctx.guild.id, ctx.command.name, ctx.author.id)
+            self.record_command(ctx.guild.id, "command_name", ctx.author.id)
     
     @commands.Cog.listener()
     async def on_interaction(self, interaction):

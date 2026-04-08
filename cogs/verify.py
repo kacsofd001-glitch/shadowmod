@@ -170,10 +170,10 @@ class Verify(commands.Cog):
         
         await interaction.followup.send(embed=config_embed)
     
-    @commands.command(name='setupverify')
-    @commands.has_permissions(administrator=True)
-    async def setup_verify_prefix(self, ctx, channel: discord.TextChannel, *, roles: str = ""):
-        await ctx.send("⚠️ Please use the slash command `/setupverify` for easier configuration!")
+    @app_commands.command(name='setupverify', description='Execute setupverify command')
+    @app_commands.checks.has_permissions(administrator=True)
+    async def setup_verify_prefix(self, interaction: discord.Interaction, channel: discord.TextChannel, *, roles: str = ""):
+        await interaction.response.send_message("⚠️ Please use the slash command `/setupverify` for easier configuration!")
 
 async def setup(bot):
     await bot.add_cog(Verify(bot))

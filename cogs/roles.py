@@ -1,21 +1,22 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 from datetime import datetime, timezone
 
 class Roles(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command(name='createrole')
-    @commands.has_permissions(manage_roles=True)
-    async def create_role(self, ctx, name: str, color: str = None):
+    @app_commands.command(name='createrole', description='Execute createrole command')
+    @app_commands.checks.has_permissions(manage_roles=True)
+    async def create_role(self, interaction: discord.Interaction, name: str, color: str = None):
         try:
             role_color = discord.Color.default()
             if color:
                 color = color.replace('#', '')
                 role_color = discord.Color(int(color, 16))
             
-            role = await ctx.guild.create_role(name=name, color=role_color)
+            role = await interaction.guild.create_role(name=name, color=role_color)
             
             embed = discord.Embed(
                 title="✅ Role Created",
@@ -23,17 +24,17 @@ class Roles(commands.Cog):
                 color=discord.Color.green(),
                 timestamp=datetime.now(timezone.utc)
             )
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         except ValueError:
-            await ctx.send("❌ Invalid color format! Use hex color (e.g., #FF5733)")
+            await interaction.response.send_message("❌ Invalid color format! Use hex color (e.g., #FF5733)")
         except Exception as e:
-            await ctx.send(f"❌ Error creating role: {str(e)}")
+            await interaction.response.send_message(f"❌ Error creating role: {str(e)}")
     
-    @commands.command(name='deleterole')
-    @commands.has_permissions(manage_roles=True)
-    async def delete_role(self, ctx, role: discord.Role):
-        if role >= ctx.author.top_role and ctx.author.id != ctx.guild.owner_id:
-            await ctx.send("❌ You cannot delete a role higher than or equal to your highest role!")
+    @app_commands.command(name='deleterole', description='Execute deleterole command')
+    @app_commands.checks.has_permissions(manage_roles=True)
+    async def delete_role(self, interaction: discord.Interaction, role: discord.Role):
+        if role >= interaction.user.top_role and interaction.user.id != interaction.guild.owner_id:
+            await interaction.response.send_message("❌ You cannot delete a role higher than or equal to your highest role!")
             return
         
         role_name = role.name
@@ -45,17 +46,17 @@ class Roles(commands.Cog):
             color=discord.Color.green(),
             timestamp=datetime.now(timezone.utc)
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='addrole')
-    @commands.has_permissions(manage_roles=True)
-    async def add_role(self, ctx, member: discord.Member, role: discord.Role):
-        if role >= ctx.author.top_role and ctx.author.id != ctx.guild.owner_id:
-            await ctx.send("❌ You cannot assign a role higher than or equal to your highest role!")
+    @app_commands.command(name='addrole', description='Execute addrole command')
+    @app_commands.checks.has_permissions(manage_roles=True)
+    async def add_role(self, interaction: discord.Interaction, member: discord.Member, role: discord.Role):
+        if role >= interaction.user.top_role and interaction.user.id != interaction.guild.owner_id:
+            await interaction.response.send_message("❌ You cannot assign a role higher than or equal to your highest role!")
             return
         
         if role in member.roles:
-            await ctx.send(f"❌ {member.mention} already has the {role.mention} role!")
+            await interaction.response.send_message(f"❌ {member.mention} already has the {role.mention} role!")
             return
         
         await member.add_roles(role)
@@ -66,13 +67,13 @@ class Roles(commands.Cog):
             color=discord.Color.green(),
             timestamp=datetime.now(timezone.utc)
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='removerole')
-    @commands.has_permissions(manage_roles=True)
-    async def remove_role(self, ctx, member: discord.Member, role: discord.Role):
+    @app_commands.command(name='removerole', description='Execute removerole command')
+    @app_commands.checks.has_permissions(manage_roles=True)
+    async def remove_role(self, interaction: discord.Interaction, member: discord.Member, role: discord.Role):
         if role not in member.roles:
-            await ctx.send(f"❌ {member.mention} doesn't have the {role.mention} role!")
+            await interaction.response.send_message(f"❌ {member.mention} doesn't have the {role.mention} role!")
             return
         
         await member.remove_roles(role)
@@ -83,10 +84,10 @@ class Roles(commands.Cog):
             color=discord.Color.green(),
             timestamp=datetime.now(timezone.utc)
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='roleinfo')
-    async def role_info(self, ctx, role: discord.Role):
+    @app_commands.command(name='roleinfo', description='Execute roleinfo command')
+    async def role_info(self, interaction: discord.Interaction, role: discord.Role):
         embed = discord.Embed(
             title=f"📋 Role Info: {role.name}",
             color=role.color,
@@ -101,11 +102,11 @@ class Roles(commands.Cog):
         embed.add_field(name="Hoisted", value="Yes" if role.hoist else "No", inline=True)
         embed.add_field(name="Created", value=role.created_at.strftime('%Y-%m-%d'), inline=True)
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='roles')
-    async def list_roles(self, ctx):
-        roles = sorted(ctx.guild.roles[1:], key=lambda r: r.position, reverse=True)
+    @app_commands.command(name='roles', description='Execute roles command')
+    async def list_roles(self, interaction: discord.Interaction):
+        roles = sorted(interaction.guild.roles[1:], key=lambda r: r.position, reverse=True)
         
         embed = discord.Embed(
             title=f"📋 Server Roles ({len(roles)})",
@@ -119,7 +120,7 @@ class Roles(commands.Cog):
         if len(roles) > 25:
             embed.set_footer(text=f"Showing 25 of {len(roles)} roles")
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Roles(bot))

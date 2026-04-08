@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import wavelink
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -154,15 +155,15 @@ class Music(commands.Cog):
     @commands.command(name='play')
     async def play(self, ctx, *, query: str):
         """Play music from YouTube, Spotify, or search query"""
-        if not ctx.author.voice:
+        if not interaction.user.voice:
             embed = discord.Embed(
                 title="❌ Not in Voice Channel",
                 description="You need to be in a voice channel to play music!",
                 color=0xFF006E)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
-        voice_channel = ctx.author.voice.channel
+        voice_channel = interaction.user.voice.channel
 
         # Check if Lavalink is connected
         lavalink_available = False
@@ -176,7 +177,7 @@ class Music(commands.Cog):
             lavalink_available = False
 
         if lavalink_available:
-            if not ctx.voice_client:
+            if not self.bot.get_guild(interaction.guild.id).voice_client:
                 try:
                     vc: wavelink.Player = await voice_channel.connect(cls=wavelink.Player)
                 except Exception as e:
@@ -184,20 +185,20 @@ class Music(commands.Cog):
                         title="❌ Connection Error",
                         description=f"Failed to connect: {str(e)}",
                         color=0xFF006E)
-                    await ctx.send(embed=embed)
+                    await interaction.response.send_message(embed=embed)
                     return
             else:
-                vc: wavelink.Player = ctx.voice_client
+                vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
 
             spotify_info = self.parse_spotify_url(query)
             
             # Handle Spotify Playlists
             if spotify_info and spotify_info['type'] == 'playlist':
-                await ctx.send("⌛ Processing Spotify playlist... This might take a moment.")
+                await interaction.response.send_message("⌛ Processing Spotify playlist... This might take a moment.")
                 queries = await self.get_spotify_playlist(spotify_info['id'])
                 
                 if not queries:
-                    await ctx.send("❌ Failed to load Spotify playlist.")
+                    await interaction.response.send_message("❌ Failed to load Spotify playlist.")
                     return
                 
                 added_count = 0
@@ -218,7 +219,7 @@ class Music(commands.Cog):
                     title="✅ Playlist Added",
                     description=f"Added **{added_count}** tracks from the Spotify playlist to the queue.",
                     color=0x1DB954)
-                await ctx.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
                 return
 
             # Handle Spotify Tracks
@@ -234,7 +235,7 @@ class Music(commands.Cog):
                         title="❌ No Results",
                         description="No tracks found matching your query.",
                         color=0xFF006E)
-                    await ctx.send(embed=embed)
+                    await interaction.response.send_message(embed=embed)
                     return
 
                 # Handle YouTube Playlists
@@ -251,7 +252,7 @@ class Music(commands.Cog):
                         title="✅ YouTube Playlist Added",
                         description=f"Added **{added_count}** tracks from **{tracks.name}** to the queue.",
                         color=0x8B00FF)
-                    await ctx.send(embed=embed)
+                    await interaction.response.send_message(embed=embed)
                     return
 
                 track = tracks[0] if isinstance(tracks, list) else tracks
@@ -273,24 +274,24 @@ class Music(commands.Cog):
                     embed.set_thumbnail(url=track.artwork)
                 
                 view = MusicControlView(self.bot, vc)
-                await ctx.send(embed=embed, view=view)
+                await interaction.response.send_message(embed=embed, view=view)
 
             except Exception as e:
                 embed = discord.Embed(title="❌ Playback Error",
                                       description=f"An error occurred: {str(e)}",
                                       color=0xFF006E)
-                await ctx.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
         else:
             # Fallback engine doesn't easily support playlists via yt-dlp search without more complexity
-            await ctx.send("⚠️ Lavalink is unavailable. Playlist support is limited in fallback mode.")
+            await interaction.response.send_message("⚠️ Lavalink is unavailable. Playlist support is limited in fallback mode.")
             # Original single-track fallback logic follows...        else:
             # Fallback to discord.FFmpegPCMAudio if Lavalink is down
-            await ctx.send("⚠️ Lavalink is currently unavailable. Using standard audio engine...")
+            await interaction.response.send_message("⚠️ Lavalink is currently unavailable. Using standard audio engine...")
             
-            if not ctx.voice_client:
+            if not self.bot.get_guild(interaction.guild.id).voice_client:
                 vc = await voice_channel.connect()
             else:
-                vc = ctx.voice_client
+                vc = self.bot.get_guild(interaction.guild.id).voice_client
 
             try:
                 # Use yt-dlp to get the direct stream URL
@@ -304,7 +305,7 @@ class Music(commands.Cog):
                 
                 if proc.returncode != 0:
                     error_msg = stderr.decode().strip()
-                    await ctx.send(f"❌ Failed to fetch audio: {error_msg[:100]}")
+                    await interaction.response.send_message(f"❌ Failed to fetch audio: {error_msg[:100]}")
                     return
 
                 url = stdout.decode().strip().split('\n')[0]
@@ -324,106 +325,106 @@ class Music(commands.Cog):
                     title="🎵 Now Playing (Standard Engine)",
                     description=f"**{query}**",
                     color=0x00F3FF)
-                await ctx.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
 
             except Exception as e:
-                await ctx.send(f"❌ Standard playback error: {str(e)}")
+                await interaction.response.send_message(f"❌ Standard playback error: {str(e)}")
 
     @commands.command(name='pause')
     async def pause(self, ctx):
         """Pause the current playback"""
-        vc: wavelink.Player = ctx.voice_client
+        vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
 
         if not vc or not vc.playing:
             embed = discord.Embed(
                 title="❌ Nothing Playing",
                 description="There's nothing playing right now.",
                 color=0xFF006E)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
         await vc.pause(True)
         embed = discord.Embed(title="⏸️ Paused",
                               description="Playback has been paused.",
                               color=0x8B00FF)
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @commands.command(name='resume')
     async def resume(self, ctx):
         """Resume paused playback"""
-        vc: wavelink.Player = ctx.voice_client
+        vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
 
         if not vc or not vc.paused:
             embed = discord.Embed(
                 title="❌ Nothing Paused",
                 description="There's nothing paused right now.",
                 color=0xFF006E)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
         await vc.pause(False)
         embed = discord.Embed(title="▶️ Resumed",
                               description="Playback has been resumed.",
                               color=0x00F3FF)
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @commands.command(name='skip')
     async def skip(self, ctx):
         """Skip to the next song"""
         # Handle Lavalink skip
-        if hasattr(ctx.voice_client, 'skip'):
-            vc: wavelink.Player = ctx.voice_client
+        if hasattr(self.bot.get_guild(interaction.guild.id).voice_client, 'skip'):
+            vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
             if not vc or not vc.playing:
                 embed = discord.Embed(
                     title="❌ Nothing Playing",
                     description="There's nothing playing right now.",
                     color=0xFF006E)
-                await ctx.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
                 return
 
             await vc.skip(force=True)
             embed = discord.Embed(title="⏭️ Skipped",
                                   description="Skipped to the next track.",
                                   color=0x8B00FF)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
             # Handle standard engine skip
-            if ctx.voice_client and ctx.voice_client.is_playing():
-                ctx.voice_client.stop()
-                await ctx.send("⏭️ Skipped (Standard Engine)")
+            if self.bot.get_guild(interaction.guild.id).voice_client and self.bot.get_guild(interaction.guild.id).voice_client.is_playing():
+                self.bot.get_guild(interaction.guild.id).voice_client.stop()
+                await interaction.response.send_message("⏭️ Skipped (Standard Engine)")
             else:
-                await ctx.send("❌ Nothing playing to skip.")
+                await interaction.response.send_message("❌ Nothing playing to skip.")
 
     @commands.command(name='stop')
     async def stop(self, ctx):
         """Stop playback and disconnect"""
-        if not ctx.voice_client:
+        if not self.bot.get_guild(interaction.guild.id).voice_client:
             embed = discord.Embed(
                 title="❌ Not Connected",
                 description="I'm not connected to a voice channel.",
                 color=0xFF006E)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
-        if hasattr(ctx.voice_client, 'disconnect'):
-            await ctx.voice_client.disconnect()
+        if hasattr(self.bot.get_guild(interaction.guild.id).voice_client, 'disconnect'):
+            await self.bot.get_guild(interaction.guild.id).voice_client.disconnect()
         
         embed = discord.Embed(title="⏹️ Stopped",
                               description="Playback stopped and disconnected.",
                               color=0xFF006E)
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @commands.command(name='queue')
     async def queue(self, ctx):
         """Display the music queue"""
-        vc: wavelink.Player = ctx.voice_client
+        vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
 
         if not vc:
             embed = discord.Embed(
                 title="❌ Not Connected",
                 description="I'm not connected to a voice channel.",
                 color=0xFF006E)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
         embed = discord.Embed(title="🎵 Music Queue", color=0x8B00FF)
@@ -449,19 +450,19 @@ class Music(commands.Cog):
         if vc.queue.mode == wavelink.QueueMode.loop:
             embed.set_footer(text="🔁 Loop: ON")
 
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @commands.command(name='nowplaying', aliases=['np'])
     async def nowplaying(self, ctx):
         """Show currently playing track"""
-        vc: wavelink.Player = ctx.voice_client
+        vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
 
         if not vc or not vc.current:
             embed = discord.Embed(
                 title="❌ Nothing Playing",
                 description="There's nothing playing right now.",
                 color=0xFF006E)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
         track = vc.current
@@ -491,19 +492,19 @@ class Music(commands.Cog):
         if vc.queue.mode == wavelink.QueueMode.loop:
             embed.set_footer(text="🔁 Loop: ON")
 
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @commands.command(name='loop')
     async def loop(self, ctx):
         """Toggle loop mode"""
-        vc: wavelink.Player = ctx.voice_client
+        vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
 
         if not vc:
             embed = discord.Embed(
                 title="❌ Not Connected",
                 description="I'm not connected to a voice channel.",
                 color=0xFF006E)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
         if vc.queue.mode == wavelink.QueueMode.loop:
@@ -518,19 +519,19 @@ class Music(commands.Cog):
         embed = discord.Embed(title=f"{emoji} Loop Mode",
                               description=f"Loop mode has been **{status}**.",
                               color=0x8B00FF)
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @commands.command(name='volume')
     async def volume(self, ctx, volume: int):
         """Adjust playback volume (0-100)"""
-        vc: wavelink.Player = ctx.voice_client
+        vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
 
         if not vc:
             embed = discord.Embed(
                 title="❌ Not Connected",
                 description="I'm not connected to a voice channel.",
                 color=0xFF006E)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
         if volume < 0 or volume > 100:
@@ -538,23 +539,23 @@ class Music(commands.Cog):
                 title="❌ Invalid Volume",
                 description="Volume must be between 0 and 100.",
                 color=0xFF006E)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
         await vc.set_volume(volume)
         embed = discord.Embed(title="🔊 Volume Adjusted",
                               description=f"Volume set to **{volume}%**",
                               color=0x00F3FF)
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @commands.command(name='radio1')
     async def radio1(self, ctx):
         """Play Hungarian Rádió 1 (24/7) / Rádió 1 lejátszása (0-24)"""
-        if not ctx.author.voice:
-            await ctx.send("❌ You need to be in a voice channel! / Hangcsatornában kell lenned!")
+        if not interaction.user.voice:
+            await interaction.response.send_message("❌ You need to be in a voice channel! / Hangcsatornában kell lenned!")
             return
 
-        voice_channel = ctx.author.voice.channel
+        voice_channel = interaction.user.voice.channel
         stream_url = "https://myradioonline.hu/radio1" # We'll use a direct stream search for wavelink
         
         # Lavalink connection check
@@ -569,10 +570,10 @@ class Music(commands.Cog):
             lavalink_available = False
 
         if lavalink_available:
-            if not ctx.voice_client:
+            if not self.bot.get_guild(interaction.guild.id).voice_client:
                 vc: wavelink.Player = await voice_channel.connect(cls=wavelink.Player)
             else:
-                vc: wavelink.Player = ctx.voice_client
+                vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
             
             # Wavelink 3.x/4.x search for the stream
             try:
@@ -595,22 +596,22 @@ class Music(commands.Cog):
                     color=0xFFFF00
                 )
                 embed.set_thumbnail(url="https://radio1.hu/wp-content/themes/radio1/img/logo.png")
-                await ctx.send(embed=embed, view=MusicControlView(self.bot, vc))
+                await interaction.response.send_message(embed=embed, view=MusicControlView(self.bot, vc))
             except Exception as e:
                 # If Lavalink fails, automatically trigger FFmpeg fallback
-                await ctx.send(f"⚠️ Lavalink stream error. Switching to fallback engine... / Lavalink hiba. Átváltás tartalék motorra...")
+                await interaction.response.send_message(f"⚠️ Lavalink stream error. Switching to fallback engine... / Lavalink hiba. Átváltás tartalék motorra...")
                 lavalink_available = False # Trigger the 'else' block
         
         if not lavalink_available:
             # Standard engine fallback (FFmpeg)
-            if not ctx.voice_client:
+            if not self.bot.get_guild(interaction.guild.id).voice_client:
                 try:
                     vc = await voice_channel.connect()
                 except Exception as e:
-                    await ctx.send(f"❌ Connection failed: {str(e)}")
+                    await interaction.response.send_message(f"❌ Connection failed: {str(e)}")
                     return
             else:
-                vc = ctx.voice_client
+                vc = self.bot.get_guild(interaction.guild.id).voice_client
             
             try:
                 # Rádió 1 stream direct URL for FFmpeg
@@ -630,9 +631,9 @@ class Music(commands.Cog):
                     title="📻 Rádió 1 - 0/24 Live (Standard Engine)",
                     description="Now broadcasting Hungarian Rádió 1! / Rádió 1 élő adás indítva!",
                     color=0xFFFF00)
-                await ctx.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
             except Exception as e:
-                await ctx.send(f"❌ Standard radio error: {str(e)}")
+                await interaction.response.send_message(f"❌ Standard radio error: {str(e)}")
 
 async def setup(bot):
     await bot.add_cog(Music(bot))

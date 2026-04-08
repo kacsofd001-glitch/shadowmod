@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 from discord.ui import Button, View
+from discord import app_commands
 from datetime import datetime, timezone, timedelta
 import random
 import config
@@ -120,24 +121,24 @@ class Giveaways(commands.Cog):
     async def before_check_giveaways(self):
         await self.bot.wait_until_ready()
     
-    @commands.command(name='giveaway')
-    @commands.has_permissions(manage_guild=True)
-    async def start_giveaway(self, ctx, duration: str, winners: int, *, prize: str):
+    @app_commands.command(name='giveaway', description='Execute giveaway command')
+    @app_commands.checks.has_permissions(manage_guild=True)
+    async def start_giveaway(self, interaction: discord.Interaction, duration: str, winners: int, *, prize: str):
         time_units = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
         
         try:
             time_amount = int(duration[:-1])
             time_unit = duration[-1]
         except:
-            await ctx.send("❌ Invalid time format! Use: 10s, 5m, 2h, 1d")
+            await interaction.response.send_message("❌ Invalid time format! Use: 10s, 5m, 2h, 1d")
             return
         
         if time_unit not in time_units:
-            await ctx.send("❌ Invalid time format! Use: 10s, 5m, 2h, 1d")
+            await interaction.response.send_message("❌ Invalid time format! Use: 10s, 5m, 2h, 1d")
             return
         
         if winners < 1:
-            await ctx.send("❌ There must be at least 1 winner!")
+            await interaction.response.send_message("❌ There must be at least 1 winner!")
             return
         
         seconds = time_amount * time_units[time_unit]
@@ -149,7 +150,7 @@ class Giveaways(commands.Cog):
             color=0x8B00FF,
             timestamp=datetime.now(timezone.utc)
         )
-        embed.set_footer(text=f"Hosted by {ctx.author}")
+        embed.set_footer(text=f"Hosted by {interaction.user}")
         
         giveaway_id = str(int(datetime.now(timezone.utc).timestamp()))
         
@@ -161,31 +162,31 @@ class Giveaways(commands.Cog):
             'prize': prize,
             'winners': winners,
             'end_time': end_time.timestamp(),
-            'channel_id': str(ctx.channel.id),
+            'channel_id': str(interaction.channel.id),
             'message_id': '',
-            'host': str(ctx.author),
+            'host': str(interaction.user),
             'participants': []
         }
         config.save_config(cfg)
         
         view = GiveawayView(giveaway_id, self.bot)
-        message = await ctx.send(embed=embed, view=view)
+        message = await interaction.response.send_message(embed=embed, view=view)
         
         self.active_giveaways[giveaway_id] = view
         
         cfg['giveaways'][giveaway_id]['message_id'] = str(message.id)
         config.save_config(cfg)
         
-        await ctx.message.delete()
+        # Message deletion not supported in slash commands
     
-    @commands.command(name='reroll')
-    @commands.has_permissions(manage_guild=True)
-    async def reroll_giveaway(self, ctx, message_id: int):
+    @app_commands.command(name='reroll', description='Execute reroll command')
+    @app_commands.checks.has_permissions(manage_guild=True)
+    async def reroll_giveaway(self, interaction: discord.Interaction, message_id: int):
         try:
-            message = await ctx.channel.fetch_message(message_id)
+            message = await interaction.channel.fetch_message(message_id)
             
             if not message.embeds or "giveaway" not in message.embeds[0].title.lower():
-                await ctx.send("❌ That's not a giveaway message!")
+                await interaction.response.send_message("❌ That's not a giveaway message!")
                 return
             
             cfg = config.load_config()
@@ -206,13 +207,13 @@ class Giveaways(commands.Cog):
                         break
             
             if not giveaway_data:
-                await ctx.send("❌ Giveaway data not found!")
+                await interaction.response.send_message("❌ Giveaway data not found!")
                 return
             
             participants = giveaway_data.get('participants', [])
             
             if len(participants) == 0:
-                await ctx.send("❌ No participants to reroll!")
+                await interaction.response.send_message("❌ No participants to reroll!")
                 return
             
             new_winner_id = random.choice(participants)
@@ -225,10 +226,10 @@ class Giveaways(commands.Cog):
                 timestamp=datetime.now(timezone.utc)
             )
             
-            await ctx.send(embed=embed)
-            await ctx.send(f"🎊 Congratulations {new_winner.mention}! You won **{giveaway_data['prize']}**!")
+            await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(f"🎊 Congratulations {new_winner.mention}! You won **{giveaway_data['prize']}**!")
         except Exception as e:
-            await ctx.send(f"❌ Error rerolling giveaway: {str(e)}")
+            await interaction.response.send_message(f"❌ Error rerolling giveaway: {str(e)}")
 
 async def setup(bot):
     await bot.add_cog(Giveaways(bot))

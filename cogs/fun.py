@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import aiohttp
 import random
 import config
@@ -48,10 +49,10 @@ class Fun(commands.Cog):
             ("think", "Modern problémák", "Modern megoldások"),
         ]
     
-    @commands.command(name='meme')
-    async def random_meme(self, ctx):
-        guild_id = ctx.guild.id
-        await ctx.trigger_typing()
+    @app_commands.command(name='meme', description='Execute meme command')
+    async def random_meme(self, interaction: discord.Interaction):
+        guild_id = interaction.guild.id
+        await interaction.response.defer()
         
         # Use a more reliable public meme API for random memes
         meme_apis = [
@@ -75,7 +76,7 @@ class Fun(commands.Cog):
                         embed.set_image(url=meme_url)
                         embed.set_footer(text=f"r/{data.get('subreddit')} | {get_text(guild_id, 'generated_meme')}")
                         
-                        await ctx.send(embed=embed)
+                        await interaction.response.send_message(embed=embed)
                         return
                     else:
                         raise Exception("Meme API error")
@@ -97,11 +98,11 @@ class Fun(commands.Cog):
             embed.set_image(url=meme_url)
             embed.set_footer(text=get_text(guild_id, 'generated_meme'))
             
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
     
     
-    @commands.command(name='sound')
-    async def random_sound(self, ctx):
+    @app_commands.command(name='sound', description='Execute sound command')
+    async def random_sound(self, interaction: discord.Interaction):
         sound = random.choice(self.sounds)
         
         embed = discord.Embed(
@@ -110,48 +111,48 @@ class Fun(commands.Cog):
             color=discord.Color.random()
         )
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='8ball')
-    async def eight_ball(self, ctx, *, question: str = ""):
+    @app_commands.command(name='8ball', description='Execute 8ball command')
+    async def eight_ball(self, interaction: discord.Interaction, *, question: str = ""):
         from translations import get_text
         if not question:
-            await ctx.send("❌ Please ask a question!")
+            await interaction.response.send_message("❌ Please ask a question!")
             return
         
-        responses = get_text(ctx.guild.id, '8ball_responses')
+        responses = get_text(interaction.guild.id, '8ball_responses')
         answer = random.choice(responses)
         
         embed = discord.Embed(
-            title=get_text(ctx.guild.id, 'magic_8ball'),
+            title=get_text(interaction.guild.id, 'magic_8ball'),
             color=discord.Color.purple()
         )
-        embed.add_field(name=get_text(ctx.guild.id, 'question'), value=question, inline=False)
-        embed.add_field(name=get_text(ctx.guild.id, 'answer'), value=answer, inline=False)
+        embed.add_field(name=get_text(interaction.guild.id, 'question'), value=question, inline=False)
+        embed.add_field(name=get_text(interaction.guild.id, 'answer'), value=answer, inline=False)
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='coinflip')
-    async def coin_flip(self, ctx):
+    @app_commands.command(name='coinflip', description='Execute coinflip command')
+    async def coin_flip(self, interaction: discord.Interaction):
         from translations import get_text
-        result = random.choice([get_text(ctx.guild.id, 'heads'), get_text(ctx.guild.id, 'tails')])
+        result = random.choice([get_text(interaction.guild.id, 'heads'), get_text(interaction.guild.id, 'tails')])
         emoji = '🪙'
         
         embed = discord.Embed(
-            title=get_text(ctx.guild.id, 'coin_flip'),
-            description=get_text(ctx.guild.id, 'coin_result', result),
+            title=get_text(interaction.guild.id, 'coin_flip'),
+            description=get_text(interaction.guild.id, 'coin_result', result),
             color=discord.Color.gold()
         )
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='roll')
-    async def dice_roll(self, ctx, dice: str = "1d6"):
+    @app_commands.command(name='roll', description='Execute roll command')
+    async def dice_roll(self, interaction: discord.Interaction, dice: str = "1d6"):
         try:
             rolls, sides = map(int, dice.split('d'))
             
             if rolls > 100 or sides > 1000:
-                await ctx.send("❌ That's too many dice or sides!")
+                await interaction.response.send_message("❌ That's too many dice or sides!")
                 return
             
             results = [random.randint(1, sides) for _ in range(rolls)]
@@ -168,9 +169,9 @@ class Fun(commands.Cog):
             
             embed.add_field(name="Total", value=str(total), inline=False)
             
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         except:
-            await ctx.send("❌ Invalid format! Use: `!roll 2d6` (rolls, d, sides)")
+            await interaction.response.send_message("❌ Invalid format! Use: `!roll 2d6` (rolls, d, sides)")
 
 async def setup(bot):
     await bot.add_cog(Fun(bot))

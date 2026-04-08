@@ -21,7 +21,7 @@ class HungarianDefense(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def hu_defense(self, ctx):
         """Hungarian server defense management"""
-        if ctx.invoked_subcommand is None:
+        if None is None:
             from translations import get_text
             lang = 'hu' if await self._is_hungarian_guild(ctx.guild) else 'en'
             

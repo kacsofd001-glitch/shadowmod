@@ -27,6 +27,7 @@ class InteractiveHelp(commands.Cog):
                 "🛡️ **Moderation** - Manage your server\n"
                 "💰 **Economy** - Currency & shop system\n"
                 "🎮 **Games** - Fun mini-games\n"
+                "� **Music** - Music playback system\n"
                 "🎭 **Fun** - Entertainment commands\n"
                 "⚙️ **Utility** - Helpful tools\n"
                 "📊 **Stats** - Analytics & tracking\n"
@@ -36,6 +37,7 @@ class InteractiveHelp(commands.Cog):
                 "🛡️ **Moderáció** - Szerver kezelése\n"
                 "💰 **Gazdaság** - Pénzrendszer & bolt\n"
                 "🎮 **Játékok** - Szórakoztató minijátékok\n"
+                "🎵 **Zene** - Zenelejátszás rendszer\n"
                 "🎭 **Szórakozás** - Szórakoztató parancsok\n"
                 "⚙️ **Eszközök** - Hasznos eszközök\n"
                 "📊 **Statisztika** - Analytics & nyomkövetés\n"
@@ -72,22 +74,24 @@ class HelpView(discord.ui.View):
                 "`/ban` - Ban user\n"
                 "`/kick` - Kick user\n"
                 "`/mute` / `/unmute` - Mute/unmute user\n"
-                "`/warn` - Warn user\n"
+                "`/warn` / `/warnings` - Warn user / Check warnings\n"
                 "`/purge` - Delete messages\n"
                 "`/tempmute` - Timeout user\n"
+                "`/tempban` - Temporarily ban user\n"
                 "`/lock` / `/unlock` - Channel lock\n"
-                "`/say` - Make bot send a message\n"
-                "`/embedsay` - Make bot send an embed"
+                "`/ticket` / `/closeticket` - Create/close support ticket\n"
+                "`/poll` / `/quickpoll` - Create a poll"
             ) if lang == 'en' else (
                 "`/ban` - Felhasználó kitiltása\n"
                 "`/kick` - Felhasználó kirúgása\n"
                 "`/mute` / `/unmute` - Felhasználó némítása/visszahangosítása\n"
-                "`/warn` - Felhasználó figyelmeztetése\n"
+                "`/warn` / `/warnings` - Felhasználó figyelmeztetése / Figyelmeztetések megtekintése\n"
                 "`/purge` - Üzenetek törlése\n"
                 "`/tempmute` - Felhasználó időtúltöltése\n"
+                "`/tempban` - Felhasználó ideiglenes kitiltása\n"
                 "`/lock` / `/unlock` - Csatorna zárolása\n"
-                "`/say` - Bot szöveg küldése\n"
-                "`/embedsay` - Bot embed küldése"
+                "`/ticket` / `/closeticket` - Támogatási jegy létrehozása/lezárása\n"
+                "`/poll` / `/quickpoll` - Szavazás létrehozása"
             ),
             color=0xFF0000
         )
@@ -135,23 +139,57 @@ class HelpView(discord.ui.View):
             description=(
                 "`/rps` - Rock-Paper-Scissors\n"
                 "`/tictactoe` - Tic-Tac-Toe\n"
-                "`/dice` - Roll dice\n"
                 "`/coinflip` - Flip coin\n"
-                "`/trivia` - Fun trivia\n"
-                "`/blackjack` - Casino game\n"
-                "`/slots` - Slot machine\n"
-                "`/connectfour` - Connect Four"
+                "`/roll` - Roll dice\n"
+                "`/8ball` - Magic 8-ball\n"
+                "`/connectfour` - Connect Four\n"
+                "`/giveaway` - Start giveaway\n"
+                "`/reroll` - Reroll giveaway"
             ) if lang == 'en' else (
                 "`/rps` - Kő-papír-olló\n"
                 "`/tictactoe` - Amőba\n"
-                "`/dice` - Kocka dobása\n"
                 "`/coinflip` - Érmefeldobás\n"
-                "`/trivia` - Érdekes trivia\n"
-                "`/blackjack` - Kaszinó játék\n"
-                "`/slots` - Nyerőgép\n"
-                "`/connectfour` - Négy összeköt"
+                "`/roll` - Kocka dobása\n"
+                "`/8ball` - Mágikus 8-as\n"
+                "`/connectfour` - Négy összeköt\n"
+                "`/giveaway` - Nyeremény rajzolás\n"
+                "`/reroll` - Nyeremény újrahúzása"
             ),
             color=0xFF00FF
+        )
+        await interaction.response.edit_message(embed=embed)
+    
+    @discord.ui.button(label="🎵 Music", style=discord.ButtonStyle.primary, emoji="🎵", row=1)
+    async def music_help(self, interaction: discord.Interaction, button: discord.ui.Button):
+        import translations
+        from translations import get_text
+        lang = translations.get_guild_language(self.guild_id)
+        embed = discord.Embed(
+            title=get_text(self.guild_id, 'help_music', lang=lang) if 'help_music' in translations.get_text.__dict__ else ('🎵 Music' if lang == 'en' else '🎵 Zene'),
+            description=(
+                "`/play` - Play music\n"
+                "`/pause` - Pause playback\n"
+                "`/resume` - Resume playback\n"
+                "`/skip` - Skip track\n"
+                "`/stop` - Stop and disconnect\n"
+                "`/queue` - View music queue\n"
+                "`/nowplaying` - Current track info\n"
+                "`/loop` - Toggle loop mode\n"
+                "`/volume` - Adjust volume\n"
+                "`/radio1` - Play live radio"
+            ) if lang == 'en' else (
+                "`/play` - Zene lejátszása\n"
+                "`/pause` - Lejátszás szüneteltetése\n"
+                "`/resume` - Lejátszás folytatása\n"
+                "`/skip` - Dal kihagyása\n"
+                "`/stop` - Leállítás és bontás\n"
+                "`/queue` - Sorlista megtekintése\n"
+                "`/nowplaying` - Jelenlegi dal info\n"
+                "`/loop` - Hurok mód váltása\n"
+                "`/volume` - Hangerő beállítása\n"
+                "`/radio1` - Élő rádió lejátszása"
+            ),
+            color=0x8B00FF
         )
         await interaction.response.edit_message(embed=embed)
     
@@ -163,27 +201,55 @@ class HelpView(discord.ui.View):
         embed = discord.Embed(
             title=get_text(self.guild_id, 'help_config', lang=lang),
             description=(
-                "`/ping` - Latency check\n"
                 "`/serverinfo` - Server stats\n"
                 "`/botinfo` - Bot details\n"
                 "`/userinfo` - User profile\n"
+                "`/support` - Support info\n"
+                "`/webpage` - Bot dashboard\n"
                 "`/setlang` - Change language\n"
-                "`/setprefix` - Role nickname prefix\n"
                 "`/setlog` - Set log channel\n"
                 "`/setwebhook` - Set logging webhook\n"
-                "`/setupvoice` - Setup temp voice system\n"
-                "`/voicename` - Rename your temp voice channel"
+                "`/testwebhook` - Test webhook\n"
+                "`/loginfo` - Logging info\n"
+                "`/createrole` - Create role\n"
+                "`/deleterole` - Delete role\n"
+                "`/addrole` - Add role to user\n"
+                "`/removerole` - Remove role from user\n"
+                "`/roleinfo` - Role information\n"
+                "`/roles` - List server roles\n"
+                "`/servers` - Bot server list\n"
+                "`/createinvite` - Create invite\n"
+                "`/setaltage` - Set alt account age\n"
+                "`/setupverify` - Setup verify system\n"
+                "`/setprefix` - Configure role prefix\n"
+                "`/removeprefix` - Remove role prefix\n"
+                "`/updateallnicks` - Update all nicknames\n"
+                "`/viewprefixes` - View role prefixes"
             ) if lang == 'en' else (
-                "`/ping` - Késleltetés ellenőrzés\n"
                 "`/serverinfo` - Szerver statisztikák\n"
                 "`/botinfo` - Bot részletei\n"
                 "`/userinfo` - Felhasználó profil\n"
+                "`/support` - Támogatás info\n"
+                "`/webpage` - Bot irányítópult\n"
                 "`/setlang` - Nyelv módosítása\n"
-                "`/setprefix` - Szerep becenév prefix\n"
                 "`/setlog` - Naplócsatorna beállítása\n"
                 "`/setwebhook` - Webhook beállítása\n"
-                "`/setupvoice` - Temp hang rendszer\n"
-                "`/voicename` - Temp hang csatorna átnevezése"
+                "`/testwebhook` - Webhook tesztelése\n"
+                "`/loginfo` - Naplózás info\n"
+                "`/createrole` - Szerep létrehozása\n"
+                "`/deleterole` - Szerep törlése\n"
+                "`/addrole` - Szerep hozzáadása\n"
+                "`/removerole` - Szerep eltávolítása\n"
+                "`/roleinfo` - Szerep információ\n"
+                "`/roles` - Szerver szerepek\n"
+                "`/servers` - Bot szerver lista\n"
+                "`/createinvite` - Meghívó létrehozása\n"
+                "`/setaltage` - Alt fiók kor beállítása\n"
+                "`/setupverify` - Ellenőrzés rendszer\n"
+                "`/setprefix` - Szerep prefix beállítása\n"
+                "`/removeprefix` - Szerep prefix eltávolítása\n"
+                "`/updateallnicks` - Összes becenév frissítése\n"
+                "`/viewprefixes` - Szerep prefixek megtekintése"
             ),
             color=0x00F3FF
         )
@@ -196,12 +262,24 @@ class HelpView(discord.ui.View):
         lang = translations.get_guild_language(self.guild_id)
         embed = discord.Embed(
             title=get_text(self.guild_id, 'help_fun', lang=lang),
-            description=get_text(self.guild_id, 'help_fun_desc', lang=lang),
+            description=(
+                "`/meme` - Send a random meme\n"
+                "`/8ball` - Magic 8-ball\n"
+                "`/coinflip` - Flip a coin\n"
+                "`/roll` - Roll the dice\n"
+                "`/sound` - Play a funny sound"
+            ) if lang == 'en' else (
+                "`/meme` - Véletlenszerű mém\n"
+                "`/8ball` - Mágikus 8-as\n"
+                "`/coinflip` - Érmefeldobás\n"
+                "`/roll` - Kocka dobása\n"
+                "`/sound` - Szórakoztató hang"
+            ),
             color=0xFF00FF
         )
         await interaction.response.edit_message(embed=embed)
 
-    @discord.ui.button(label="📊 Stats", style=discord.ButtonStyle.secondary, emoji="📊", row=1)
+    @discord.ui.button(label="📊 Stats", style=discord.ButtonStyle.secondary, emoji="📊", row=2)
     async def stats_help(self, interaction: discord.Interaction, button: discord.ui.Button):
         import translations
         from translations import get_text

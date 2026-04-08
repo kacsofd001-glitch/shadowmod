@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import traceback
 import sys
 from datetime import datetime, timezone
@@ -24,7 +25,7 @@ class WebhookLogging(commands.Cog):
             print(f"Failed to send webhook: {e}")
     
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
+    async def on_command_error(self, interaction: discord.Interaction, error):
         embed = discord.Embed(
             title="⚠️ Command Error",
             color=discord.Color.red(),
@@ -32,8 +33,8 @@ class WebhookLogging(commands.Cog):
         )
         
         embed.add_field(name="Command", value=f"`{ctx.command}`", inline=True)
-        embed.add_field(name="User", value=f"{ctx.author} ({ctx.author.id})", inline=True)
-        embed.add_field(name="Channel", value=f"{ctx.channel.mention}", inline=True)
+        embed.add_field(name="User", value=f"{interaction.user} ({interaction.user.id})", inline=True)
+        embed.add_field(name="Channel", value=f"{interaction.channel.mention}", inline=True)
         
         if isinstance(error, commands.MissingRequiredArgument):
             embed.add_field(
@@ -117,9 +118,9 @@ class WebhookLogging(commands.Cog):
         
         await self.send_to_webhook(embed)
     
-    @commands.command(name='setwebhook')
-    @commands.has_permissions(administrator=True)
-    async def set_webhook(self, ctx, webhook_url: str):
+    @app_commands.command(name='setwebhook', description='Execute setwebhook command')
+    @app_commands.checks.has_permissions(administrator=True)
+    async def set_webhook(self, interaction: discord.Interaction, webhook_url: str):
         self.webhook_url = webhook_url
         config.update_config('webhook_url', webhook_url)
         
@@ -135,11 +136,11 @@ class WebhookLogging(commands.Cog):
         )
         
         await self.send_to_webhook(embed)
-        await ctx.send("✅ Webhook logging configured! Check your webhook channel.")
+        await interaction.response.send_message("✅ Webhook logging configured! Check your webhook channel.")
     
-    @commands.command(name='testwebhook')
-    @commands.has_permissions(administrator=True)
-    async def test_webhook(self, ctx):
+    @app_commands.command(name='testwebhook', description='Execute testwebhook command')
+    @app_commands.checks.has_permissions(administrator=True)
+    async def test_webhook(self, interaction: discord.Interaction):
         embed = discord.Embed(
             title="🧪 Test Webhook",
             description="This is a test message from the bot!",
@@ -147,15 +148,15 @@ class WebhookLogging(commands.Cog):
             timestamp=datetime.now(timezone.utc)
         )
         
-        embed.add_field(name="Tested by", value=str(ctx.author), inline=True)
-        embed.add_field(name="Channel", value=ctx.channel.mention, inline=True)
+        embed.add_field(name="Tested by", value=str(interaction.user), inline=True)
+        embed.add_field(name="Channel", value=interaction.channel.mention, inline=True)
         
         await self.send_to_webhook(embed)
-        await ctx.send("✅ Test webhook sent! Check your webhook channel.")
+        await interaction.response.send_message("✅ Test webhook sent! Check your webhook channel.")
     
-    @commands.command(name='loginfo')
-    @commands.has_permissions(administrator=True)
-    async def log_info(self, ctx, *, message: str):
+    @app_commands.command(name='loginfo', description='Execute loginfo command')
+    @app_commands.checks.has_permissions(administrator=True)
+    async def log_info(self, interaction: discord.Interaction, *, message: str):
         embed = discord.Embed(
             title="ℹ️ Info Log",
             description=message,
@@ -163,10 +164,10 @@ class WebhookLogging(commands.Cog):
             timestamp=datetime.now(timezone.utc)
         )
         
-        embed.add_field(name="Logged by", value=str(ctx.author), inline=True)
+        embed.add_field(name="Logged by", value=str(interaction.user), inline=True)
         
         await self.send_to_webhook(embed)
-        await ctx.send("✅ Info logged to webhook.")
+        await interaction.response.send_message("✅ Info logged to webhook.")
 
 async def setup(bot):
     await bot.add_cog(WebhookLogging(bot))

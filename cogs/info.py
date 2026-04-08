@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 from datetime import datetime, timezone
 import platform
 import os
@@ -12,11 +13,11 @@ class Info(commands.Cog):
         # Add /dashboard path to URL
         self.dashboard_url = f'{self.custom_domain}/dashboard'
     
-    @commands.command(name='serverinfo', aliases=['si'])
-    async def serverinfo(self, ctx):
+    @app_commands.command(name='serverinfo', aliases=['si'], description='Execute serverinfo command')
+    async def serverinfo(self, interaction: discord.Interaction):
         """Show server information"""
         from translations import get_text
-        guild = ctx.guild
+        guild = interaction.guild
         
         # Count channels by type
         text_channels = len(guild.text_channels)
@@ -108,12 +109,12 @@ class Info(commands.Cog):
         if guild.banner:
             embed.set_image(url=guild.banner.url)
         
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+        embed.set_footer(text=f"Requested by {interaction.user}", icon_url=interaction.user.display_avatar.url)
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='botinfo', aliases=['bi'])
-    async def botinfo(self, ctx):
+    @app_commands.command(name='botinfo', aliases=['bi'], description='Execute botinfo command')
+    async def botinfo(self, interaction: discord.Interaction):
         """Show bot information and statistics"""
         from translations import get_text
         # Calculate uptime
@@ -191,14 +192,14 @@ class Info(commands.Cog):
             inline=True
         )
         
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+        embed.set_footer(text=f"Requested by {interaction.user}", icon_url=interaction.user.display_avatar.url)
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='userinfo', aliases=['ui', 'whois'])
-    async def userinfo(self, ctx, member: discord.Member = None):
+    @app_commands.command(name='userinfo', aliases=['ui', 'whois'], description='Execute userinfo command')
+    async def userinfo(self, interaction: discord.Interaction, member: discord.Member = None):
         """Show detailed user information with badges"""
-        member = member or ctx.author
+        member = member or interaction.user
         
         # Create embed
         embed = discord.Embed(
@@ -324,12 +325,12 @@ class Info(commands.Cog):
         if member.top_role.color.value != 0:
             embed.color = member.top_role.color
         
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+        embed.set_footer(text=f"Requested by {interaction.user}", icon_url=interaction.user.display_avatar.url)
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='support')
-    async def support(self, ctx):
+    @app_commands.command(name='support', description='Execute support command')
+    async def support(self, interaction: discord.Interaction):
         """Get the support server invite link"""
         embed = discord.Embed(
             title="💬 Support Server",
@@ -351,10 +352,10 @@ class Info(commands.Cog):
         
         embed.set_footer(text="We'd love to see you there! 💜")
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='webpage', aliases=['web', 'dashboard'])
-    async def webpage(self, ctx):
+    @app_commands.command(name='webpage', aliases=['web', 'dashboard'], description='Execute webpage command')
+    async def webpage(self, interaction: discord.Interaction):
         """Get the link to the bot's live web dashboard"""
         embed = discord.Embed(
             title="🌐 Live Web Dashboard",
@@ -376,7 +377,7 @@ class Info(commands.Cog):
         
         embed.set_footer(text="Dashboard updates every 5 seconds ⚡")
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Info(bot))

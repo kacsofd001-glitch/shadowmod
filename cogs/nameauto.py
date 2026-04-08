@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import config
 
 class NameAutomation(commands.Cog):
@@ -69,11 +70,11 @@ class NameAutomation(commands.Cog):
         if before.roles != after.roles:
             await self.update_member_nickname(after)
     
-    @commands.command(name='setprefix')
-    @commands.has_permissions(administrator=True)
-    async def set_role_prefix(self, ctx, role: discord.Role, prefix: str):
+    @app_commands.command(name='setprefix', description='Execute setprefix command')
+    @app_commands.checks.has_permissions(administrator=True)
+    async def set_role_prefix(self, interaction: discord.Interaction, role: discord.Role, prefix: str):
         if len(prefix) > 10:
-            await ctx.send("❌ Prefix must be 10 characters or less!")
+            await interaction.response.send_message("❌ Prefix must be 10 characters or less!")
             return
         
         cfg = config.load_config()
@@ -91,11 +92,11 @@ class NameAutomation(commands.Cog):
         )
         embed.add_field(name="Example", value=f"{prefix} Username", inline=False)
         
-        msg = await ctx.send(embed=embed)
+        msg = await interaction.response.send_message(embed=embed)
         
         await msg.edit(content="🔄 Updating member nicknames...", embed=embed)
         count = 0
-        for member in ctx.guild.members:
+        for member in interaction.guild.members:
             if role in member.roles:
                 await self.update_member_nickname(member)
                 count += 1
@@ -103,14 +104,14 @@ class NameAutomation(commands.Cog):
         embed.add_field(name="Updated", value=f"{count} members updated!", inline=False)
         await msg.edit(content=None, embed=embed)
     
-    @commands.command(name='removeprefix')
-    @commands.has_permissions(administrator=True)
-    async def remove_role_prefix(self, ctx, role: discord.Role):
+    @app_commands.command(name='removeprefix', description='Execute removeprefix command')
+    @app_commands.checks.has_permissions(administrator=True)
+    async def remove_role_prefix(self, interaction: discord.Interaction, role: discord.Role):
         cfg = config.load_config()
         role_prefixes = cfg.get('role_prefixes', {})
         
         if str(role.id) not in role_prefixes:
-            await ctx.send(f"❌ {role.mention} doesn't have a prefix set!")
+            await interaction.response.send_message(f"❌ {role.mention} doesn't have a prefix set!")
             return
         
         del cfg['role_prefixes'][str(role.id)]
@@ -122,11 +123,11 @@ class NameAutomation(commands.Cog):
             color=0x00F3FF
         )
         
-        msg = await ctx.send(embed=embed)
+        msg = await interaction.response.send_message(embed=embed)
         
         await msg.edit(content="🔄 Updating member nicknames...", embed=embed)
         count = 0
-        for member in ctx.guild.members:
+        for member in interaction.guild.members:
             if role in member.roles:
                 await self.update_member_nickname(member)
                 count += 1
@@ -134,13 +135,13 @@ class NameAutomation(commands.Cog):
         embed.add_field(name="Updated", value=f"{count} members updated!", inline=False)
         await msg.edit(content=None, embed=embed)
     
-    @commands.command(name='updateallnicks')
-    @commands.has_permissions(administrator=True)
-    async def update_all_nicknames(self, ctx):
-        await ctx.send("🔄 Updating all member nicknames... This may take a while.")
+    @app_commands.command(name='updateallnicks', description='Execute updateallnicks command')
+    @app_commands.checks.has_permissions(administrator=True)
+    async def update_all_nicknames(self, interaction: discord.Interaction):
+        await interaction.response.send_message("🔄 Updating all member nicknames... This may take a while.")
         
         count = 0
-        for member in ctx.guild.members:
+        for member in interaction.guild.members:
             await self.update_member_nickname(member)
             count += 1
         
@@ -150,15 +151,15 @@ class NameAutomation(commands.Cog):
             color=0x00F3FF
         )
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @commands.command(name='viewprefixes')
-    async def view_prefixes(self, ctx):
+    @app_commands.command(name='viewprefixes', description='Execute viewprefixes command')
+    async def view_prefixes(self, interaction: discord.Interaction):
         cfg = config.load_config()
         role_prefixes = cfg.get('role_prefixes', {})
         
         if not role_prefixes:
-            await ctx.send("❌ No role prefixes configured!")
+            await interaction.response.send_message("❌ No role prefixes configured!")
             return
         
         embed = discord.Embed(
@@ -168,7 +169,7 @@ class NameAutomation(commands.Cog):
         )
         
         for role_id, prefix in role_prefixes.items():
-            role = ctx.guild.get_role(int(role_id))
+            role = interaction.guild.get_role(int(role_id))
             if role:
                 embed.add_field(
                     name=role.name,
@@ -176,7 +177,7 @@ class NameAutomation(commands.Cog):
                     inline=False
                 )
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(NameAutomation(bot))

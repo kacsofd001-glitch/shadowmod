@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 from datetime import datetime, timedelta, timezone
 import config
 
@@ -26,11 +27,11 @@ class AntiAlt(commands.Cog):
             except:
                 pass
     
-    @commands.command(name='setaltage')
-    @commands.has_permissions(administrator=True)
-    async def set_alt_age(self, ctx, days: int):
+    @app_commands.command(name='setaltage', description='Execute setaltage command')
+    @app_commands.checks.has_permissions(administrator=True)
+    async def set_alt_age(self, interaction: discord.Interaction, days: int):
         if days < 0:
-            await ctx.send("❌ Days must be a positive number!")
+            await interaction.response.send_message("❌ Days must be a positive number!")
             return
         
         config.update_config('min_account_age_days', days)
@@ -40,7 +41,7 @@ class AntiAlt(commands.Cog):
             description=f"Minimum account age set to **{days} days**",
             color=0x00F3FF
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(AntiAlt(bot))

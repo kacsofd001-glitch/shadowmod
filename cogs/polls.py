@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ui import Button, View
+from discord import app_commands
 from datetime import datetime, timezone
 
 class PollView(View):
@@ -78,24 +79,24 @@ class Polls(commands.Cog):
         self.bot = bot
         self.poll_counter = 0
     
-    @commands.command(name='poll')
-    @commands.has_permissions(manage_messages=True)
-    async def create_poll(self, ctx, *, args):
+    @app_commands.command(name='poll', description='Execute poll command')
+    @app_commands.checks.has_permissions(manage_messages=True)
+    async def create_poll(self, interaction: discord.Interaction, *, args):
         parts = args.split('"')
         
         if len(parts) < 3:
-            await ctx.send('❌ Usage: `!poll "Question here?" "Option 1" "Option 2" ...`')
+            await interaction.response.send_message('❌ Usage: `!poll "Question here?" "Option 1" "Option 2" ...`')
             return
         
         question = parts[1]
         options = [p.strip() for p in parts[2:] if p.strip() and p.strip() != '"']
         
         if len(options) < 2:
-            await ctx.send("❌ You need at least 2 options for a poll!")
+            await interaction.response.send_message("❌ You need at least 2 options for a poll!")
             return
         
         if len(options) > 10:
-            await ctx.send("❌ Maximum 10 options allowed!")
+            await interaction.response.send_message("❌ Maximum 10 options allowed!")
             return
         
         self.poll_counter += 1
@@ -110,28 +111,28 @@ class Polls(commands.Cog):
         for i, option in enumerate(options, 1):
             embed.add_field(name=f"Option {i}", value=option, inline=False)
         
-        embed.set_footer(text=f"Poll created by {ctx.author}")
+        embed.set_footer(text=f"Poll created by {interaction.user}")
         
         view = PollView(self.poll_counter, options)
-        await ctx.send(embed=embed, view=view)
-        await ctx.message.delete()
+        await interaction.response.send_message(embed=embed, view=view)
+        # Message deletion not supported in slash commands
     
-    @commands.command(name='quickpoll')
-    @commands.has_permissions(manage_messages=True)
-    async def quick_poll(self, ctx, *, question):
+    @app_commands.command(name='quickpoll', description='Execute quickpoll command')
+    @app_commands.checks.has_permissions(manage_messages=True)
+    async def quick_poll(self, interaction: discord.Interaction, *, question):
         embed = discord.Embed(
             title="📊 Quick Poll",
             description=question,
             color=0x8B00FF,
             timestamp=datetime.now(timezone.utc)
         )
-        embed.set_footer(text=f"Poll created by {ctx.author}")
+        embed.set_footer(text=f"Poll created by {interaction.user}")
         
-        message = await ctx.send(embed=embed)
+        message = await interaction.response.send_message(embed=embed)
         await message.add_reaction("👍")
         await message.add_reaction("👎")
         await message.add_reaction("🤷")
-        await ctx.message.delete()
+        # Message deletion not supported in slash commands
 
 async def setup(bot):
     await bot.add_cog(Polls(bot))

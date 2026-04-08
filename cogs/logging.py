@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 from datetime import datetime, timezone
 import config
 
@@ -122,13 +123,13 @@ class Logging(commands.Cog):
         
         await self.send_log(guild, embed)
     
-    @commands.command(name='setlog')
-    @commands.has_permissions(administrator=True)
-    async def set_log_channel(self, ctx, channel: discord.TextChannel):
+    @app_commands.command(name='setlog', description='Execute setlog command')
+    @app_commands.checks.has_permissions(administrator=True)
+    async def set_log_channel(self, interaction: discord.Interaction, channel: discord.TextChannel):
         cfg = config.load_config()
         if 'guild_log_channels' not in cfg:
             cfg['guild_log_channels'] = {}
-        cfg['guild_log_channels'][str(ctx.guild.id)] = channel.id
+        cfg['guild_log_channels'][str(interaction.guild.id)] = channel.id
         config.save_config(cfg)
         
         embed = discord.Embed(
@@ -136,7 +137,7 @@ class Logging(commands.Cog):
             description=f"Log channel has been set to {channel.mention} for this server.",
             color=0x00F3FF
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
         
         welcome_embed = discord.Embed(
             title="📋 Logging System Activated",

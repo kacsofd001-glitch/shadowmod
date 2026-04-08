@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ui import Button, View
+from discord import app_commands
 import random
 
 class RPSView(View):
@@ -22,7 +23,7 @@ class RPSView(View):
         await self.process_choice(interaction, 'scissors')
     
     async def process_choice(self, interaction: discord.Interaction, choice):
-        if interaction.user.id != self.ctx.author.id:
+        if interaction.user.id != self.interaction.user.id:
             await interaction.response.send_message("❌ This is not your game!", ephemeral=True)
             return
         
@@ -148,8 +149,8 @@ class Games(commands.Cog):
         self.RPSView = RPSView
         self.TicTacToeView = TicTacToeView
     
-    @commands.command(name='rps')
-    async def rock_paper_scissors(self, ctx):
+    @app_commands.command(name='rps', description='Execute rps command')
+    async def rock_paper_scissors(self, interaction: discord.Interaction):
         embed = discord.Embed(
             title="🎮 Rock Paper Scissors",
             description="Choose your move!",
@@ -157,27 +158,27 @@ class Games(commands.Cog):
         )
         
         view = RPSView(ctx)
-        await ctx.send(embed=embed, view=view)
+        await interaction.response.send_message(embed=embed, view=view)
     
-    @commands.command(name='tictactoe')
-    async def tic_tac_toe(self, ctx, opponent: discord.Member):
+    @app_commands.command(name='tictactoe', description='Execute tictactoe command')
+    async def tic_tac_toe(self, interaction: discord.Interaction, opponent: discord.Member):
         if opponent.bot:
-            await ctx.send("❌ You cannot play against a bot!")
+            await interaction.response.send_message("❌ You cannot play against a bot!")
             return
         
-        if opponent.id == ctx.author.id:
-            await ctx.send("❌ You cannot play against yourself!")
+        if opponent.id == interaction.user.id:
+            await interaction.response.send_message("❌ You cannot play against yourself!")
             return
         
         embed = discord.Embed(
             title="🎮 Tic Tac Toe",
-            description=f"**Current turn:** {ctx.author.mention} (X)",
+            description=f"**Current turn:** {interaction.user.mention} (X)",
             color=0x8B00FF
         )
-        embed.add_field(name="Players", value=f"❌ {ctx.author.mention}\n⭕ {opponent.mention}")
+        embed.add_field(name="Players", value=f"❌ {interaction.user.mention}\n⭕ {opponent.mention}")
         
-        view = TicTacToeView(ctx.author, opponent)
-        await ctx.send(embed=embed, view=view)
+        view = TicTacToeView(interaction.user, opponent)
+        await interaction.response.send_message(embed=embed, view=view)
 
 async def setup(bot):
     await bot.add_cog(Games(bot))

@@ -20,15 +20,13 @@ intents = discord.Intents.all()
 STATS_FILE = 'bot_stats.json'
 
 def get_prefix(bot, message):
-    """Dynamic prefix per guild"""
-    if message.guild:
-        return config.get_guild_prefix(message.guild.id)
-    return '!'
+    """Prefix is DISABLED - using slash commands only"""
+    return None  # Effectively disables prefix commands
 
 class DiscordBot(commands.Bot):
     def __init__(self):
         super().__init__(
-            command_prefix=get_prefix,
+            command_prefix=lambda x, y: None,  # Slash commands only
             intents=intents,
             help_command=None
         )
