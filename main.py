@@ -1,4 +1,11 @@
-print("🔄 Loading bot modules...", flush=True)
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+ShadowMod Discord Bot - Main Application
+Complete moderation, music, economy, and engagement system
+"""
+
+print("[*] Loading bot modules...", flush=True)
 
 import discord
 from discord.ext import commands, tasks
@@ -10,9 +17,9 @@ import json
 import config
 import sys
 
-print("📁 Loading environment variables...", flush=True)
+print("[*] Loading environment variables...", flush=True)
 load_dotenv()
-print("✅ Environment variables loaded", flush=True)
+print("[OK] Environment variables loaded", flush=True)
 
 intents = discord.Intents.all()
 
@@ -101,13 +108,13 @@ class DiscordBot(commands.Bot):
             try:
                 await self.load_extension(cog)
                 loaded_count += 1
-                print(f"✅ Loaded: {cog}")
+                print(f"[OK] Loaded: {cog}")
             except Exception as e:
-                print(f"❌ Failed to load {cog}: {e}")
+                print(f"[FAIL] Failed to load {cog}: {e}")
                 import traceback
                 traceback.print_exc()
         
-        print(f"\n✅ All cogs loaded! ({loaded_count}/{len(cogs_to_load)})")
+        print(f"\n[OK] All cogs loaded! ({loaded_count}/{len(cogs_to_load)})")
         
     async def on_ready(self):
         """This method is now replaced by the standalone event handler"""
@@ -143,42 +150,42 @@ async def keep_alive():
     try:
         if bot.user:
             current_time = datetime.now(timezone.utc).isoformat()
-            print(f"💓 [HEARTBEAT] Bot is alive at {current_time} | Latency: {round(bot.latency * 1000)}ms | Guilds: {len(bot.guilds)}")
+            print(f"[*] [HEARTBEAT] Bot is alive at {current_time} | Latency: {round(bot.latency * 1000)}ms | Guilds: {len(bot.guilds)}")
             bot.update_stats_file()
         else:
-            print("⚠️ [HEARTBEAT] Warning: Bot user not initialized yet")
+            print("[!] [HEARTBEAT] Warning: Bot user not initialized yet")
     except Exception as e:
-        print(f"❌ [HEARTBEAT] Error: {e}")
+        print(f"[FAIL] [HEARTBEAT] Error: {e}")
 
 @keep_alive.before_loop
 async def before_keep_alive():
     """Wait for bot to be ready before starting keep-alive"""
     await bot.wait_until_ready()
-    print("✅ Keep-alive task started")
+    print("[OK] Keep-alive task started")
 
 @bot.event
 async def on_ready():
     global _keep_alive_started
     
-    print(f'✅ Bot is ready! Logged in as {bot.user}')
-    print(f'✅ Bot ID: {bot.user.id}')
+    print(f'[OK] Bot is ready! Logged in as {bot.user}')
+    print(f'[OK] Bot ID: {bot.user.id}')
     print('------')
-    print(f'📊 Connected to {len(bot.guilds)} guilds')
+    print(f'[*] Connected to {len(bot.guilds)} guilds')
     
     # Start keep-alive task only once
     if not _keep_alive_started:
         try:
             keep_alive.start()
             _keep_alive_started = True
-            print("💓 Keep-alive heartbeat task started")
+            print("[*] Keep-alive heartbeat task started")
         except Exception as e:
-            print(f"❌ Failed to start keep-alive task: {e}")
+            print(f"[FAIL] Failed to start keep-alive task: {e}")
     
     try:
         synced = await bot.tree.sync()
-        print(f'✅ Synced {len(synced)} slash commands')
+        print(f'[OK] Synced {len(synced)} slash commands')
     except Exception as e:
-        print(f'❌ Failed to sync commands: {e}')
+        print(f'[FAIL] Failed to sync commands: {e}')
     
     await bot.change_presence(
         activity=discord.Activity(
@@ -193,20 +200,20 @@ async def on_ready():
 @bot.event
 async def on_disconnect():
     """Handle bot disconnection"""
-    print("⚠️  Bot disconnected from Discord at " + datetime.now(timezone.utc).isoformat() + ". Saving config...")
+    print("[!]  Bot disconnected from Discord at " + datetime.now(timezone.utc).isoformat() + ". Saving config...")
     await save_config_on_close()
 
 @bot.event
 async def on_resumed():
     """Called when bot reconnects after being disconnected"""
-    print("✅ Bot has resumed connection to Discord!")
+    print("[OK] Bot has resumed connection to Discord!")
     bot.update_stats_file()
 
 @bot.event
 async def on_error(event, *args, **kwargs):
     """Global error handler - prevents bot from crashing on event errors"""
     error_info = sys.exc_info()
-    print(f"❌ Error in event '{event}' at {datetime.now(timezone.utc).isoformat()}:")
+    print(f"[FAIL] Error in event '{event}' at {datetime.now(timezone.utc).isoformat()}:")
     print(f"   Exception: {error_info[1]}")
     
     # Log to a file for debugging
@@ -221,22 +228,22 @@ async def on_error(event, *args, **kwargs):
     # Import traceback for full error logs
     import traceback
     traceback.print_exc()
-    print("⚡ Bot will continue running despite this error")
+    print("[*] Bot will continue running despite this error")
 
 async def save_config_on_close():
     """Save all config data before bot closes"""
-    print("💾 Saving configuration before shutdown...")
+    print("[*] Saving configuration before shutdown...")
     try:
         cfg = config.load_config()
         config.save_config(cfg)
-        print("✅ Configuration saved successfully!")
+        print("[OK] Configuration saved successfully!")
     except Exception as e:
-        print(f"❌ Failed to save configuration on shutdown: {e}")
+        print(f"[FAIL] Failed to save configuration on shutdown: {e}")
 
 @bot.tree.error
 async def on_app_command_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
     """Global error handler for slash commands"""
-    print(f"❌ Slash command error: {error}")
+    print(f"[FAIL] Slash command error: {error}")
     try:
         if interaction.response.is_done():
             await interaction.followup.send(f"Error: {str(error)}", ephemeral=True)
@@ -248,7 +255,7 @@ async def on_app_command_error(interaction: discord.Interaction, error: discord.
 @bot.event
 async def on_interaction(interaction: discord.Interaction):
     """Debug: Log all interactions"""
-    print(f"🔵 Interaction received: {interaction.type} - {interaction.data if hasattr(interaction, 'data') else 'Unknown'}")
+    print(f"[>] Interaction received: {interaction.type} - {interaction.data if hasattr(interaction, 'data') else 'Unknown'}")
 
 @bot.command(name='help')
 async def help_command(ctx):
@@ -277,7 +284,7 @@ async def help_command(ctx):
                 "🎮 **Games** - Fun mini-games\n"
                 "🎭 **Fun** - Entertainment commands\n"
                 "⚙️ **Utility** - Helpful tools\n"
-                "📊 **Stats** - Analytics & tracking"
+                "[*] **Stats** - Analytics & tracking"
             ),
             inline=False
         )
@@ -290,13 +297,13 @@ async def help_command(ctx):
 
     # Fallback legacy help (if cog not loaded)
     embed = discord.Embed(
-        title="⚡ SHADOW-MOD ✨ | COMMAND DATABASE",
+        title="[*] SHADOW-MOD ✨ | COMMAND DATABASE",
         description=f"━━━━━━━━━━━━━━━━━━━━━━━━━\n`Next-Gen Discord Moderation System`\n**Current Prefix:** `{prefix}` | **Slash:** `/`\n━━━━━━━━━━━━━━━━━━━━━━━━━",
         color=0x00F3FF  # Neon cyan
     )
     
     embed.add_field(
-        name="📊 INFORMATION SYSTEMS",
+        name="[*] INFORMATION SYSTEMS",
         value="`/serverinfo` - Server statistics & details\n`/botinfo` - Bot features & uptime\n`/userinfo [@user]` - User profile with badges\n`/support` - Support server link\n`/webpage` - Live web dashboard",
         inline=False
     )
@@ -380,7 +387,7 @@ async def help_command(ctx):
     )
     
     embed.add_field(
-        name="📊 SERVER ANALYTICS",
+        name="[*] SERVER ANALYTICS",
         value="`/serverstats` - Full server statistics\n`Tracks: messages, activity, top users, growth`",
         inline=False
     )
@@ -405,11 +412,11 @@ async def help_command(ctx):
     
     embed.add_field(
         name="🌐 WEB RESOURCES",
-        value="[📖 Full Command List](https://shadowmod.onrender.com/help)\n[📊 Live Dashboard](https://shadowmod.onrender.com/dashboard)",
+        value="[📖 Full Command List](https://shadowmod.onrender.com/help)\n[[*] Live Dashboard](https://shadowmod.onrender.com/dashboard)",
         inline=False
     )
     
-    embed.set_footer(text="⚡ Made by MoonlightVFX | 75+ Slash Commands Ready ⚡")
+    embed.set_footer(text="[*] Made by MoonlightVFX | 75+ Slash Commands Ready [*]")
     embed.set_thumbnail(url=ctx.bot.user.display_avatar.url)
     
     await ctx.send(embed=embed)
@@ -421,13 +428,13 @@ async def ping_command(ctx):
     # Determine latency color
     if latency < 100:
         color = 0x00F3FF  # Neon cyan - excellent
-        status = "⚡ OPTIMAL"
+        status = "[*] OPTIMAL"
     elif latency < 200:
         color = 0x8B00FF  # Neon purple - good
-        status = "✅ STABLE"
+        status = "[OK] STABLE"
     else:
         color = 0xFF006E  # Neon pink - slow
-        status = "⚠️ DEGRADED"
+        status = "[!] DEGRADED"
     
     embed = discord.Embed(
         title=f"📡 SYSTEM RESPONSE | {status}",
@@ -436,7 +443,7 @@ async def ping_command(ctx):
     )
     embed.add_field(name="Status", value=status, inline=True)
     embed.add_field(name="Response Time", value=f"{latency}ms", inline=True)
-    embed.set_footer(text="⚡ Neural Network Active")
+    embed.set_footer(text="[*] Neural Network Active")
     
     await ctx.send(embed=embed)
 
@@ -446,7 +453,7 @@ if __name__ == '__main__':
     print("\n🚀 Starting bot standalone mode...", flush=True)
     TOKEN = os.getenv('DISCORD_TOKEN')
     if not TOKEN:
-        print("❌ ERROR: DISCORD_TOKEN not found!", flush=True)
+        print("[FAIL] ERROR: DISCORD_TOKEN not found!", flush=True)
         exit(1)
     
     try:
@@ -457,14 +464,14 @@ if __name__ == '__main__':
         try:
             cfg = config.load_config()
             config.save_config(cfg)
-            print("✅ Configuration saved on shutdown!", flush=True)
+            print("[OK] Configuration saved on shutdown!", flush=True)
         except Exception as e:
-            print(f"❌ Failed to save config on shutdown: {e}", flush=True)
+            print(f"[FAIL] Failed to save config on shutdown: {e}", flush=True)
     except Exception as e:
-        print(f"❌ Bot crashed: {e}", flush=True)
+        print(f"[FAIL] Bot crashed: {e}", flush=True)
         try:
             cfg = config.load_config()
             config.save_config(cfg)
-            print("✅ Configuration saved after crash!", flush=True)
+            print("[OK] Configuration saved after crash!", flush=True)
         except Exception as e2:
-            print(f"❌ Failed to save config after crash: {e2}", flush=True)
+            print(f"[FAIL] Failed to save config after crash: {e2}", flush=True)
