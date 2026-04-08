@@ -95,8 +95,7 @@ class DiscordBot(commands.Bot):
             'cogs.botstatus',
             'cogs.webhooks',
             'cogs.hungariandefense',
-            'cogs.community',
-            'cogs.slash_commands'
+            'cogs.community'
         ]
         
         loaded_count = 0
