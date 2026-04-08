@@ -1625,20 +1625,6 @@ class SlashCommands(commands.Cog):
         
         await interaction.response.send_message(embed=embed)
 
-    # ==================== AFK COMMAND ====================
-    
-    @app_commands.command(name="afk", description="Set your AFK status")
-    @app_commands.describe(reason="Reason for being AFK")
-    async def slash_afk(self, interaction: discord.Interaction, reason: str = "AFK"):
-        afk_cog = self.bot.get_cog('AFK')
-        if not afk_cog:
-            await interaction.response.send_message("❌ AFK system not loaded!", ephemeral=True)
-            return
-        
-        afk_cog.set_afk(interaction.user.id, reason)
-        
-        await interaction.response.send_message(f"💤 You are now AFK: {reason}")
-
     # ==================== SERVER STATS COMMANDS ====================
     
     @app_commands.command(name="serverstats", description="Show server statistics")
