@@ -4,6 +4,7 @@ Commands for managing Hungarian-specific automod features
 """
 import discord
 from discord.ext import commands
+from discord import app_commands
 from hungarian_automod import (
     HUNGARIAN_BAD_WORDS, ENGLISH_BAD_WORDS, 
     get_bad_words_for_language, merge_bad_words
@@ -17,40 +18,11 @@ class HungarianDefense(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.group(name='hudefense', aliases=['hudef', 'hmd'])
-    @commands.has_permissions(manage_guild=True)
-    async def hu_defense(self, ctx):
-        """Hungarian server defense management"""
-        if None is None:
-            from translations import get_text
-            lang = 'hu' if await self._is_hungarian_guild(ctx.guild) else 'en'
-            
-            title = get_text(ctx.guild.id, 'hudef_title', lang=lang) if lang == 'hu' else "🛡️ Hungarian Defense System"
-            
-            embed = discord.Embed(
-                title=title,
-                description="Manage Hungarian-specific server protection features",
-                color=discord.Color.red()
-            )
-            embed.add_field(
-                name="Commands",
-                value=(
-                    "`/hudefense enable` - Enable Hungarian automod\n"
-                    "`/hudefense disable` - Disable Hungarian automod\n"
-                    "`/hudefense status` - Check status\n"
-                    "`/hudefense badwords` - Manage bad words\n"
-                    "`/hudefense preview` - Preview bad words list"
-                ),
-                inline=False
-            )
-            embed.set_footer(text="Keep your Hungarian server safe!")
-            await ctx.send(embed=embed)
-    
-    @hu_defense.command(name='enable')
-    @commands.has_permissions(manage_guild=True)
-    async def enable_hu_defense(self, ctx):
+    @app_commands.command(name='hudefense_enable', description='Enable Hungarian defense automod')
+    @app_commands.checks.has_permissions(manage_guild=True)
+    async def enable_hu_defense(self, interaction: discord.Interaction):
         """Enable Hungarian automod"""
-        settings = get_guild_settings(str(ctx.guild.id))
+        settings = get_guild_settings(str(interaction.guild.id))
         
         settings['automod'] = settings.get('automod', {})
         settings['automod']['enabled'] = True
@@ -61,7 +33,7 @@ class HungarianDefense(commands.Cog):
             settings['bad_words'] = HUNGARIAN_BAD_WORDS.copy()
         
         settings['language'] = 'hu'
-        update_guild_settings(str(ctx.guild.id), settings)
+        update_guild_settings(str(interaction.guild.id), settings)
         
         embed = discord.Embed(
             title="✅ Hungarian Defense Enabled",
@@ -71,28 +43,28 @@ class HungarianDefense(commands.Cog):
                        "📊 Spam Detection: Enabled",
             color=discord.Color.green()
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @hu_defense.command(name='disable')
-    @commands.has_permissions(manage_guild=True)
-    async def disable_hu_defense(self, ctx):
+    @app_commands.command(name='hudefense_disable', description='Disable Hungarian defense automod')
+    @app_commands.checks.has_permissions(manage_guild=True)
+    async def disable_hu_defense(self, interaction: discord.Interaction):
         """Disable Hungarian automod"""
-        settings = get_guild_settings(str(ctx.guild.id))
+        settings = get_guild_settings(str(interaction.guild.id))
         settings['automod'] = settings.get('automod', {})
         settings['automod']['enabled'] = False
-        update_guild_settings(str(ctx.guild.id), settings)
+        update_guild_settings(str(interaction.guild.id), settings)
         
         embed = discord.Embed(
             title="❌ Hungarian Defense Disabled",
             description="Hungarian automod has been disabled.",
             color=discord.Color.red()
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @hu_defense.command(name='status')
-    async def defense_status(self, ctx):
+    @app_commands.command(name='hudefense_status', description='Check Hungarian defense status')
+    async def defense_status(self, interaction: discord.Interaction):
         """Check Hungarian defense status"""
-        settings = get_guild_settings(str(ctx.guild.id))
+        settings = get_guild_settings(str(interaction.guild.id))
         automod = settings.get('automod', {})
         is_enabled = automod.get('enabled', False)
         
@@ -111,67 +83,67 @@ class HungarianDefense(commands.Cog):
             inline=True
         )
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @hu_defense.command(name='addbadword')
-    @commands.has_permissions(manage_guild=True)
-    async def add_bad_word(self, ctx, *, word: str):
+    @app_commands.command(name='hudefense_addbadword', description='Add a custom bad word to filter')
+    @app_commands.checks.has_permissions(manage_guild=True)
+    async def add_bad_word(self, interaction: discord.Interaction, word: str):
         """Add a custom bad word to the filter"""
         if len(word) < 2:
-            await ctx.send("❌ Word must be at least 2 characters long")
+            await interaction.response.send_message("❌ Word must be at least 2 characters long")
             return
         
-        settings = get_guild_settings(str(ctx.guild.id))
+        settings = get_guild_settings(str(interaction.guild.id))
         bad_words = settings.get('bad_words', [])
         
         word_lower = word.lower()
         if word_lower in bad_words:
-            await ctx.send(f"⚠️ '{word}' is already in the bad words list")
+            await interaction.response.send_message(f"⚠️ '{word}' is already in the bad words list")
             return
         
         bad_words.append(word_lower)
         settings['bad_words'] = bad_words
-        update_guild_settings(str(ctx.guild.id), settings)
+        update_guild_settings(str(interaction.guild.id), settings)
         
         embed = discord.Embed(
             title="✅ Word Added",
             description=f"'{word}' has been added to the bad words filter",
             color=discord.Color.green()
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @hu_defense.command(name='removebadword')
-    @commands.has_permissions(manage_guild=True)
-    async def remove_bad_word(self, ctx, *, word: str):
+    @app_commands.command(name='hudefense_removebadword', description='Remove a word from filter')
+    @app_commands.checks.has_permissions(manage_guild=True)
+    async def remove_bad_word(self, interaction: discord.Interaction, word: str):
         """Remove a word from the bad words filter"""
-        settings = get_guild_settings(str(ctx.guild.id))
+        settings = get_guild_settings(str(interaction.guild.id))
         bad_words = settings.get('bad_words', [])
         
         word_lower = word.lower()
         if word_lower not in bad_words:
-            await ctx.send(f"⚠️ '{word}' is not in the bad words list")
+            await interaction.response.send_message(f"⚠️ '{word}' is not in the bad words list")
             return
         
         bad_words.remove(word_lower)
         settings['bad_words'] = bad_words
-        update_guild_settings(str(ctx.guild.id), settings)
+        update_guild_settings(str(interaction.guild.id), settings)
         
         embed = discord.Embed(
             title="✅ Word Removed",
             description=f"'{word}' has been removed from the bad words filter",
             color=discord.Color.green()
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @hu_defense.command(name='preview')
-    async def preview_bad_words(self, ctx):
+    @app_commands.command(name='hudefense_preview', description='Preview the bad words list')
+    async def preview_bad_words(self, interaction: discord.Interaction):
         """Preview the bad words list"""
-        settings = get_guild_settings(str(ctx.guild.id))
+        settings = get_guild_settings(str(interaction.guild.id))
         bad_words = settings.get('bad_words', [])
         language = settings.get('language', 'en')
         
         if not bad_words:
-            await ctx.send("❌ No bad words configured")
+            await interaction.response.send_message("❌ No bad words configured")
             return
         
         # Send in chunks to avoid message length limit
@@ -184,18 +156,21 @@ class HungarianDefense(commands.Cog):
                 color=discord.Color.orange()
             )
             embed.set_footer(text=f"Total: {len(bad_words)} words")
-            await ctx.send(embed=embed)
+            if i == 1:
+                await interaction.response.send_message(embed=embed)
+            else:
+                await interaction.followup.send(embed=embed)
     
-    @hu_defense.command(name='resetbadwords')
-    @commands.has_permissions(manage_guild=True)
-    async def reset_bad_words(self, ctx):
+    @app_commands.command(name='hudefense_resetbadwords', description='Reset bad words to defaults')
+    @app_commands.checks.has_permissions(manage_guild=True)
+    async def reset_bad_words(self, interaction: discord.Interaction):
         """Reset bad words to default for server language"""
-        settings = get_guild_settings(str(ctx.guild.id))
+        settings = get_guild_settings(str(interaction.guild.id))
         language = settings.get('language', 'en')
         
         default_words = get_bad_words_for_language(language)
         settings['bad_words'] = default_words.copy()
-        update_guild_settings(str(ctx.guild.id), settings)
+        update_guild_settings(str(interaction.guild.id), settings)
         
         embed = discord.Embed(
             title="✅ Reset to Defaults",
@@ -203,12 +178,12 @@ class HungarianDefense(commands.Cog):
                        f"📊 {len(default_words)} words now blocked",
             color=discord.Color.green()
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
     
-    @hu_defense.command(name='stats')
-    async def defense_stats(self, ctx):
+    @app_commands.command(name='hudefense_stats', description='Show defense statistics')
+    async def defense_stats(self, interaction: discord.Interaction):
         """Show defense statistics"""
-        settings = get_guild_settings(str(ctx.guild.id))
+        settings = get_guild_settings(str(interaction.guild.id))
         
         bad_words = settings.get('bad_words', [])
         language = settings.get('language', 'en')
@@ -230,12 +205,7 @@ class HungarianDefense(commands.Cog):
             value=max(0, len(bad_words) - len(get_bad_words_for_language(language)))
         )
         
-        await ctx.send(embed=embed)
-    
-    async def _is_hungarian_guild(self, guild):
-        """Check if guild is set to Hungarian"""
-        settings = get_guild_settings(str(guild.id))
-        return settings.get('language', 'en') == 'hu'
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(HungarianDefense(bot))

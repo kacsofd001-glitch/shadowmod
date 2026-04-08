@@ -221,13 +221,12 @@ class Giveaways(commands.Cog):
             
             embed = discord.Embed(
                 title="🎉 Giveaway Rerolled!",
-                description=f"**Prize:** {giveaway_data['prize']}\n\n**New Winner:** {new_winner.mention}",
+                description=f"**Prize:** {giveaway_data['prize']}\n\n**New Winner:** {new_winner.mention}\n🎊 Congratulations {new_winner.mention}! You won **{giveaway_data['prize']}**!",
                 color=discord.Color.gold(),
                 timestamp=datetime.now(timezone.utc)
             )
             
             await interaction.response.send_message(embed=embed)
-            await interaction.response.send_message(f"🎊 Congratulations {new_winner.mention}! You won **{giveaway_data['prize']}**!")
         except Exception as e:
             await interaction.response.send_message(f"❌ Error rerolling giveaway: {str(e)}")
 

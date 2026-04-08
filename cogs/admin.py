@@ -55,14 +55,12 @@ class Admin(commands.Cog):
         except:
             pass
     
-    def is_bot_owner():
-        async def predicate(ctx):
-            return await interaction.client.is_owner(interaction.user)
-        return commands.check(predicate)
-    
     @app_commands.command(name='servers', description='Execute servers command')
-    @is_bot_owner()
     async def servers(self, interaction: discord.Interaction):
+        # Check if user is bot owner
+        if not await self.bot.is_owner(interaction.user):
+            await interaction.response.send_message("❌ You must be the bot owner to use this command!", ephemeral=True)
+            return
         guild_id = interaction.guild.id if interaction.guild else None
         
         embed = discord.Embed(
@@ -77,7 +75,7 @@ class Admin(commands.Cog):
         
         if server_list:
             chunks = [server_list[i:i+10] for i in range(0, len(server_list), 10)]
-            for i, chunk in enumerate(chunks):
+            for i, chunk in enumerate(chunks, 1):
                 embed.add_field(
                     name=f"Servers {i*10 + 1}-{min((i+1)*10, len(server_list))}",
                     value="\n\n".join(chunk),
@@ -97,8 +95,11 @@ class Admin(commands.Cog):
             await interaction.response.send_message(get_text(guild_id, 'owner_only'))
     
     @app_commands.command(name='createinvite', description='Execute createinvite command')
-    @is_bot_owner()
     async def create_invite(self, interaction: discord.Interaction, server_id: int):
+        # Check if user is bot owner
+        if not await self.bot.is_owner(interaction.user):
+            await interaction.response.send_message("❌ You must be the bot owner to use this command!", ephemeral=True)
+            return
         guild_id = interaction.guild.id if interaction.guild else None
         
         guild = self.bot.get_guild(server_id)

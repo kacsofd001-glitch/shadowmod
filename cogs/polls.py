@@ -79,24 +79,13 @@ class Polls(commands.Cog):
         self.bot = bot
         self.poll_counter = 0
     
-    @app_commands.command(name='poll', description='Execute poll command')
+    @app_commands.command(name='poll', description='Create a poll with question and options')
     @app_commands.checks.has_permissions(manage_messages=True)
-    async def create_poll(self, interaction: discord.Interaction, *, args):
-        parts = args.split('"')
-        
-        if len(parts) < 3:
-            await interaction.response.send_message('❌ Usage: `!poll "Question here?" "Option 1" "Option 2" ...`')
-            return
-        
-        question = parts[1]
-        options = [p.strip() for p in parts[2:] if p.strip() and p.strip() != '"']
+    async def create_poll(self, interaction: discord.Interaction, question: str, option1: str, option2: str, option3: str = None, option4: str = None, option5: str = None):
+        options = [op for op in [option1, option2, option3, option4, option5] if op]
         
         if len(options) < 2:
             await interaction.response.send_message("❌ You need at least 2 options for a poll!")
-            return
-        
-        if len(options) > 10:
-            await interaction.response.send_message("❌ Maximum 10 options allowed!")
             return
         
         self.poll_counter += 1
@@ -115,11 +104,10 @@ class Polls(commands.Cog):
         
         view = PollView(self.poll_counter, options)
         await interaction.response.send_message(embed=embed, view=view)
-        # Message deletion not supported in slash commands
     
-    @app_commands.command(name='quickpoll', description='Execute quickpoll command')
+    @app_commands.command(name='quickpoll', description='Create a quick poll with yes/no/maybe')
     @app_commands.checks.has_permissions(manage_messages=True)
-    async def quick_poll(self, interaction: discord.Interaction, *, question):
+    async def quick_poll(self, interaction: discord.Interaction, question: str):
         embed = discord.Embed(
             title="📊 Quick Poll",
             description=question,

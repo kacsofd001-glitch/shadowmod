@@ -25,16 +25,16 @@ class WebhookLogging(commands.Cog):
             print(f"Failed to send webhook: {e}")
     
     @commands.Cog.listener()
-    async def on_command_error(self, interaction: discord.Interaction, error):
+    async def on_app_command_error(self, interaction: discord.Interaction, error):
         embed = discord.Embed(
             title="⚠️ Command Error",
             color=discord.Color.red(),
             timestamp=datetime.now(timezone.utc)
         )
         
-        embed.add_field(name="Command", value=f"`{ctx.command}`", inline=True)
+        embed.add_field(name="Command", value=f"`{interaction.command.qualified_name if interaction.command else 'Unknown'}`", inline=True)
         embed.add_field(name="User", value=f"{interaction.user} ({interaction.user.id})", inline=True)
-        embed.add_field(name="Channel", value=f"{interaction.channel.mention}", inline=True)
+        embed.add_field(name="Channel", value=f"{interaction.channel.mention if interaction.channel else 'DM'}", inline=True)
         
         if isinstance(error, commands.MissingRequiredArgument):
             embed.add_field(
