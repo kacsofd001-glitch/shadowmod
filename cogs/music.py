@@ -152,7 +152,6 @@ class Music(commands.Cog):
         except:
             return []
 
-    @commands.command(name='play')
     async def play(self, ctx, *, query: str):
         """Play music from YouTube, Spotify, or search query"""
         if not interaction.user.voice:
@@ -330,7 +329,6 @@ class Music(commands.Cog):
             except Exception as e:
                 await interaction.response.send_message(f"❌ Standard playback error: {str(e)}")
 
-    @commands.command(name='pause')
     async def pause(self, ctx):
         """Pause the current playback"""
         vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
@@ -349,7 +347,6 @@ class Music(commands.Cog):
                               color=0x8B00FF)
         await interaction.response.send_message(embed=embed)
 
-    @commands.command(name='resume')
     async def resume(self, ctx):
         """Resume paused playback"""
         vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
@@ -368,7 +365,6 @@ class Music(commands.Cog):
                               color=0x00F3FF)
         await interaction.response.send_message(embed=embed)
 
-    @commands.command(name='skip')
     async def skip(self, ctx):
         """Skip to the next song"""
         # Handle Lavalink skip
@@ -395,7 +391,6 @@ class Music(commands.Cog):
             else:
                 await interaction.response.send_message("❌ Nothing playing to skip.")
 
-    @commands.command(name='stop')
     async def stop(self, ctx):
         """Stop playback and disconnect"""
         if not self.bot.get_guild(interaction.guild.id).voice_client:
@@ -414,7 +409,6 @@ class Music(commands.Cog):
                               color=0xFF006E)
         await interaction.response.send_message(embed=embed)
 
-    @commands.command(name='queue')
     async def queue(self, ctx):
         """Display the music queue"""
         vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
@@ -452,7 +446,6 @@ class Music(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @commands.command(name='nowplaying', aliases=['np'])
     async def nowplaying(self, ctx):
         """Show currently playing track"""
         vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
@@ -494,7 +487,6 @@ class Music(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @commands.command(name='loop')
     async def loop(self, ctx):
         """Toggle loop mode"""
         vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
@@ -521,7 +513,6 @@ class Music(commands.Cog):
                               color=0x8B00FF)
         await interaction.response.send_message(embed=embed)
 
-    @commands.command(name='volume')
     async def volume(self, ctx, volume: int):
         """Adjust playback volume (0-100)"""
         vc: wavelink.Player = self.bot.get_guild(interaction.guild.id).voice_client
@@ -548,7 +539,6 @@ class Music(commands.Cog):
                               color=0x00F3FF)
         await interaction.response.send_message(embed=embed)
 
-    @commands.command(name='radio1')
     async def radio1(self, ctx):
         """Play Hungarian Rádió 1 (24/7) / Rádió 1 lejátszása (0-24)"""
         if not interaction.user.voice:

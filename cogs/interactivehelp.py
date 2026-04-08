@@ -78,9 +78,7 @@ class HelpView(discord.ui.View):
                 "`/purge` - Delete messages\n"
                 "`/tempmute` - Timeout user\n"
                 "`/tempban` - Temporarily ban user\n"
-                "`/lock` / `/unlock` - Channel lock\n"
-                "`/ticket` / `/closeticket` - Create/close support ticket\n"
-                "`/poll` / `/quickpoll` - Create a poll"
+                "`/lock` / `/unlock` - Channel lock"
             ) if lang == 'en' else (
                 "`/ban` - Felhasználó kitiltása\n"
                 "`/kick` - Felhasználó kirúgása\n"
@@ -89,9 +87,7 @@ class HelpView(discord.ui.View):
                 "`/purge` - Üzenetek törlése\n"
                 "`/tempmute` - Felhasználó időtúltöltése\n"
                 "`/tempban` - Felhasználó ideiglenes kitiltása\n"
-                "`/lock` / `/unlock` - Csatorna zárolása\n"
-                "`/ticket` / `/closeticket` - Támogatási jegy létrehozása/lezárása\n"
-                "`/poll` / `/quickpoll` - Szavazás létrehozása"
+                "`/lock` / `/unlock` - Csatorna zárolása"
             ),
             color=0xFF0000
         )
@@ -264,15 +260,9 @@ class HelpView(discord.ui.View):
             title=get_text(self.guild_id, 'help_fun', lang=lang),
             description=(
                 "`/meme` - Send a random meme\n"
-                "`/8ball` - Magic 8-ball\n"
-                "`/coinflip` - Flip a coin\n"
-                "`/roll` - Roll the dice\n"
                 "`/sound` - Play a funny sound"
             ) if lang == 'en' else (
                 "`/meme` - Véletlenszerű mém\n"
-                "`/8ball` - Mágikus 8-as\n"
-                "`/coinflip` - Érmefeldobás\n"
-                "`/roll` - Kocka dobása\n"
                 "`/sound` - Szórakoztató hang"
             ),
             color=0xFF00FF
