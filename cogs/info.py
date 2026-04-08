@@ -13,7 +13,7 @@ class Info(commands.Cog):
         # Add /dashboard path to URL
         self.dashboard_url = f'{self.custom_domain}/dashboard'
     
-    @app_commands.command(name='serverinfo', aliases=['si'], description='Execute serverinfo command')
+    @app_commands.command(name='serverinfo', description='Execute serverinfo command')
     async def serverinfo(self, interaction: discord.Interaction):
         """Show server information"""
         from translations import get_text
@@ -113,7 +113,7 @@ class Info(commands.Cog):
         
         await interaction.response.send_message(embed=embed)
     
-    @app_commands.command(name='botinfo', aliases=['bi'], description='Execute botinfo command')
+    @app_commands.command(name='botinfo', description='Execute botinfo command')
     async def botinfo(self, interaction: discord.Interaction):
         """Show bot information and statistics"""
         from translations import get_text
@@ -196,7 +196,7 @@ class Info(commands.Cog):
         
         await interaction.response.send_message(embed=embed)
     
-    @app_commands.command(name='userinfo', aliases=['ui', 'whois'], description='Execute userinfo command')
+    @app_commands.command(name='userinfo', description='Execute userinfo command')
     async def userinfo(self, interaction: discord.Interaction, member: discord.Member = None):
         """Show detailed user information with badges"""
         member = member or interaction.user
@@ -354,7 +354,7 @@ class Info(commands.Cog):
         
         await interaction.response.send_message(embed=embed)
     
-    @app_commands.command(name='webpage', aliases=['web', 'dashboard'], description='Execute webpage command')
+    @app_commands.command(name='webpage', description='Execute webpage command')
     async def webpage(self, interaction: discord.Interaction):
         """Get the link to the bot's live web dashboard"""
         embed = discord.Embed(

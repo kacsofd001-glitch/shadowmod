@@ -169,11 +169,6 @@ class Verify(commands.Cog):
             config_embed.add_field(name="Roles to Remove", value=", ".join(role_names) if role_names else "None", inline=False)
         
         await interaction.followup.send(embed=config_embed)
-    
-    @app_commands.command(name='setupverify', description='Execute setupverify command')
-    @app_commands.checks.has_permissions(administrator=True)
-    async def setup_verify_prefix(self, interaction: discord.Interaction, channel: discord.TextChannel, *, roles: str = ""):
-        await interaction.response.send_message("⚠️ Please use the slash command `/setupverify` for easier configuration!")
 
 async def setup(bot):
     await bot.add_cog(Verify(bot))
