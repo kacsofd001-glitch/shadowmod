@@ -49,58 +49,6 @@ class Fun(commands.Cog):
             ("think", "Modern problémák", "Modern megoldások"),
         ]
     
-    @app_commands.command(name='meme', description='Execute meme command')
-    async def random_meme(self, interaction: discord.Interaction):
-        guild_id = interaction.guild.id
-        await interaction.response.defer()
-        
-        # Use a more reliable public meme API for random memes
-        meme_apis = [
-            "https://meme-api.com/gimme",
-            "https://meme-api.com/gimme/wholesomememes",
-            "https://meme-api.com/gimme/memes"
-        ]
-        
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(random.choice(meme_apis), timeout=aiohttp.ClientTimeout(total=5)) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        meme_url = data.get('url')
-                        meme_title = data.get('title', get_text(guild_id, 'meme_title'))
-                        
-                        embed = discord.Embed(
-                            title=meme_title,
-                            color=discord.Color.random()
-                        )
-                        embed.set_image(url=meme_url)
-                        embed.set_footer(text=f"r/{data.get('subreddit')} | {get_text(guild_id, 'generated_meme')}")
-                        
-                        await interaction.response.send_message(embed=embed)
-                        return
-                    else:
-                        raise Exception("Meme API error")
-        except Exception as e:
-            # Fallback to local templates if API fails
-            lang = get_guild_language(guild_id)
-            templates = self.meme_templates_hu if lang == 'hu' else self.meme_templates_en
-            template_name, top_text, bottom_text = random.choice(templates)
-            
-            top_text_encoded = quote(top_text, safe='')
-            bottom_text_encoded = quote(bottom_text, safe='')
-            
-            meme_url = f"https://api.memegen.link/images/{template_name}/{top_text_encoded}/{bottom_text_encoded}.png"
-            
-            embed = discord.Embed(
-                title=get_text(guild_id, 'meme_title'),
-                color=discord.Color.random()
-            )
-            embed.set_image(url=meme_url)
-            embed.set_footer(text=get_text(guild_id, 'generated_meme'))
-            
-            await interaction.response.send_message(embed=embed)
-    
-    
     @app_commands.command(name='sound', description='Execute sound command')
     async def random_sound(self, interaction: discord.Interaction):
         sound = random.choice(self.sounds)
@@ -110,25 +58,6 @@ class Fun(commands.Cog):
             description=sound,
             color=discord.Color.random()
         )
-        
-        await interaction.response.send_message(embed=embed)
-    
-    @app_commands.command(name='8ball', description='Execute 8ball command')
-    async def eight_ball(self, interaction: discord.Interaction, *, question: str = ""):
-        from translations import get_text
-        if not question:
-            await interaction.response.send_message("❌ Please ask a question!")
-            return
-        
-        responses = get_text(interaction.guild.id, '8ball_responses')
-        answer = random.choice(responses)
-        
-        embed = discord.Embed(
-            title=get_text(interaction.guild.id, 'magic_8ball'),
-            color=discord.Color.purple()
-        )
-        embed.add_field(name=get_text(interaction.guild.id, 'question'), value=question, inline=False)
-        embed.add_field(name=get_text(interaction.guild.id, 'answer'), value=answer, inline=False)
         
         await interaction.response.send_message(embed=embed)
     
@@ -161,11 +90,10 @@ class Fun(commands.Cog):
             embed = discord.Embed(
                 title="🎲 Dice Roll",
                 description=f"Rolling {rolls}d{sides}",
-                color=0x8B00FF
+                color=discord.Color.random()
             )
             
-            if len(results) <= 20:
-                embed.add_field(name="Results", value=", ".join(map(str, results)), inline=False)
+            embed.add_field(name="Results", value=", ".join(map(str, results)), inline=False)
             
             embed.add_field(name="Total", value=str(total), inline=False)
             
