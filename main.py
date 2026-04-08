@@ -138,6 +138,8 @@ class DiscordBot(commands.Bot):
 bot = DiscordBot()
 
 # Keep-alive task to prevent inactivity timeout
+_keep_alive_started = False  # Flag to ensure we only start once
+
 @tasks.loop(minutes=5)
 async def keep_alive():
     """Periodic health check to prevent inactivity disconnects"""
@@ -157,15 +159,23 @@ async def before_keep_alive():
     await bot.wait_until_ready()
     print("✅ Keep-alive task started")
 
-# Start keep-alive on bot startup
-keep_alive.start()
-
 @bot.event
 async def on_ready():
+    global _keep_alive_started
+    
     print(f'✅ Bot is ready! Logged in as {bot.user}')
     print(f'✅ Bot ID: {bot.user.id}')
     print('------')
     print(f'📊 Connected to {len(bot.guilds)} guilds')
+    
+    # Start keep-alive task only once
+    if not _keep_alive_started:
+        try:
+            keep_alive.start()
+            _keep_alive_started = True
+            print("💓 Keep-alive heartbeat task started")
+        except Exception as e:
+            print(f"❌ Failed to start keep-alive task: {e}")
     
     try:
         synced = await bot.tree.sync()
