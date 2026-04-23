@@ -34,9 +34,27 @@ log_event("STARTUP", "Application starting", {"build": BUILD_VERSION})
 
 bot_instance = None
 stop_event = threading.Event()
-shutdown_lock = threading.Lock()
-
-def graceful_exit(reason="User request"):
+def save_config_before_restart():
+    """Force save configuration before bot restart"""
+    try:
+        print("[*] [BOT] Saving configuration before restart...", flush=True)
+        import config
+        cfg = config.load_config()
+        config.save_config(cfg)
+        print("[OK] [BOT] Configuration saved successfully before restart", flush=True)
+        
+        # Also flush database
+        try:
+            import database
+            database.flush_database()
+            print("[OK] [BOT] Database flushed successfully before restart", flush=True)
+        except Exception as e:
+            print(f"[!] [BOT] Database flush warning: {e}", flush=True)
+            
+    except Exception as e:
+        print(f"[FAIL] [BOT] Failed to save config before restart: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
     """Ensure clean shutdown"""
     with shutdown_lock:
         if not stop_event.is_set():
@@ -81,10 +99,13 @@ def run_bot_direct():
             if stop_event.is_set():
                 print("[OK] [BOT] Bot shutdown on stop signal", flush=True)
                 log_event("BOT_STOP", "Bot exited cleanly")
+                save_config_before_restart()  # Save on clean shutdown too
                 return
             else:
                 print("[!]  [BOT] Bot exited unexpectedly (no error logged)", flush=True)
                 log_event("BOT_EXIT", "Bot exited without error", {"attempt": restart_count + 1})
+                # Save config before restart
+                save_config_before_restart()
                 restart_count += 1
                 
         except KeyboardInterrupt:
@@ -97,6 +118,9 @@ def run_bot_direct():
             log_event("BOT_CRASH", f"{type(e).__name__}: {e}", {"attempt": restart_count + 1})
             import traceback
             traceback.print_exc()
+            
+            # Save config before restart on crash
+            save_config_before_restart()
             
             restart_count += 1
             if restart_count < max_restarts and not stop_event.is_set():
